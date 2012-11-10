@@ -6,9 +6,9 @@ class SerialDevice(Device):
     A device we connect to over a serial port.
     '''
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, baud=9600):
         super(SerialDevice, self).__init__(deviceID)
-        self.port = Serial(serialDevice)
+        self.port = Serial(serialDevice, baud)
         
     def sendCommand(self, commandString):
         print "Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr
