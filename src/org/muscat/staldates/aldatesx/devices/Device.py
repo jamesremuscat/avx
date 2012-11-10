@@ -1,5 +1,5 @@
 
-class Device():
+class Device(object):
     '''
     This is a thing. It does stuff.
     '''
