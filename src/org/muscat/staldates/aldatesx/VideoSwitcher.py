@@ -62,6 +62,11 @@ class VideoSwitcher(QMainWindow):
         gridlayout.addWidget(self.btnVisualsPC, 0, 5)
         self.inputs.addButton(self.btnVisualsPC, 6)
         
+        self.btnBlank = InputButton(self.centralwidget)
+        self.btnBlank.setText("Blank")
+        gridlayout.addWidget(self.btnBlank, 0, 6)
+        self.inputs.addButton(self.btnBlank, 0)
+        
         blank = QWidget(self.centralwidget)
         gridlayout.addWidget(blank, 1, 0, 1, 5)
         
