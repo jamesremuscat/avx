@@ -11,12 +11,10 @@ from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
 from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 
-class AldatesX(QMainWindow, VideoSwitcher):
+class AldatesX(VideoSwitcher):
     
     def __init__(self, controller):
-        super(AldatesX, self).__init__()
-        self.setupUi(self)
-        self.controller = controller
+        super(AldatesX, self).__init__(controller)
             
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -16,13 +16,13 @@ class OutputButton(ExpandingButton):
         super(OutputButton, self).__init__(parent)
         self.ID = ID
 
-class VideoSwitcher(QWidget):
+class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
         super(VideoSwitcher, self).__init__()
-        self.setupUi(self)
+        self.setupUi()
         self.controller = controller
         
-    def setupUi(self, VideoSwitcher):
+    def setupUi(self):
         self.setWindowTitle("Video Switcher")
         self.resize(1024, 768)
         self.centralwidget = QWidget(self)
@@ -128,14 +128,23 @@ class VideoSwitcher(QWidget):
         self.btnGallery.clicked.connect(self.handleOutputSelect)
         self.btnWelcome.clicked.connect(self.handleOutputSelect)
         self.btnFont.clicked.connect(self.handleOutputSelect)
+        self.btnRecord.clicked.connect(self.handleOutputSelect)
         self.btnAll.clicked.connect(self.handleOutputSelect)
         ''' btnPCMix is a special case since that's on a different switcher '''
         
     def handleInputSelect(self):
         print "Input selected: " + str(self.inputs.checkedId())
+        # Eventually switch the preview switcher here too
         
     def handleOutputSelect(self):
-        sender = self.sender()
+        outputChannel = self.sender().ID
+        inputChannel = self.inputs.checkedId()
+        
+        if inputChannel == 5:
+            # TODO need to handle 'extras' as a special case
+            print "Can't correctly handle extras switcher yet"
+            
+        
         switcher = self.controller.getDevice("Main")
-        switcher.sendInputToOutput(self.inputs.checkedId(), sender.ID)
+        switcher.sendInputToOutput(inputChannel, outputChannel)
         
