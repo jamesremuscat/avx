@@ -144,9 +144,7 @@ class VideoSwitcher(QMainWindow):
         inputChannel = self.inputs.checkedId()
         
         if inputChannel == 5:
-            # TODO need to handle 'extras' as a special case
-            print "Can't correctly handle extras switcher yet"
-            
+            self.extrasSwitcher.take()
         
         switcher = self.controller.getDevice("Main")
         switcher.sendInputToOutput(inputChannel, outputChannel)

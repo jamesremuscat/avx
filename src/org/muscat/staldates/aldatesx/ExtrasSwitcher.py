@@ -52,3 +52,14 @@ class ExtrasSwitcher(QWidget):
         btnPrevMix = OutputButton(self, 1)
         btnPrevMix.setText("Preview / PC Mix")
         layout.addWidget(btnPrevMix, 1, 0, 1, 5)
+        
+        btnPrevMix.clicked.connect(self.takePreview)
+        
+        
+    def takePreview(self):
+        self.take(1)
+        
+        
+    def take(self, output=2):
+        '''Send the currently selected input to the main switcher's input. '''
+        self.switcher.sendInputToOutput(self.inputs.checkedId(), output)
