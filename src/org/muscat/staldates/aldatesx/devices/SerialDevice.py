@@ -11,7 +11,7 @@ class SerialDevice(Device):
         self.port = Serial(serialDevice)
         
     def sendCommand(self, commandString):
-        print "Sending " + commandString.encode('hex_codec')
+        print "Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr
         sentBytes = self.port.write(commandString)
         print str(sentBytes) + " bytes sent"
         
