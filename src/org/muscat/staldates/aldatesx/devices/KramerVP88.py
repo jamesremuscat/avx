@@ -16,7 +16,7 @@ class KramerVP88(SerialDevice):
         
     def sendInputToOutput(self, inChannel, outChannel):
         toSend = [0x01, 0x80 + inChannel, 0x80 + outChannel, 0x80 + self.machineNumber]
-        self.sendCommand(SerialDevice.byteArrayToString(toSend))
+        return self.sendCommand(SerialDevice.byteArrayToString(toSend))
         
         
         

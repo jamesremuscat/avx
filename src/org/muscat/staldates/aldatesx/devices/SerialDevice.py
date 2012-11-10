@@ -14,6 +14,7 @@ class SerialDevice(Device):
         print "Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr
         sentBytes = self.port.write(commandString)
         print str(sentBytes) + " bytes sent"
+        return sentBytes
         
     @staticmethod
     def byteArrayToString(byteArray):

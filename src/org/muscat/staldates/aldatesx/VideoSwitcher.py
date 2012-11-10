@@ -54,7 +54,7 @@ class VideoSwitcher(QMainWindow):
         gridlayout.addWidget(self.btnBlank, 0, 6)
         self.inputs.addButton(self.btnBlank, 0)
         
-        self.extrasSwitcher = ExtrasSwitcher(self.controller.getDevice("Extras"))
+        self.extrasSwitcher = ExtrasSwitcher(self.controller)
         self.blank = QWidget(self)
         gridlayout.addWidget(self.blank, 1, 0, 1, 5)
         
@@ -146,6 +146,5 @@ class VideoSwitcher(QMainWindow):
         if inputChannel == 5:
             self.extrasSwitcher.take()
         
-        switcher = self.controller.getDevice("Main")
-        switcher.sendInputToOutput(inputChannel, outputChannel)
+        self.controller.switch("Main", inputChannel, outputChannel)
         

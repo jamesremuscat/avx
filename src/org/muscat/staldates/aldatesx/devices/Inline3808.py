@@ -10,4 +10,4 @@ class Inline3808(SerialDevice):
         self.sendCommand("[CNF290000]") # All boards to group 1. Copying what the AMX does currently though this should be the default.
         
     def sendInputToOutput(self, inChannel, outChannel):
-        self.sendCommand("[PT1O0" + str(outChannel) + "I0" + str(inChannel) + "]")
+        return self.sendCommand("[PT1O0" + str(outChannel) + "I0" + str(inChannel) + "]")

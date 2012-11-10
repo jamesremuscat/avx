@@ -11,9 +11,9 @@ class ExtrasSwitcher(QWidget):
     The extras switcher.
     '''
 
-    def __init__(self, switcher):
+    def __init__(self, controller):
         super(ExtrasSwitcher, self).__init__()
-        self.switcher = switcher
+        self.controller = controller
         self.initUI()
         
     def initUI(self):
@@ -62,4 +62,4 @@ class ExtrasSwitcher(QWidget):
         
     def take(self, output=2):
         '''Send the currently selected input to the main switcher's input. '''
-        self.switcher.sendInputToOutput(self.inputs.checkedId(), output)
+        self.controller.switch("Extras", self.inputs.checkedId(), output)
