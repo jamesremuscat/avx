@@ -5,11 +5,10 @@ Created on 8 Nov 2012
 '''
 from PySide.QtGui import *
 from PySide.QtCore import *
-from PySide.QtUiTools import QUiLoader
-import sys
 from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
 from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
+import sys
 
 class AldatesX(VideoSwitcher):
     
