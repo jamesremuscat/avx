@@ -7,21 +7,17 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from PySide.QtUiTools import QUiLoader
 import sys
+from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
 
-class AldatesX(QWidget):
-    def initUI(self):
-        loader = QUiLoader()
-        file = QFile("/home/james/workspace/AldatesX/ui/VideoSwitcher.ui")
-        file.open(QFile.ReadOnly)
-        ui = loader.load(file, self)
-        file.close()
-        ui.show()
-
-if __name__ == "__main__":
+class AldatesX(QMainWindow, VideoSwitcher):
     
-
+    def __init__(self):
+        super(AldatesX, self).__init__()
+        self.setupUi(self)
+            
+if __name__ == "__main__":
     app = QApplication(sys.argv)
+    
     myapp = AldatesX()
-    myapp.initUI()
     myapp.show()
     sys.exit(app.exec_())
