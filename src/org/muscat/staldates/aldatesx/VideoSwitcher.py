@@ -1,26 +1,13 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
-
-class ExpandingButton(QPushButton):
-    def __init__(self, parent):
-        super(ExpandingButton, self).__init__(parent)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        
-class InputButton(ExpandingButton):
-    def __init__(self, parent):
-        super(InputButton, self).__init__(parent)
-        self.setCheckable(True)
-        
-class OutputButton(ExpandingButton):
-    def __init__(self, parent, ID):
-        super(OutputButton, self).__init__(parent)
-        self.ID = ID
+from Buttons import InputButton, OutputButton, ExpandingButton
+from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
         super(VideoSwitcher, self).__init__()
-        self.setupUi()
         self.controller = controller
+        self.setupUi()
         
     def setupUi(self):
         self.setWindowTitle("Video Switcher")
@@ -67,8 +54,9 @@ class VideoSwitcher(QMainWindow):
         gridlayout.addWidget(self.btnBlank, 0, 6)
         self.inputs.addButton(self.btnBlank, 0)
         
-        blank = QWidget(self.centralwidget)
-        gridlayout.addWidget(blank, 1, 0, 1, 5)
+        self.extrasSwitcher = ExtrasSwitcher(self.controller.getDevice("Extras"))
+        self.blank = QWidget(self)
+        gridlayout.addWidget(self.blank, 1, 0, 1, 5)
         
         outputsGrid = QGridLayout()
         
@@ -117,6 +105,7 @@ class VideoSwitcher(QMainWindow):
         QMetaObject.connectSlotsByName(self)
         self.setInputClickHandlers()
         self.setOutputClickHandlers()
+        self.gridlayout = gridlayout
         
     def setInputClickHandlers(self):
         self.btnCamera1.clicked.connect(self.handleInputSelect)
@@ -140,6 +129,15 @@ class VideoSwitcher(QMainWindow):
     def handleInputSelect(self):
         print "Input selected: " + str(self.inputs.checkedId())
         # Eventually switch the preview switcher here too
+        self.gridlayout.removeWidget(self.gridlayout.itemAtPosition(1,0).widget())
+        if self.inputs.checkedId() == 5:
+            self.blank.hide()
+            self.gridlayout.addWidget(self.extrasSwitcher, 1, 0, 1, 5)
+            self.extrasSwitcher.show()
+        else:
+            self.extrasSwitcher.hide()
+            self.blank.hide()
+            self.gridlayout.addWidget(self.blank, 1, 0, 1, 5)
         
     def handleOutputSelect(self):
         outputChannel = self.sender().ID
