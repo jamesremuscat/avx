@@ -2,6 +2,7 @@
 from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 import Pyro4
+import subprocess
 #from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
 
 
@@ -20,7 +21,10 @@ if __name__ == "__main__":
     #controller.addDevice(extrasSwitcher)
     
     ##### Aldates configuration above
-    
+
+    ip = subprocess.check_output( ["hostname", "-I"]  ).rstrip()
+    print "Using " + ip + " as hostname"
+    Pyro4.config.HOST = ip 
     daemon = Pyro4.Daemon()
     ns = Pyro4.locateNS()
     uri = daemon.register(controller)
