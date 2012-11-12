@@ -2,6 +2,7 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
+from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
@@ -134,6 +135,8 @@ class VideoSwitcher(QMainWindow):
             self.blank.hide()
             self.gridlayout.addWidget(self.extrasSwitcher, 1, 0, 1, 5)
             self.extrasSwitcher.show()
+        elif self.inputs.checkedId() == 1:
+            self.gridlayout.addWidget(CameraControl(self.controller, 1), 1, 0, 1, 5)
         else:
             self.extrasSwitcher.hide()
             self.blank.hide()

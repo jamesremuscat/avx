@@ -1,7 +1,7 @@
 from PySide.QtGui import QPushButton, QSizePolicy
 
 class ExpandingButton(QPushButton):
-    def __init__(self, parent):
+    def __init__(self, parent = None):
         super(ExpandingButton, self).__init__(parent)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
