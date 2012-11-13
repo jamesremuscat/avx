@@ -113,9 +113,9 @@ class VideoSwitcher(QMainWindow):
     def configureInnerControlPanels(self):
         self.panels = [
                        QWidget(), # Blank
-                       CameraControl(self.controller, 1), # Camera 1
-                       CameraControl(self.controller, 2), # Camera 2
-                       CameraControl(self.controller, 3), # Camera 3
+                       CameraControl(self.controller, "Camera 1"),
+                       CameraControl(self.controller, "Camera 2"),
+                       CameraControl(self.controller, "Camera 3"),
                        QWidget(), # DVD - no controls
                        ExtrasSwitcher(self.controller), # Extras
                        QWidget() # Visuals PC - no controls - yet...

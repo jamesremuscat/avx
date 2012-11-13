@@ -15,5 +15,26 @@ class Controller(object):
         if self.devices.has_key(deviceID) :
             return self.devices[deviceID].sendInputToOutput(inChannel, outChannel)
         else:
+            print "No device with ID " + deviceID
             return -1
-            
+        
+    def move(self, camDeviceID, direction):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            if direction == CameraMove.Left:
+                return camera.moveLeft()
+            elif direction == CameraMove.Right:
+                return camera.moveRight()
+            elif direction == CameraMove.Up:
+                return camera.moveUp()
+            elif direction == CameraMove.Down:
+                return camera.moveDown()
+            elif direction == CameraMove.Stop:
+                return camera.stop()
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
+    
+    
+class CameraMove():
+    Left, Right, Up, Down, Stop = range(5)
