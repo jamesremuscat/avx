@@ -25,3 +25,9 @@ class CoriogenEclipse(SerialDevice):
         
     def fadeIn(self):
         self.sendCommand("Fade = 1\x13")
+    
+    def freeze(self):
+        self.sendCommand("Freeze = On\x13")
+    
+    def unfreeze(self):
+        self.sendCommand("Freeze = Off\x13")
