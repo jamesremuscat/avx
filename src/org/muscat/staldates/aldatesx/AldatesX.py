@@ -24,8 +24,8 @@ if __name__ == "__main__":
     mainSwitcher = KramerVP88("Main", "/dev/ttyUSB0", 1)
     controller.addDevice(mainSwitcher)
     
-    extrasSwitcher = Inline3808("Extras", "/dev/ttyUSB0")
-    controller.addDevice(extrasSwitcher)
+    #extrasSwitcher = Inline3808("Extras", "/dev/ttyUSB0")
+    #controller.addDevice(extrasSwitcher)
     
     myapp = AldatesX(controller)
     myapp.show()

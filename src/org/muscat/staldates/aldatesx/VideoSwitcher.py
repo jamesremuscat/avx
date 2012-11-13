@@ -3,6 +3,7 @@ from PySide.QtCore import *
 from Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
+from org.muscat.staldates.aldatesx import CameraControls
 
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
@@ -106,7 +107,20 @@ class VideoSwitcher(QMainWindow):
         QMetaObject.connectSlotsByName(self)
         self.setInputClickHandlers()
         self.setOutputClickHandlers()
+        self.configureInnerControlPanels()
         self.gridlayout = gridlayout
+        
+    def configureInnerControlPanels(self):
+        self.panels = [
+                       QWidget(), # Blank
+                       CameraControl(self.controller, 1), # Camera 1
+                       CameraControl(self.controller, 2), # Camera 2
+                       CameraControl(self.controller, 3), # Camera 3
+                       QWidget(), # DVD - no controls
+                       ExtrasSwitcher(self.controller), # Extras
+                       QWidget() # Visuals PC - no controls - yet...
+                       ]
+        
         
     def setInputClickHandlers(self):
         self.btnCamera1.clicked.connect(self.handleInputSelect)
@@ -131,16 +145,11 @@ class VideoSwitcher(QMainWindow):
         print "Input selected: " + str(self.inputs.checkedId())
         # Eventually switch the preview switcher here too
         self.gridlayout.removeWidget(self.gridlayout.itemAtPosition(1,0).widget())
-        if self.inputs.checkedId() == 5:
-            self.blank.hide()
-            self.gridlayout.addWidget(self.extrasSwitcher, 1, 0, 1, 5)
-            self.extrasSwitcher.show()
-        elif self.inputs.checkedId() == 1:
-            self.gridlayout.addWidget(CameraControl(self.controller, 1), 1, 0, 1, 5)
-        else:
-            self.extrasSwitcher.hide()
-            self.blank.hide()
-            self.gridlayout.addWidget(self.blank, 1, 0, 1, 5)
+        for p in self.panels:
+            p.hide()
+        chosenPanel = self.panels[self.inputs.checkedId()]
+        self.gridlayout.addWidget(chosenPanel, 1, 0, 1, 5)
+        chosenPanel.show()
         
     def handleOutputSelect(self):
         outputChannel = self.sender().ID
