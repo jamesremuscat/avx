@@ -19,48 +19,58 @@ class VISCACamera(SerialDevice):
         self.cameraID = cameraID
         
     def sendVISCA(self, commandBytes):
-        self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+        return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
         
     def moveUp(self):
-        self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x01])
+        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x01])
         
     def moveDown(self):
-        self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x02])
+        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x02])
         
     def moveLeft(self):
-        self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x01, 0x03])
+        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x01, 0x03])
         
     def moveRight(self):
-        self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x02, 0x03])
+        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x02, 0x03])
         
     def stop(self):
-        self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x03])
+        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x03])
         
     def zoomIn(self):
-        self.sendVISCA([0x01, 0x04, 0x07, 0x02])
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x02])
         
     def zoomOut(self):
-        self.sendVISCA([0x01, 0x04, 0x07, 0x03])
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x03])
         
     def zoomStop(self):
-        self.sendVISCA([0x01, 0x04, 0x07, 0x00])
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x00])
         
     def focusFar(self):
         self.focusManual()
-        self.sendVISCA([0x01, 0x04, 0x08, 0x02])
+        return self.sendVISCA([0x01, 0x04, 0x08, 0x02])
         
     def focusNear(self):
         self.focusManual()
-        self.sendVISCA([0x01, 0x04, 0x08, 0x03])
+        return self.sendVISCA([0x01, 0x04, 0x08, 0x03])
         
     def focusStop(self):
-        self.sendVISCA([0x01, 0x04, 0x08, 0x00])
+        return self.sendVISCA([0x01, 0x04, 0x08, 0x00])
         
     def focusAuto(self):
-        self.sendVISCA([0x01, 0x04, 0x38, 0x02])
+        return self.sendVISCA([0x01, 0x04, 0x38, 0x02])
         
     def focusManual(self):
-        self.sendVISCA([0x01, 0x04, 0x38, 0x03])
+        return self.sendVISCA([0x01, 0x04, 0x38, 0x03])
+        
+    def storePreset(self, preset):
+        if preset < 0 or preset > 5:
+            return -1
+        self.sendVISCA([0x01, 0x04, 0x3F, 0x01, preset])
+        
+    def recallPreset(self, preset):
+        if preset < 0 or preset > 5:
+            return -1
+        self.sendVISCA([0x01, 0x04, 0x3F, 0x02, preset])
         
         
         

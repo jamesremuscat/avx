@@ -1,6 +1,7 @@
 from PySide.QtGui import QGridLayout, QWidget
 from org.muscat.staldates.aldatesx.Buttons import ExpandingButton
-from org.muscat.staldates.aldatesx.Controller import CameraMove
+from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
+    CameraZoom
 
 class CameraButton(ExpandingButton):
     def __init__(self, cameraBinding):
@@ -47,21 +48,29 @@ class CameraControl(QWidget):
         btnRight.pressed.connect(self.move)
         btnRight.released.connect(self.stop)
         
-        btnZoomIn = ExpandingButton()
+        btnZoomIn = CameraButton(CameraZoom.Tele)
         layout.addWidget(btnZoomIn, 0, 3, 2, 1)
         btnZoomIn.setText("Zoom+")
+        btnZoomIn.pressed.connect(self.zoom)
+        btnZoomIn.released.connect(self.stopZoom)
         
-        btnZoomOut = ExpandingButton()
+        btnZoomOut = CameraButton(CameraZoom.Wide)
         layout.addWidget(btnZoomOut, 2, 3, 2, 1)
         btnZoomOut.setText("Zoom-")
+        btnZoomOut.pressed.connect(self.zoom)
+        btnZoomOut.released.connect(self.stopZoom)
         
-        btnFocusFar = ExpandingButton()
+        btnFocusFar = CameraButton(CameraFocus.Far)
         layout.addWidget(btnFocusFar, 0, 4, 2, 1)
         btnFocusFar.setText("Focus+")
+        btnFocusFar.pressed.connect(self.focus)
+        btnFocusFar.released.connect(self.stopFocus)
         
-        btnFocusNear = ExpandingButton()
+        btnFocusNear = CameraButton(CameraFocus.Near)
         layout.addWidget(btnFocusNear, 2, 4, 2, 1)
         btnFocusNear.setText("Focus-")
+        btnFocusNear.pressed.connect(self.focus)
+        btnFocusNear.released.connect(self.stopFocus)
         
         btnBrightUp = ExpandingButton()
         layout.addWidget(btnBrightUp, 0, 5, 2, 1)
@@ -72,13 +81,15 @@ class CameraControl(QWidget):
         btnBrightDown.setText("Bright+")
         
         for i in range(1,7):
-            btnPresetRecall = ExpandingButton()
+            btnPresetRecall = CameraButton(i)
             layout.addWidget(btnPresetRecall, 4, i - 1, 2, 1)
             btnPresetRecall.setText(str(i))
+            btnPresetRecall.clicked.connect(self.recallPreset)
             
-            btnPresetSet = ExpandingButton()
+            btnPresetSet = CameraButton(i)
             layout.addWidget(btnPresetSet, 6, i-1, 2, 1)
             btnPresetSet.setText("Set")
+            btnPresetSet.clicked.connect(self.storePreset)
             
     def move(self):
         sender = self.sender()
@@ -89,4 +100,38 @@ class CameraControl(QWidget):
         
     def stop(self):
         self.controller.move(self.cameraID, CameraMove.Stop)
+        
+    def focus(self):
+        sender = self.sender()
+        try:
+            return self.controller.focus(self.cameraID, sender.cameraBinding)
+        except AttributeError:
+            return -1
+        
+    def stopFocus(self):
+        self.controller.focus(self.cameraID, CameraFocus.Stop)
+        
+    def zoom(self):
+        sender = self.sender()
+        try:
+            return self.controller.zoom(self.cameraID, sender.cameraBinding)
+        except AttributeError:
+            return -1
+        
+    def stopZoom(self):
+        self.controller.zoom(self.cameraID, CameraZoom.Stop)
+        
+    def storePreset(self):
+        sender = self.sender()
+        try:
+            return self.controller.savePreset(self.cameraID, sender.cameraBinding)
+        except AttributeError:
+            return -1
+        
+    def recallPreset(self):
+        sender = self.sender()
+        try:
+            return self.controller.recallPreset(self.cameraID, sender.cameraBinding)
+        except AttributeError:
+            return -1
         

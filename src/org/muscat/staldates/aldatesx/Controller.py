@@ -35,6 +35,56 @@ class Controller(object):
             print "No device with ID " + camDeviceID
         return -1
     
+    def zoom(self, camDeviceID, zoomType):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            if zoomType == CameraZoom.Tele:
+                return camera.zoomIn()
+            elif zoomType == CameraZoom.Wide:
+                return camera.zoomOut()
+            elif zoomType == CameraZoom.Stop:
+                return camera.zoomStop()
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
+    
+    def focus(self, camDeviceID, focusType):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            if focusType == CameraFocus.Auto:
+                return camera.focusAuto()
+            elif focusType == CameraFocus.Near:
+                return camera.focusNear()
+            elif focusType == CameraFocus.Far:
+                return camera.focusFar()
+            elif focusType == CameraFocus.Stop:
+                return camera.focusStop()
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
+    
+    def savePreset(self, camDeviceID, preset):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            camera.storePreset(preset)
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
+    
+    def recallPreset(self, camDeviceID, preset):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            camera.recallPreset(preset)
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
+    
     
 class CameraMove():
     Left, Right, Up, Down, Stop = range(5)
+    
+class CameraZoom():
+    Tele, Wide, Stop = range(3)
+    
+class CameraFocus():
+    Near, Far, Auto, Stop = range(4)
