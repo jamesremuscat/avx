@@ -129,6 +129,7 @@ class VideoSwitcher(QMainWindow):
         self.btnDVD.clicked.connect(self.handleInputSelect)
         self.btnExtras.clicked.connect(self.handleInputSelect)
         self.btnVisualsPC.clicked.connect(self.handleInputSelect)
+        self.btnBlank.clicked.connect(self.handleInputSelect)
         
     def setOutputClickHandlers(self):
         self.btnProjectors.clicked.connect(self.handleOutputSelect)
@@ -142,12 +143,14 @@ class VideoSwitcher(QMainWindow):
         ''' btnPCMix is a special case since that's on a different switcher '''
         
     def handleInputSelect(self):
-        print "Input selected: " + str(self.inputs.checkedId())
-        # Eventually switch the preview switcher here too
+        inputID = self.inputs.checkedId()
+        print "Input selected: " + str(inputID)
+        if inputID > 0:
+            self.controller.switch("Preview", inputID, 1)
         self.gridlayout.removeWidget(self.gridlayout.itemAtPosition(1,0).widget())
         for p in self.panels:
             p.hide()
-        chosenPanel = self.panels[self.inputs.checkedId()]
+        chosenPanel = self.panels[inputID]
         self.gridlayout.addWidget(chosenPanel, 1, 0, 1, 5)
         chosenPanel.show()
         
