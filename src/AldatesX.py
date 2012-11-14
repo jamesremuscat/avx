@@ -5,9 +5,10 @@ Created on 8 Nov 2012
 @author: james
 '''
 from PySide.QtGui import QApplication
+from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
-import sys
 import Pyro4
+import sys
 
 class AldatesX(VideoSwitcher):
     
@@ -17,7 +18,7 @@ class AldatesX(VideoSwitcher):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
-    controller = Pyro4.Proxy("PYRONAME:aldates.alix")
+    controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
     
     myapp = AldatesX(controller)
     myapp.show()
