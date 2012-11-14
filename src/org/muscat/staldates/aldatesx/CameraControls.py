@@ -1,4 +1,5 @@
-from PySide.QtGui import QGridLayout, QWidget
+from PySide.QtGui import QGridLayout, QWidget, QIcon
+from PySide.QtCore import QSize
 from org.muscat.staldates.aldatesx.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
     CameraZoom
@@ -26,27 +27,31 @@ class CameraControl(QWidget):
         
         btnUp = CameraButton(CameraMove.Up)
         layout.addWidget(btnUp, 0, 1, 2, 1)
-        btnUp.setText("Up")
         btnUp.pressed.connect(self.move)
         btnUp.released.connect(self.stop)
+        btnUp.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/up.svg"))
+        btnUp.setIconSize(QSize(64,64))
         
         btnLeft = CameraButton(CameraMove.Left)
         layout.addWidget(btnLeft, 1, 0, 2, 1)
-        btnLeft.setText("Left")
         btnLeft.pressed.connect(self.move)
         btnLeft.released.connect(self.stop)
+        btnLeft.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/back.svg"))
+        btnLeft.setIconSize(QSize(64,64))
         
         btnDown = CameraButton(CameraMove.Down)
         layout.addWidget(btnDown, 2, 1, 2, 1)
-        btnDown.setText("Down")
         btnDown.pressed.connect(self.move)
         btnDown.released.connect(self.stop)
+        btnDown.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/down.svg"))
+        btnDown.setIconSize(QSize(64,64))
         
         btnRight = CameraButton(CameraMove.Right)
         layout.addWidget(btnRight, 1, 2, 2, 1)
-        btnRight.setText("Right")
         btnRight.pressed.connect(self.move)
         btnRight.released.connect(self.stop)
+        btnRight.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/forward.svg"))
+        btnRight.setIconSize(QSize(64,64))
         
         btnZoomIn = CameraButton(CameraZoom.Tele)
         layout.addWidget(btnZoomIn, 0, 3, 2, 1)

@@ -1,5 +1,5 @@
-from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup
-from PySide.QtCore import QMetaObject
+from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup, QIcon
+from PySide.QtCore import QMetaObject, QSize
 from Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
@@ -24,21 +24,29 @@ class VideoSwitcher(QMainWindow):
         self.btnDVD.setText("DVD")
         gridlayout.addWidget(self.btnDVD, 0, 0)
         self.inputs.addButton(self.btnDVD, 4)
+        self.btnDVD.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/media-cdrom.svg"))
+        self.btnDVD.setIconSize(QSize(32, 32))
         
         self.btnCamera1 = InputButton(self.centralwidget)
         self.btnCamera1.setText("Camera 1")
         gridlayout.addWidget(self.btnCamera1, 0, 1)
         self.inputs.addButton(self.btnCamera1, 1)
+        self.btnCamera1.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
+        self.btnCamera1.setIconSize(QSize(32, 32))
         
         self.btnCamera2 = InputButton(self.centralwidget)
         self.btnCamera2.setText("Camera 2")
         gridlayout.addWidget(self.btnCamera2, 0, 2)
         self.inputs.addButton(self.btnCamera2, 2)
+        self.btnCamera2.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
+        self.btnCamera2.setIconSize(QSize(32, 32))
         
         self.btnCamera3 = InputButton(self.centralwidget)
         self.btnCamera3.setText("Camera 3")
         gridlayout.addWidget(self.btnCamera3, 0, 3)
         self.inputs.addButton(self.btnCamera3, 3)
+        self.btnCamera3.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
+        self.btnCamera3.setIconSize(QSize(32, 32))
         
         self.btnExtras = InputButton(self.centralwidget)
         self.btnExtras.setText("Extras")
@@ -49,6 +57,8 @@ class VideoSwitcher(QMainWindow):
         self.btnVisualsPC.setText("Visuals PC")
         gridlayout.addWidget(self.btnVisualsPC, 0, 5)
         self.inputs.addButton(self.btnVisualsPC, 6)
+        self.btnVisualsPC.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/computer.svg"))
+        self.btnVisualsPC.setIconSize(QSize(32, 32))
         
         self.btnBlank = InputButton(self.centralwidget)
         self.btnBlank.setText("Blank")
