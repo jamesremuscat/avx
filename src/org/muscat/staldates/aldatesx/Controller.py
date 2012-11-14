@@ -1,4 +1,3 @@
-
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
@@ -91,3 +90,4 @@ class CameraZoom():
     
 class CameraFocus():
     Near, Far, Auto, Stop = range(4)
+    

@@ -1,9 +1,8 @@
-from PySide.QtGui import *
-from PySide.QtCore import *
+from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup
+from PySide.QtCore import QMetaObject
 from Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
-from org.muscat.staldates.aldatesx import CameraControls
 
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
