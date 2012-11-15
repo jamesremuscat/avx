@@ -3,8 +3,11 @@ from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 import Pyro4
 import subprocess
+import atexit
 #from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
 
+def shutdownDaemon(self, daemon):
+    daemon.shutdown()
 
 if __name__ == "__main__":
     controller = Controller()
@@ -29,5 +32,7 @@ if __name__ == "__main__":
     ns = Pyro4.locateNS()
     uri = daemon.register(controller)
     ns.register(Controller.pyroName, uri)
+    
+    atexit.register(shutdownDaemon, daemon = daemon)
     
     daemon.requestLoop()
