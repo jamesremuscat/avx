@@ -1,8 +1,10 @@
-from PySide.QtGui import QGridLayout, QWidget, QIcon
+from PySide.QtGui import QGridLayout, QWidget, QIcon, QMessageBox
 from PySide.QtCore import QSize
 from org.muscat.staldates.aldatesx.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
     CameraZoom
+from Pyro4.errors import NamingError, ProtocolError
+from StringConstants import StringConstants
 
 class CameraButton(ExpandingButton):
     def __init__(self, cameraBinding):
@@ -13,7 +15,6 @@ class CameraControl(QWidget):
     '''
     GUI to control a camera.
     '''
-
 
     def __init__(self, controller, cameraID):
         super(CameraControl, self).__init__()
@@ -102,9 +103,18 @@ class CameraControl(QWidget):
             return self.controller.move(self.cameraID, sender.cameraBinding)
         except AttributeError:
             return -1
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def stop(self):
-        self.controller.move(self.cameraID, CameraMove.Stop)
+        try:
+            self.controller.move(self.cameraID, CameraMove.Stop)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def focus(self):
         sender = self.sender()
@@ -112,9 +122,18 @@ class CameraControl(QWidget):
             return self.controller.focus(self.cameraID, sender.cameraBinding)
         except AttributeError:
             return -1
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def stopFocus(self):
-        self.controller.focus(self.cameraID, CameraFocus.Stop)
+        try:
+            self.controller.focus(self.cameraID, CameraFocus.Stop)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def zoom(self):
         sender = self.sender()
@@ -122,9 +141,18 @@ class CameraControl(QWidget):
             return self.controller.zoom(self.cameraID, sender.cameraBinding)
         except AttributeError:
             return -1
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def stopZoom(self):
-        self.controller.zoom(self.cameraID, CameraZoom.Stop)
+        try:
+            self.controller.zoom(self.cameraID, CameraZoom.Stop)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def storePreset(self):
         sender = self.sender()
@@ -132,6 +160,10 @@ class CameraControl(QWidget):
             return self.controller.savePreset(self.cameraID, sender.cameraBinding)
         except AttributeError:
             return -1
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
     def recallPreset(self):
         sender = self.sender()
@@ -139,4 +171,14 @@ class CameraControl(QWidget):
             return self.controller.recallPreset(self.cameraID, sender.cameraBinding)
         except AttributeError:
             return -1
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
+            
+    def errorBox(self, text):
+        msgBox = QMessageBox()
+        msgBox.setText(text)
+        msgBox.setIcon(QMessageBox.Critical)
+        msgBox.exec_()
         

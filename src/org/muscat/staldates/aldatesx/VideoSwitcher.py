@@ -1,8 +1,10 @@
-from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup, QIcon
+from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, QSize
 from Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
+from Pyro4.errors import ProtocolError, NamingError
+from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
@@ -155,7 +157,12 @@ class VideoSwitcher(QMainWindow):
         inputID = self.inputs.checkedId()
         print "Input selected: " + str(inputID)
         if inputID > 0:
-            self.controller.switch("Preview", inputID, 1)
+            try:
+                self.controller.switch("Preview", inputID, 1)
+            except NamingError:
+                self.errorBox(StringConstants.nameErrorText)
+            except ProtocolError:
+                self.errorBox(StringConstants.protocolErrorText)
         self.gridlayout.removeWidget(self.gridlayout.itemAtPosition(1,0).widget())
         for p in self.panels:
             p.hide()
@@ -169,6 +176,16 @@ class VideoSwitcher(QMainWindow):
         
         if inputChannel == 5:
             self.extrasSwitcher.take()
+        try:
+            self.controller.switch("Main", inputChannel, outputChannel)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
         
-        self.controller.switch("Main", inputChannel, outputChannel)
+    def errorBox(self, text):
+        msgBox = QMessageBox()
+        msgBox.setText(text)
+        msgBox.setIcon(QMessageBox.Critical)
+        msgBox.exec_()
         
