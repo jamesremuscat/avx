@@ -61,6 +61,17 @@ class VISCACamera(SerialDevice):
         
     def focusManual(self):
         return self.sendVISCA([0x01, 0x04, 0x38, 0x03])
+    
+    def brighter(self):
+        self.sendVISCA([0x01, 0x04, 0x39, 0x0D, 0xFF]) # Put camera into manual exposure mode first!
+        return self.sendVISCA([0x01, 0x04, 0x0D, 0x02, 0xFF])
+    
+    def darker(self):
+        self.sendVISCA([0x01, 0x04, 0x39, 0x0D, 0xFF]) # Put camera into manual exposure mode first!
+        return self.sendVISCA([0x01, 0x04, 0x0D, 0x03, 0xFF])
+    
+    def autoExposure(self):
+        return self.sendVISCA([0x01, 0x04, 0x39, 0x00, 0xFF])
         
     def storePreset(self, preset):
         if preset < 0 or preset > 5:

@@ -66,6 +66,20 @@ class Controller(object):
             print "No device with ID " + camDeviceID
         return -1
     
+    def exposure(self, camDeviceID, exposureType):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            if exposureType == CameraExposure.Brighter:
+                return camera.brighter()
+            elif exposureType == CameraExposure.Darker:
+                return camera.darker()
+            elif exposureType == CameraExposure.Auto:
+                return camera.autoExposure()
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
+            
+    
     def savePreset(self, camDeviceID, preset):
         if self.devices.has_key(camDeviceID):
             camera = self.devices[camDeviceID]
@@ -91,4 +105,7 @@ class CameraZoom():
     
 class CameraFocus():
     Near, Far, Auto, Stop = range(4)
+    
+class CameraExposure():
+    Brighter, Darker, Auto = range(3)
     

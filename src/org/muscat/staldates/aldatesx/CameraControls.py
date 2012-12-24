@@ -2,7 +2,7 @@ from PySide.QtGui import QGridLayout, QWidget, QIcon, QMessageBox
 from PySide.QtCore import QSize
 from org.muscat.staldates.aldatesx.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
-    CameraZoom
+    CameraZoom, CameraExposure
 from Pyro4.errors import NamingError, ProtocolError
 from StringConstants import StringConstants
 
@@ -78,13 +78,14 @@ class CameraControl(QWidget):
         btnFocusNear.pressed.connect(self.focus)
         btnFocusNear.released.connect(self.stopFocus)
         
-        btnBrightUp = ExpandingButton()
+        btnBrightUp = CameraButton(CameraExposure.Brighter)
         layout.addWidget(btnBrightUp, 0, 5, 2, 1)
         btnBrightUp.setText("Bright+")
+        btnBrightUp.clicked.connect(self.exposure)
 
         btnBrightDown = ExpandingButton()
         layout.addWidget(btnBrightDown, 2, 5, 2, 1)
-        btnBrightDown.setText("Bright+")
+        btnBrightDown.setText("Bright-")
         
         for i in range(1,7):
             btnPresetRecall = CameraButton(i)
@@ -149,6 +150,17 @@ class CameraControl(QWidget):
     def stopZoom(self):
         try:
             self.controller.zoom(self.cameraID, CameraZoom.Stop)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
+        
+    def exposure(self):
+        sender = self.sender()
+        try:
+            return self.controller.exposure(self.cameraID, sender.cameraBinding)
+        except AttributeError:
+            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
