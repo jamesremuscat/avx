@@ -1,5 +1,5 @@
-from PySide.QtGui import QGridLayout, QWidget, QIcon, QMessageBox
-from PySide.QtCore import QSize
+from PySide.QtGui import QGridLayout, QLabel, QWidget, QIcon, QMessageBox
+from PySide.QtCore import QSize, Qt
 from org.muscat.staldates.aldatesx.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
     CameraZoom, CameraExposure
@@ -10,6 +10,43 @@ class CameraButton(ExpandingButton):
     def __init__(self, cameraBinding):
         super(CameraButton, self).__init__()
         self.cameraBinding = cameraBinding
+        
+class PlusMinusButtons(QWidget):
+    def __init__(self, caption, upBinding, downBinding):
+        super(PlusMinusButtons, self).__init__()
+        self.upButton = CameraButton(upBinding)
+        self.upButton.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/gtk-add.svg"))
+        self.upButton.setIconSize(QSize(64,64))
+        
+        self.downButton = CameraButton(downBinding)
+        self.downButton.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/gtk-remove.svg"))
+        self.downButton.setIconSize(QSize(64,64))
+        
+        self.caption = QLabel("<b>" + caption + "</b>")
+        self.caption.setAlignment(Qt.AlignCenter)
+        
+        self.initLayout()
+        
+    def initLayout(self):
+        
+        layout = QGridLayout()
+        self.setLayout(layout)
+        
+        layout.addWidget(self.upButton, 0, 0)
+        layout.addWidget(self.caption, 1, 0)
+        layout.addWidget(self.downButton, 2, 0)
+        
+    def connectPressed(self, connection):
+        self.upButton.pressed.connect(connection)
+        self.downButton.pressed.connect(connection)
+    
+    def connectReleased(self, connection):
+        self.upButton.released.connect(connection)
+        self.downButton.released.connect(connection)
+        
+    def connectClicked(self, connection):
+        self.upButton.clicked.connect(connection)
+        self.downButton.clicked.connect(connection)
 
 class CameraControl(QWidget):
     '''
@@ -54,38 +91,19 @@ class CameraControl(QWidget):
         btnRight.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/forward.svg"))
         btnRight.setIconSize(QSize(64,64))
         
-        btnZoomIn = CameraButton(CameraZoom.Tele)
-        layout.addWidget(btnZoomIn, 0, 3, 2, 1)
-        btnZoomIn.setText("Zoom+")
-        btnZoomIn.pressed.connect(self.zoom)
-        btnZoomIn.released.connect(self.stopZoom)
+        zoomInOut = PlusMinusButtons("Zoom", CameraZoom.Tele, CameraZoom.Wide)
+        zoomInOut.connectPressed(self.zoom)
+        zoomInOut.connectReleased(self.stopZoom)
+        layout.addWidget(zoomInOut, 0, 3, 4, 1)
         
-        btnZoomOut = CameraButton(CameraZoom.Wide)
-        layout.addWidget(btnZoomOut, 2, 3, 2, 1)
-        btnZoomOut.setText("Zoom-")
-        btnZoomOut.pressed.connect(self.zoom)
-        btnZoomOut.released.connect(self.stopZoom)
+        focus = PlusMinusButtons("Focus", CameraFocus.Far, CameraFocus.Near)
+        focus.connectPressed(self.focus)
+        focus.connectReleased(self.stopFocus)
+        layout.addWidget(focus, 0, 4, 4, 1)
         
-        btnFocusFar = CameraButton(CameraFocus.Far)
-        layout.addWidget(btnFocusFar, 0, 4, 2, 1)
-        btnFocusFar.setText("Focus+")
-        btnFocusFar.pressed.connect(self.focus)
-        btnFocusFar.released.connect(self.stopFocus)
-        
-        btnFocusNear = CameraButton(CameraFocus.Near)
-        layout.addWidget(btnFocusNear, 2, 4, 2, 1)
-        btnFocusNear.setText("Focus-")
-        btnFocusNear.pressed.connect(self.focus)
-        btnFocusNear.released.connect(self.stopFocus)
-        
-        btnBrightUp = CameraButton(CameraExposure.Brighter)
-        layout.addWidget(btnBrightUp, 0, 5, 2, 1)
-        btnBrightUp.setText("Bright+")
-        btnBrightUp.clicked.connect(self.exposure)
-
-        btnBrightDown = ExpandingButton()
-        layout.addWidget(btnBrightDown, 2, 5, 2, 1)
-        btnBrightDown.setText("Bright-")
+        brightness = PlusMinusButtons("Brightness", CameraExposure.Brighter, CameraExposure.Darker)
+        brightness.connectClicked(self.exposure)
+        layout.addWidget(brightness, 0, 5, 4, 1)
         
         for i in range(1,7):
             btnPresetRecall = CameraButton(i)
