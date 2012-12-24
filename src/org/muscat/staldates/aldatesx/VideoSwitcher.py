@@ -1,6 +1,7 @@
 from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, QSize
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
+from org.muscat.staldates.aldatesx.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
@@ -111,6 +112,8 @@ class VideoSwitcher(QMainWindow):
         outputsGrid.setColumnStretch(1, 1)
         
         gridlayout.addLayout(outputsGrid, 1, 6)
+        
+        gridlayout.addWidget(Clock(), 2, 6)
 
         gridlayout.setRowMinimumHeight(1, 500)      
         gridlayout.setRowStretch(0, 1)  
