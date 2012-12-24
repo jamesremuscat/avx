@@ -1,6 +1,6 @@
 from PySide.QtGui import QGridLayout, QLabel, QWidget, QIcon, QMessageBox
 from PySide.QtCore import QSize, Qt
-from org.muscat.staldates.aldatesx.Buttons import ExpandingButton
+from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
     CameraZoom, CameraExposure
 from Pyro4.errors import NamingError, ProtocolError

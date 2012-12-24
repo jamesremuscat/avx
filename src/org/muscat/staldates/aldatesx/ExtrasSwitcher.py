@@ -4,7 +4,7 @@ Created on 10 Nov 2012
 @author: james
 '''
 from PySide.QtGui import QWidget, QGridLayout, QButtonGroup
-from org.muscat.staldates.aldatesx.VideoSwitcher import InputButton, OutputButton
+from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
 
 class ExtrasSwitcher(QWidget):
     '''
