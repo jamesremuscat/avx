@@ -11,13 +11,14 @@ InputButton, OutputButton {
 
 InputButton:pressed, InputButton:checked, OutputButton:pressed {
 	background-color: #ECBE13;
+	color: black;
 }
 
 CameraButton {
 	font-family: arial, sans-serif;
 	font-size: 16pt;
-	color: white;
-	background-color: #2FB8AC;
+	color: black;
+	background-color: #ECBE13;
 }
 
 QMainWindow QLabel {
