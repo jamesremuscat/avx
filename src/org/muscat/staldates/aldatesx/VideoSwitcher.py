@@ -1,4 +1,4 @@
-from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QButtonGroup, QIcon, QMessageBox
+from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, QSize
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
@@ -23,52 +23,56 @@ class VideoSwitcher(QMainWindow):
         ''' Buttons added to inputs should have a numeric ID set equal to their input number on the Aldates main switcher. '''
         self.inputs = QButtonGroup()
         
+        inputsGrid = QHBoxLayout()
+        
         self.btnDVD = InputButton(self.centralwidget)
         self.btnDVD.setText("DVD")
-        gridlayout.addWidget(self.btnDVD, 0, 0)
+        inputsGrid.addWidget(self.btnDVD)
         self.inputs.addButton(self.btnDVD, 4)
         self.btnDVD.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/media-cdrom.svg"))
         self.btnDVD.setIconSize(QSize(64, 64))
         
         self.btnCamera1 = InputButton(self.centralwidget)
         self.btnCamera1.setText("Camera 1")
-        gridlayout.addWidget(self.btnCamera1, 0, 1)
+        inputsGrid.addWidget(self.btnCamera1)
         self.inputs.addButton(self.btnCamera1, 1)
         self.btnCamera1.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
         self.btnCamera1.setIconSize(QSize(64, 64))
         
         self.btnCamera2 = InputButton(self.centralwidget)
         self.btnCamera2.setText("Camera 2")
-        gridlayout.addWidget(self.btnCamera2, 0, 2)
+        inputsGrid.addWidget(self.btnCamera2)
         self.inputs.addButton(self.btnCamera2, 2)
         self.btnCamera2.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
         self.btnCamera2.setIconSize(QSize(64, 64))
         
         self.btnCamera3 = InputButton(self.centralwidget)
         self.btnCamera3.setText("Camera 3")
-        gridlayout.addWidget(self.btnCamera3, 0, 3)
+        inputsGrid.addWidget(self.btnCamera3)
         self.inputs.addButton(self.btnCamera3, 3)
         self.btnCamera3.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
         self.btnCamera3.setIconSize(QSize(64, 64))
         
         self.btnExtras = InputButton(self.centralwidget)
         self.btnExtras.setText("Extras")
-        gridlayout.addWidget(self.btnExtras, 0, 4)
+        inputsGrid.addWidget(self.btnExtras)
         self.btnExtras.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/video-display.svg"))
         self.btnExtras.setIconSize(QSize(64, 64))
         self.inputs.addButton(self.btnExtras, 5)
         
         self.btnVisualsPC = InputButton(self.centralwidget)
         self.btnVisualsPC.setText("Visuals PC")
-        gridlayout.addWidget(self.btnVisualsPC, 0, 5)
+        inputsGrid.addWidget(self.btnVisualsPC)
         self.inputs.addButton(self.btnVisualsPC, 6)
         self.btnVisualsPC.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/computer.svg"))
         self.btnVisualsPC.setIconSize(QSize(64, 64))
         
         self.btnBlank = InputButton(self.centralwidget)
         self.btnBlank.setText("Blank")
-        gridlayout.addWidget(self.btnBlank, 0, 6)
+        inputsGrid.addWidget(self.btnBlank)
         self.inputs.addButton(self.btnBlank, 0)
+        
+        gridlayout.addLayout(inputsGrid, 0, 0, 1, 7)
         
         self.extrasSwitcher = ExtrasSwitcher(self.controller)
         self.blank = QWidget(self)
@@ -113,7 +117,7 @@ class VideoSwitcher(QMainWindow):
         outputsGrid.setColumnStretch(0, 1)
         outputsGrid.setColumnStretch(1, 1)
         
-        gridlayout.addLayout(outputsGrid, 1, 6)
+        gridlayout.addLayout(outputsGrid, 1, 5, 1, 2)
         
         gridlayout.addWidget(Clock(), 2, 6)
 
@@ -172,7 +176,7 @@ class VideoSwitcher(QMainWindow):
         for p in self.panels:
             p.hide()
         chosenPanel = self.panels[inputID]
-        self.gridlayout.addWidget(chosenPanel, 1, 0, 1, 6)
+        self.gridlayout.addWidget(chosenPanel, 1, 0, 1, 5)
         chosenPanel.show()
         
     def handleOutputSelect(self):
