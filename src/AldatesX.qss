@@ -1,0 +1,27 @@
+QMainWindow {
+	background-color: #046D8B;
+}
+
+InputButton, OutputButton {
+	background-color: #309292;
+	font-family: arial, sans-serif;
+	font-size: 16pt;
+	color: white;
+}
+
+InputButton:pressed, InputButton:checked, OutputButton:pressed {
+	background-color: #ECBE13;
+}
+
+CameraButton {
+	font-family: arial, sans-serif;
+	font-size: 16pt;
+	color: white;
+	background-color: #2FB8AC;
+}
+
+QMainWindow QLabel {
+	font-family: arial, sans-serif;
+	font-size: 16pt;
+	color: white;
+}

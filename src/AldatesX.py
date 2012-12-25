@@ -17,6 +17,13 @@ class AldatesX(VideoSwitcher):
             
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    try:
+        stylesheet = open("AldatesX.qss", "r")
+        app.setStyleSheet(stylesheet.read())
+    except IOError:
+        # never mind
+        print("Cannot find stylesheet, using default system styles.")
     
     controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
     
