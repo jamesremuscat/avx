@@ -1,9 +1,9 @@
 QMainWindow {
-	background-color: #046D8B;
+	background-color: #003E5F;
 }
 
 InputButton, OutputButton {
-	background-color: #309292;
+	background-color: #1693A5;
 	font-family: arial, sans-serif;
 	font-size: 16pt;
 	color: white;
