@@ -1,4 +1,4 @@
-from PySide.QtGui import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
+from PySide.QtGui import QMainWindow, QFrame, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, QSize
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
@@ -6,6 +6,10 @@ from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
+
+class OutputsHolderPanel(QFrame):
+    def __init__(self, parent = None):
+        super(OutputsHolderPanel, self).__init__(parent)
 
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
@@ -117,7 +121,10 @@ class VideoSwitcher(QMainWindow):
         outputsGrid.setColumnStretch(0, 1)
         outputsGrid.setColumnStretch(1, 1)
         
-        gridlayout.addLayout(outputsGrid, 1, 5, 1, 2)
+        outputsHolder = OutputsHolderPanel()
+        outputsHolder.setLayout(outputsGrid)
+        
+        gridlayout.addWidget(outputsHolder, 1, 5, 1, 2)
         
         gridlayout.addWidget(Clock(), 2, 6)
 

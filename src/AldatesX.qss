@@ -2,6 +2,10 @@ QMainWindow {
 	background-color: #003E5F;
 }
 
+OutputsHolderPanel {
+	background-color: #00527E;
+}
+
 InputButton, OutputButton {
 	background-color: #1693A5;
 	font-family: arial, sans-serif;
@@ -10,7 +14,7 @@ InputButton, OutputButton {
 }
 
 InputButton:pressed, InputButton:checked, OutputButton:pressed {
-	background-color: #ECBE13;
+	background-color: #E4E4FF;
 	color: black;
 }
 
@@ -18,7 +22,7 @@ CameraButton {
 	font-family: arial, sans-serif;
 	font-size: 16pt;
 	color: black;
-	background-color: #ECBE13;
+	background-color: #E4E4FF;
 }
 
 QMainWindow QLabel {
