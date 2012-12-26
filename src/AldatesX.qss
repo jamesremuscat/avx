@@ -6,7 +6,7 @@ OutputsHolderPanel {
 	background-color: #00527E;
 }
 
-InputButton, OutputButton, OptionButton {
+InputButton, OutputButton, OptionButton, ExpandingButton {
 	background-color: #1693A5;
 	font-family: arial, sans-serif;
 	font-size: 16pt;

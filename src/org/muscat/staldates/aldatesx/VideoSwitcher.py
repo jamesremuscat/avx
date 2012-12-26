@@ -1,12 +1,13 @@
 from PySide.QtGui import QMainWindow, QFrame, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, QSize
-from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
+from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
+from org.muscat.staldates.aldatesx.SystemPowerControl import SystemPowerControl
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
@@ -127,6 +128,11 @@ class VideoSwitcher(QMainWindow):
         
         gridlayout.addWidget(outputsHolder, 1, 5, 1, 2)
         
+        syspower = ExpandingButton()
+        syspower.setText("System Power")
+        syspower.clicked.connect(self.showSystemPower)
+        gridlayout.addWidget(syspower, 2, 0, 1, 2)
+        
         gridlayout.addWidget(Clock(), 2, 6)
 
         gridlayout.setRowMinimumHeight(1, 500)      
@@ -216,6 +222,10 @@ class VideoSwitcher(QMainWindow):
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
             self.errorBox(StringConstants.protocolErrorText)
+            
+    def showSystemPower(self):
+        pass
+
         
     def errorBox(self, text):
         msgBox = QMessageBox()
