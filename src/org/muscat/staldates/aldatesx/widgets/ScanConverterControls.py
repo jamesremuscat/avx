@@ -1,10 +1,10 @@
 from PySide.QtGui import QWidget, QGridLayout, QVBoxLayout, QIcon
 from org.muscat.staldates.aldatesx.widgets.Buttons import OptionButton
 
-class OverscanFreezeControl(QWidget):
+class OverscanFreezeWidget(QWidget):
 
     def __init__(self, parent = None):
-        super(OverscanFreezeControl, self).__init__(parent)
+        super(OverscanFreezeWidget, self).__init__(parent)
         
         
         self.btnOverscan = OptionButton()
@@ -25,7 +25,7 @@ class OverscanFreezeControl(QWidget):
         
         self.setLayout(layout)
         
-class EclipseControl(OverscanFreezeControl):
+class EclipseWidget(OverscanFreezeWidget):
     
     def __init__(self, parent = None):        
         self.btnFade = OptionButton()
@@ -36,7 +36,7 @@ class EclipseControl(OverscanFreezeControl):
         self.btnOverlay.setText("Overlay")
         self.btnOverlay.setIcon(QIcon("/usr/share/icons/Tango/scalable/apps/preferences-system-windows.svg"))
         
-        super(EclipseControl, self).__init__(parent)
+        super(EclipseWidget, self).__init__(parent)
         
     def layout(self):
         layout = QGridLayout()

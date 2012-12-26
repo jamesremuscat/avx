@@ -6,7 +6,7 @@ from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
-from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import EclipseControl
+from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import EclipseWidget
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
@@ -146,7 +146,7 @@ class VideoSwitcher(QMainWindow):
                        CameraControl(self.controller, "Camera 3"),
                        QWidget(), # DVD - no controls
                        ExtrasSwitcher(self.controller), # Extras
-                       EclipseControl() #QWidget() # Visuals PC - no controls - yet...
+                       EclipseWidget() #QWidget() # Visuals PC - no controls - yet...
                        ]
         
         

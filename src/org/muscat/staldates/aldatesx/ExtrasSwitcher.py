@@ -7,7 +7,7 @@ from PySide.QtGui import QWidget, QGridLayout, QButtonGroup, QMessageBox
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
-from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import OverscanFreezeControl
+from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import OverscanFreezeWidget
 
 class ExtrasSwitcher(QWidget):
     '''
@@ -53,7 +53,7 @@ class ExtrasSwitcher(QWidget):
         self.inputs = inputs
         
         if self.controller.hasDevice("Extras Scan Converter"):
-            scControl = OverscanFreezeControl()
+            scControl = OverscanFreezeWidget()
             layout.addWidget(scControl, 1, 4)
             scControl.btnOverscan.toggled.connect(self.toggleOverscan)
             scControl.btnFreeze.toggled.connect(self.toggleFreeze)
