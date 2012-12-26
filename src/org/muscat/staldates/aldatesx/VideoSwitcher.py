@@ -7,7 +7,7 @@ from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
-from org.muscat.staldates.aldatesx.SystemPowerControl import SystemPowerControl
+from org.muscat.staldates.aldatesx.SystemPowerWidget import SystemPowerWidget
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
@@ -232,7 +232,7 @@ class VideoSwitcher(QMainWindow):
             self.errorBox(StringConstants.protocolErrorText)
             
     def showSystemPower(self):
-        spc = SystemPowerControl()
+        spc = SystemPowerWidget()
         self.stack.insertWidget(0, spc)
         spc.b.clicked.connect(self.hideSystemPower)
         self.stack.setCurrentIndex(0)

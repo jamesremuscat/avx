@@ -1,11 +1,11 @@
 from PySide.QtGui import QWidget, QGridLayout, QLabel
 from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
 
-class SystemPowerControl(QWidget):
+class SystemPowerWidget(QWidget):
 
 
     def __init__(self):
-        super(SystemPowerControl, self).__init__()
+        super(SystemPowerWidget, self).__init__()
 
         layout = QGridLayout(self)
         
