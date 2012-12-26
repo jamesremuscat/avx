@@ -1,29 +1,48 @@
-from PySide.QtGui import QWidget, QVBoxLayout
-from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton
+from PySide.QtGui import QWidget, QGridLayout, QVBoxLayout, QIcon
+from PySide.QtCore import QSize
+from org.muscat.staldates.aldatesx.widgets.Buttons import OptionButton
 
 class OverscanFreezeControl(QWidget):
 
     def __init__(self, parent = None):
         super(OverscanFreezeControl, self).__init__(parent)
         
-        self.layout = QVBoxLayout()
         
-        self.btnOverscan = InputButton()
+        self.btnOverscan = OptionButton()
         self.btnOverscan.setText("Overscan")
-        self.layout.addWidget(self.btnOverscan)
         self.btnOverscan.setChecked(True)
+        self.btnOverscan.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/gtk-fullscreen.svg"))
         
-        self.btnFreeze = InputButton()
+        self.btnFreeze = OptionButton()
         self.btnFreeze.setText("Freeze")
-        self.layout.addWidget(self.btnFreeze)
+        self.btnFreeze.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/player_pause.svg"))
         
-        self.setLayout(self.layout)
+        self.layout()
         
-class OverscanFreezeFadeControl(OverscanFreezeControl):
+    def layout(self):
+        layout = QVBoxLayout()
+        layout.addWidget(self.btnOverscan)
+        layout.addWidget(self.btnFreeze)
+        
+        self.setLayout(layout)
+        
+class EclipseControl(OverscanFreezeControl):
     
-    def __init__(self, parent = None):
-        super(OverscanFreezeFadeControl, self).__init__(parent)
-        
-        self.btnFade = InputButton()
+    def __init__(self, parent = None):        
+        self.btnFade = OptionButton()
         self.btnFade.setText("Fade")
-        self.layout.addWidget(self.btnFade)
+        self.btnFade.setIcon(QIcon("/usr/share/icons/Tango/scalable/apps/screensaver.svg"))
+        
+        self.btnOverlay = OptionButton()
+        self.btnOverlay.setText("Overlay")
+        self.btnOverlay.setIcon(QIcon("/usr/share/icons/Tango/scalable/apps/preferences-system-windows.svg"))
+        
+        super(EclipseControl, self).__init__(parent)
+        
+    def layout(self):
+        layout = QGridLayout()
+        layout.addWidget(self.btnOverlay, 0, 0)
+        layout.addWidget(self.btnOverscan, 0, 1)
+        layout.addWidget(self.btnFreeze, 1, 0)
+        layout.addWidget(self.btnFade, 1, 1)
+        self.setLayout(layout)

@@ -6,14 +6,14 @@ OutputsHolderPanel {
 	background-color: #00527E;
 }
 
-InputButton, OutputButton {
+InputButton, OutputButton, OptionButton {
 	background-color: #1693A5;
 	font-family: arial, sans-serif;
 	font-size: 16pt;
 	color: white;
 }
 
-InputButton:pressed, InputButton:checked, OutputButton:pressed {
+InputButton:pressed, InputButton:checked, OutputButton:pressed, OptionButton:checked {
 	background-color: #E4E4FF;
 	color: black;
 }
