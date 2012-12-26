@@ -1,6 +1,6 @@
 from PySide.QtGui import QMainWindow, QFrame, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, QSize
-from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
+from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
