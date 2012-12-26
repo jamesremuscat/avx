@@ -1,4 +1,4 @@
-from PySide.QtGui import QMainWindow, QFrame, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
+from PySide.QtGui import QMainWindow, QFrame, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
 from PySide.QtCore import QMetaObject, QSize
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
@@ -25,7 +25,10 @@ class VideoSwitcher(QMainWindow):
         
         mainScreen = QWidget()
         
-        self.setCentralWidget(mainScreen)
+        self.stack = QStackedWidget()
+        self.stack.addWidget(mainScreen)
+        
+        self.setCentralWidget(self.stack)
         
         gridlayout = QGridLayout()
         mainScreen.setLayout(gridlayout)
@@ -41,6 +44,7 @@ class VideoSwitcher(QMainWindow):
         self.inputs.addButton(self.btnDVD, 4)
         self.btnDVD.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/media-cdrom.svg"))
         self.btnDVD.setIconSize(QSize(64, 64))
+        self.btnDVD
         
         self.btnCamera1 = InputButton()
         self.btnCamera1.setText("Camera 1")
