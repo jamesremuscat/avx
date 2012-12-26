@@ -59,7 +59,7 @@ class ExtrasSwitcher(QWidget):
             scControl.btnFreeze.toggled.connect(self.toggleFreeze)
             
         
-        btnPrevMix = OutputButton(self, 1)
+        btnPrevMix = OutputButton(1)
         btnPrevMix.setText("Preview / PC Mix")
         layout.addWidget(btnPrevMix, 2, 0, 1, 5)
         

@@ -13,8 +13,8 @@ class InputButton(ExpandingButton):
         self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         
 class OutputButton(ExpandingButton):
-    def __init__(self, parent, ID):
-        super(OutputButton, self).__init__(parent)
+    def __init__(self, ID):
+        super(OutputButton, self).__init__()
         self.ID = ID
         
 class OptionButton(ExpandingButton):
