@@ -122,6 +122,28 @@ class Controller(object):
             print "No device with ID " + scDevice
         return -1
     
+    def toggleOverlay(self, scDevice, overlay):
+        if self.devices.has_key(scDevice):
+            sc = self.devices[scDevice]
+            if overlay:
+                sc.overlayOn()
+            else:
+                sc.overlayOff()
+        else:
+            print "No device with ID " + scDevice
+        return -1
+    
+    def toggleFade(self, scDevice, fade):
+        if self.devices.has_key(scDevice):
+            sc = self.devices[scDevice]
+            if fade:
+                sc.fadeOut()
+            else:
+                sc.fadeIn()
+        else:
+            print "No device with ID " + scDevice
+        return -1
+    
     
 class CameraMove():
     Left, Right, Up, Down, Stop = range(5)
