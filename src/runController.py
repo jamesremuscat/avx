@@ -4,9 +4,10 @@ from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 import Pyro4
 import subprocess
 import atexit
-#from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
+from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
+from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 
-def shutdownDaemon(self, daemon):
+def shutdownDaemon(daemon):
     daemon.shutdown()
 
 if __name__ == "__main__":
@@ -14,11 +15,14 @@ if __name__ == "__main__":
     
     ##### Aldates configuration below
     
-    mainSwitcher = KramerVP88("Main", "/dev/ttyUSB0", 1)
+    mainSwitcher = KramerVP88("Main", "/dev/pts/7", 1)
     controller.addDevice(mainSwitcher)
     
-    #cam1 = VISCACamera("Camera 1", "/dev/ttyUSB0", 1)
-    #controller.addDevice(cam1)
+    cam1 = VISCACamera("Camera 1", "/dev/pts/7", 1)
+    controller.addDevice(cam1)
+    
+    scan1 = KramerVP703("Extras Scan Converter", "/dev/pts/7")
+    controller.addDevice(scan1)
     
     #extrasSwitcher = Inline3808("Extras", "/dev/ttyUSB0")
     #controller.addDevice(extrasSwitcher)
