@@ -232,8 +232,13 @@ class VideoSwitcher(QMainWindow):
             self.errorBox(StringConstants.protocolErrorText)
             
     def showSystemPower(self):
-        pass
+        spc = SystemPowerControl()
+        self.stack.insertWidget(0, spc)
+        spc.b.clicked.connect(self.hideSystemPower)
+        self.stack.setCurrentIndex(0)
 
+    def hideSystemPower(self):
+        self.stack.removeWidget(self.stack.widget(0))
         
     def errorBox(self, text):
         msgBox = QMessageBox()
