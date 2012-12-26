@@ -109,7 +109,7 @@ class VideoSwitcher(QMainWindow):
         self.btnRecord.setText("Record")
         outputsGrid.addWidget(self.btnRecord, 3, 1)
 
-        self.btnPCMix = ExpandingButton(self.centralwidget)
+        self.btnPCMix = OutputButton(self.centralwidget, ID=2)
         self.btnPCMix.setText("PC Mix")
         outputsGrid.addWidget(self.btnPCMix, 4, 0)
         self.btnAll = OutputButton(self.centralwidget, ID=0)
@@ -168,6 +168,7 @@ class VideoSwitcher(QMainWindow):
         self.btnRecord.clicked.connect(self.handleOutputSelect)
         self.btnAll.clicked.connect(self.handleOutputSelect)
         ''' btnPCMix is a special case since that's on a different switcher '''
+        self.btnPCMix.clicked.connect(self.handlePCMixSelect)
         
     def handleInputSelect(self):
         inputID = self.inputs.checkedId()
@@ -194,6 +195,22 @@ class VideoSwitcher(QMainWindow):
             self.extrasSwitcher.take()
         try:
             self.controller.switch("Main", inputChannel, outputChannel)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
+            
+    def handlePCMixSelect(self):
+        outputChannel = self.sender().ID
+        inputChannel = self.inputs.checkedId()
+        
+        if outputChannel != 2:
+            raise RuntimeError("This isn't PC Mix...")
+        
+        if inputChannel == 5:
+            self.extrasSwitcher.takePreview()
+        try:
+            self.controller.switch("Preview", inputChannel, outputChannel)
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
