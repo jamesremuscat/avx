@@ -6,7 +6,6 @@ from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
-from org.muscat.staldates.aldatesx.widgets import ScanConverterControls
 from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import EclipseControl
 
 class OutputsHolderPanel(QFrame):
