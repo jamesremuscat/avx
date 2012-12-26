@@ -7,7 +7,7 @@ class ExpandingButton(QToolButton):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
 class InputButton(ExpandingButton):
-    def __init__(self, parent):
+    def __init__(self, parent = None):
         super(InputButton, self).__init__(parent)
         self.setCheckable(True)
         self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)

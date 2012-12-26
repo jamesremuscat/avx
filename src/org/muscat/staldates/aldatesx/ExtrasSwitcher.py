@@ -7,6 +7,7 @@ from PySide.QtGui import QWidget, QGridLayout, QButtonGroup, QMessageBox
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
+from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import OverscanFreezeControl
 
 class ExtrasSwitcher(QWidget):
     '''
@@ -51,9 +52,16 @@ class ExtrasSwitcher(QWidget):
         
         self.inputs = inputs
         
+        if self.controller.hasDevice("Extras Scan Converter"):
+            scControl = OverscanFreezeControl()
+            layout.addWidget(scControl, 1, 4)
+            scControl.btnOverscan.toggled.connect(self.toggleOverscan)
+            scControl.btnFreeze.toggled.connect(self.toggleFreeze)
+            
+        
         btnPrevMix = OutputButton(self, 1)
         btnPrevMix.setText("Preview / PC Mix")
-        layout.addWidget(btnPrevMix, 1, 0, 1, 5)
+        layout.addWidget(btnPrevMix, 2, 0, 1, 5)
         
         btnPrevMix.clicked.connect(self.takePreview)
         
@@ -66,6 +74,22 @@ class ExtrasSwitcher(QWidget):
         '''Send the currently selected input to the main switcher's input. '''
         try:
             self.controller.switch("Extras", self.inputs.checkedId(), output)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
+            
+    def toggleOverscan(self):
+        try:
+            self.controller.toggleOverscan("Extras Scan Converter", self.sender().isChecked())
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
+            
+    def toggleFreeze(self):
+        try:
+            self.controller.toggleFreeze("Extras Scan Converter", self.sender().isChecked())
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:

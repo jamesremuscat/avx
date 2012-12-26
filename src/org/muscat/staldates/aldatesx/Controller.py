@@ -96,6 +96,28 @@ class Controller(object):
             print "No device with ID " + camDeviceID
         return -1
     
+    def toggleOverscan(self, scDevice, overscan):
+        if self.devices.has_key(scDevice):
+            sc = self.devices[scDevice]
+            if overscan:
+                sc.overscanOn()
+            else:
+                sc.overscanOff()
+        else:
+            print "No device with ID " + scDevice
+        return -1
+    
+    def toggleFreeze(self, scDevice, freeze):
+        if self.devices.has_key(scDevice):
+            sc = self.devices[scDevice]
+            if freeze:
+                sc.freeze()
+            else:
+                sc.unfreeze()
+        else:
+            print "No device with ID " + scDevice
+        return -1
+    
     
 class CameraMove():
     Left, Right, Up, Down, Stop = range(5)
