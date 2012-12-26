@@ -7,7 +7,7 @@ from org.muscat.staldates.aldatesx.CameraControls import CameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
-from org.muscat.staldates.aldatesx.SystemPowerWidget import SystemPowerWidget
+from org.muscat.staldates.aldatesx.widgets.SystemPowerWidget import SystemPowerWidget
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
