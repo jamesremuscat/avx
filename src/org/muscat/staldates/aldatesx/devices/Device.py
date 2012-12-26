@@ -7,3 +7,8 @@ class Device(object):
     def __init__(self, deviceID):
         self.deviceID = deviceID
         
+    def initialise(self):
+        '''
+        Extension point for device-specific initialisation code (e.g. resetting to known-default config)
+        '''
+        pass

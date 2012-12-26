@@ -9,6 +9,10 @@ class KramerVP703(SerialDevice):
     def __init__(self, deviceID, serialDevice):
         super(KramerVP703, self).__init__(deviceID, serialDevice)
         
+    def initialise(self):
+        super(KramerVP703, self).initialise()
+        self.overscanOn()
+        
     def overscanOn(self):
         return self.sendCommand("Overscan = 1\r\n")
         

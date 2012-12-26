@@ -28,6 +28,8 @@ if __name__ == "__main__":
     #controller.addDevice(extrasSwitcher)
     
     ##### Aldates configuration above
+    
+    controller.initialise()
 
     ip = subprocess.check_output( ["hostname", "-I"]  ).rstrip()
     print "Using " + ip + " as hostname"

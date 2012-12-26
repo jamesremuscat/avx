@@ -12,6 +12,10 @@ class Controller(object):
         
     def hasDevice(self, deviceID):
         return self.devices.has_key(deviceID)
+    
+    def initialise(self):
+        for device in self.devices.itervalues():
+            device.initialise()
         
     def switch(self, deviceID, inChannel, outChannel):
         '''If a device with the given ID exists, perform a video switch. If not then return -1.'''
