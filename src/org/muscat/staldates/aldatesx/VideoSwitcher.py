@@ -22,10 +22,13 @@ class VideoSwitcher(QMainWindow):
     def setupUi(self):
         self.setWindowTitle("Video Switcher")
         self.resize(1024, 768)
-        self.centralwidget = QWidget(self)
-        self.centralwidget.setGeometry(0, 0, 1024, 768)
+        
+        mainScreen = QWidget()
+        
+        self.setCentralWidget(mainScreen)
+        
         gridlayout = QGridLayout()
-        self.centralwidget.setLayout(gridlayout)
+        mainScreen.setLayout(gridlayout)
         
         ''' Buttons added to inputs should have a numeric ID set equal to their input number on the Aldates main switcher. '''
         self.inputs = QButtonGroup()
