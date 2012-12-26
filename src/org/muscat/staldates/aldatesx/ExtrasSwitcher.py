@@ -3,8 +3,10 @@ Created on 10 Nov 2012
 
 @author: james
 '''
-from PySide.QtGui import QWidget, QGridLayout, QButtonGroup
+from PySide.QtGui import QWidget, QGridLayout, QButtonGroup, QMessageBox
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
+from Pyro4.errors import ProtocolError, NamingError
+from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
 class ExtrasSwitcher(QWidget):
     '''
@@ -62,4 +64,15 @@ class ExtrasSwitcher(QWidget):
         
     def take(self, output=2):
         '''Send the currently selected input to the main switcher's input. '''
-        self.controller.switch("Extras", self.inputs.checkedId(), output)
+        try:
+            self.controller.switch("Extras", self.inputs.checkedId(), output)
+        except NamingError:
+            self.errorBox(StringConstants.nameErrorText)
+        except ProtocolError:
+            self.errorBox(StringConstants.protocolErrorText)
+            
+    def errorBox(self, text):
+        msgBox = QMessageBox()
+        msgBox.setText(text)
+        msgBox.setIcon(QMessageBox.Critical)
+        msgBox.exec_()
