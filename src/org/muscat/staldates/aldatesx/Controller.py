@@ -144,6 +144,12 @@ class Controller(object):
             print "No device with ID " + scDevice
         return -1
     
+    def systemPowerOn(self):
+        pass
+    
+    def systemPowerOff(self):
+        pass
+    
     
 class CameraMove():
     Left, Right, Up, Down, Stop = range(5)

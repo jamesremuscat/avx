@@ -235,6 +235,10 @@ class VideoSwitcher(QMainWindow):
         spc = SystemPowerWidget()
         self.stack.insertWidget(0, spc)
         spc.b.clicked.connect(self.hideSystemPower)
+        
+        spc.btnOn.clicked.connect(self.controller.systemPowerOn)
+        spc.btnOff.clicked.connect(self.controller.systemPowerOff)
+        
         self.stack.setCurrentIndex(0)
 
     def hideSystemPower(self):
