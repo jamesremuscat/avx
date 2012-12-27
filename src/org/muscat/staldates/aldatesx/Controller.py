@@ -1,3 +1,4 @@
+from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
@@ -6,6 +7,8 @@ class Controller(object):
 
     def __init__(self):
         self.devices = {}
+        self.sequencer = Sequencer()
+        self.sequencer.start()
     
     def addDevice(self, device):
         self.devices[device.deviceID] = device
