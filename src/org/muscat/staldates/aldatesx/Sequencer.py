@@ -67,3 +67,17 @@ class Event(object):
     def execute(self):
         '''Execute the Event, by calling the relevant method with the given arguments.'''
         self.method(*self.args)
+
+        
+class CompositeEvent(object):
+    '''An Event that immediately triggers any of its child events.'''
+    
+    def __init__(self, *events):
+        self.events = events
+        
+    def addEvent(self, event):
+        self.events.append(event)
+        
+    def execute(self):
+        for event in self.events:
+            event.execute()
