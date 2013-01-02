@@ -26,8 +26,8 @@ RUNNING
 ====
 
 You will need a Pyro4 nameserver running somewhere on your network. The 
-runNameserver.sh script will take care of this for you. (TODO: turn this into 
-a Linux daemon script).
+runNameserver.sh script will take care of this for you, or use the 
+contrib/pyro-nsd init script for Debian (maybe others?)
 
 The machine with all the serial ports on it will need to run the 
 runController.py script. The machine with the GUI should run the AldatesX.py
