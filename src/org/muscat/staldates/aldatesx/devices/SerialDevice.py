@@ -8,7 +8,10 @@ class SerialDevice(Device):
 
     def __init__(self, deviceID, serialDevice, baud=9600):
         super(SerialDevice, self).__init__(deviceID)
-        self.port = Serial(serialDevice, baud)
+        if isinstance(serialDevice, str):
+            self.port = Serial(serialDevice, baud)
+        else:
+            self.port = serialDevice
         
     def sendCommand(self, commandString):
         print "Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr
