@@ -7,6 +7,10 @@ class SerialDevice(Device):
     '''
 
     def __init__(self, deviceID, serialDevice, baud=9600):
+        '''
+        Create a SerialDevice with a given device ID, using a new Serial with the given device address
+        (e.g. "/dev/ttyUSB0") if given as a string, else assume serialDevice is a Serial and use that.
+        '''
         super(SerialDevice, self).__init__(deviceID)
         if isinstance(serialDevice, str):
             self.port = Serial(serialDevice, baud)
