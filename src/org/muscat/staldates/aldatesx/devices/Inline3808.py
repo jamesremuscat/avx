@@ -7,6 +7,8 @@ class Inline3808(SerialDevice):
 
     def __init__(self, deviceID, serialDevice):
         super(Inline3808, self).__init__(deviceID, serialDevice, 1200)
+        
+    def initialise(self):
         self.sendCommand("[CNF290000]") # All boards to group 1. Copying what the AMX does currently though this should be the default.
         
     def sendInputToOutput(self, inChannel, outChannel):
