@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# -------------------------------------------------------------------------
+# AldatesX Controller daemon script
+# Based on:
+#    <Pyro4 NameServer Script>
+#    Copyright (C) <2011>  <Pierre PACORY> - ppacory-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# -------------------------------------------------------------------------
+
+
+MESSAGEDIR=/var/log/aldatesx
+MESSAGELOG=/var/log/aldatesx/aldatesx.log
+PID=/var/run/AlixController.pid
+AldatesXDIR=/opt/AldatesX/src
+
+# Add Pyro Config
+# here you can add others ...
+#export PYRO_HMAC_KEY=12345
+export PYRO_LOGFILE="$MESSAGELOG"
+export PYRO_LOGLEVEL=INFO
+
+# Check the script is being run by root user
+if [ "$(id -u)" != "0" ]; then
+  echo 1>&2 "ERROR: The $0 script must be run as root"
+  exit 1
+fi
+
+# Create the PID File
+touch $PID
+
+case "$1" in
+  start)
+    # create the log directory if not exist
+    [ ! -d "$MESSAGEDIR" ] && mkdir -p "$MESSAGEDIR"
+
+    echo "Starting AldatesX Controller"
+    # test if not already running
+    if [ ! -f "/proc/$(cat $PID)/exe" ]; then
+      cd "$AldatesXDIR" 
+      ./runController.py > "$MESSAGELOG" 2>&1 &
+      echo $!>"$PID"
+    else
+      echo "AldatesX Controller already running"
+    fi
+  ;;
+  stop)
+    echo "Stopping AldatesX Controller"
+    # test if running
+    if [ -f "/proc/$(cat $PID)/exe" ]; then
+      kill -9 "$(cat $PID)"
+      rm -rf "$PID"
+    else
+      echo "AldatesX Controller already stopped"
+    fi
+    ;;
+  restart)
+    $0 start
+    $0 stop
+    ;;
+  *)
+    echo "usage: $0 {start|stop|restart}"
+esac
+exit 0
