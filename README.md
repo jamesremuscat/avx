@@ -32,3 +32,6 @@ The machine with all the serial ports on it will need to run the
 script. They don't have to be different machines. The GUI should automatically
 discover the controller via the Pyro nameserver, no need to manually configure
 IP addresses and whatnot.
+
+The controller machine can also use the `contrib/AldatesXController` init script
+to run the controller as a daemon.
