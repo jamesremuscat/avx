@@ -10,9 +10,12 @@ class VISCACamera(SerialDevice):
     A camera controlled by the Sony VISCA protocol e.g. Sony D31,
     '''
     
-    # Speeds can vary from 0x01 - 0x18; AMX uses 0x06
+    # Pan/tilt speeds can vary from 0x01 - 0x18; AMX uses 0x06
     panSpeed = 0x06
     tiltSpeed = 0x06
+    
+    # Zoom speed can vary from 0x02-0x07
+    zoomSpeed = 0x04
 
     def __init__(self, deviceID, serialDevice, cameraID):
         super(VISCACamera, self).__init__(deviceID, serialDevice)
@@ -37,10 +40,10 @@ class VISCACamera(SerialDevice):
         return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x03])
         
     def zoomIn(self):
-        return self.sendVISCA([0x01, 0x04, 0x07, 0x02])
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x20 + self.zoomSpeed])
         
     def zoomOut(self):
-        return self.sendVISCA([0x01, 0x04, 0x07, 0x03])
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x30 + self.zoomSpeed])
         
     def zoomStop(self):
         return self.sendVISCA([0x01, 0x04, 0x07, 0x00])
