@@ -38,13 +38,6 @@ class VideoSwitcher(QMainWindow):
         
         inputsGrid = QHBoxLayout()
         
-        self.btnDVD = InputButton()
-        self.btnDVD.setText("DVD")
-        inputsGrid.addWidget(self.btnDVD)
-        self.inputs.addButton(self.btnDVD, 4)
-        self.btnDVD.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/media-cdrom.svg"))
-        self.btnDVD
-        
         self.btnCamera1 = InputButton()
         self.btnCamera1.setText("Camera 1")
         inputsGrid.addWidget(self.btnCamera1)
@@ -62,6 +55,12 @@ class VideoSwitcher(QMainWindow):
         inputsGrid.addWidget(self.btnCamera3)
         self.inputs.addButton(self.btnCamera3, 3)
         self.btnCamera3.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
+        
+        self.btnDVD = InputButton()
+        self.btnDVD.setText("DVD")
+        inputsGrid.addWidget(self.btnDVD)
+        self.inputs.addButton(self.btnDVD, 4)
+        self.btnDVD.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/media-cdrom.svg"))
         
         self.btnExtras = InputButton()
         self.btnExtras.setText("Extras")
