@@ -1,5 +1,5 @@
 from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
-from PySide.QtCore import QMetaObject
+from PySide.QtCore import QMetaObject, Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
@@ -177,6 +177,26 @@ class VideoSwitcher(QMainWindow):
         self.btnAll.clicked.connect(self.handleOutputSelect)
         ''' btnPCMix is a special case since that's on a different switcher '''
         self.btnPCMix.clicked.connect(self.handlePCMixSelect)
+        
+        
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_0:
+            self.btnBlank.click()
+        elif e.key() == Qt.Key_1:
+            self.btnCamera1.click()
+        elif e.key() == Qt.Key_2:
+            self.btnCamera2.click()
+        elif e.key() == Qt.Key_3:
+            self.btnCamera3.click()
+        elif e.key() == Qt.Key_4:
+            self.btnDVD.click()
+        elif e.key() == Qt.Key_5:
+            self.btnExtras.click()
+        elif e.key() == Qt.Key_6:
+            self.btnVisualsPC.click()
+        elif e.key() == Qt.Key_Space:
+            self.btnAll.click()
+
         
     def handleInputSelect(self):
         inputID = self.inputs.checkedId()

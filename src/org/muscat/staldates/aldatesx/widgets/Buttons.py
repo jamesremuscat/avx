@@ -6,6 +6,7 @@ class ExpandingButton(QToolButton):
         super(ExpandingButton, self).__init__(parent)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setIconSize(QSize(48, 48))
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
 class InputButton(ExpandingButton):
     def __init__(self, parent = None):
