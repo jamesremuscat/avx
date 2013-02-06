@@ -85,7 +85,17 @@ class Controller(object):
         else:
             print "No device with ID " + camDeviceID
         return -1
-            
+    
+    def backlightComp(self, camDeviceID, compensation):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            if compensation:
+                return camera.backlightCompOn()
+            else:
+                return camera.backlightCompOff()
+        else:
+            print "No device with ID " + camDeviceID
+        return -1
     
     def savePreset(self, camDeviceID, preset):
         if self.devices.has_key(camDeviceID):

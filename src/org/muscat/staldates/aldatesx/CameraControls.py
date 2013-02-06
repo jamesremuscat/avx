@@ -2,7 +2,7 @@ from PySide.QtGui import QGridLayout, QLabel, QWidget, QIcon, QMessageBox
 from PySide.QtCore import QSize, Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
-    CameraZoom, CameraExposure
+    CameraZoom
 from Pyro4.errors import NamingError, ProtocolError
 from StringConstants import StringConstants
 
@@ -101,7 +101,7 @@ class CameraControl(QWidget):
         focus.connectReleased(self.stopFocus)
         layout.addWidget(focus, 0, 4, 4, 1)
         
-        brightness = PlusMinusButtons("Brightness", CameraExposure.Brighter, CameraExposure.Darker)
+        brightness = PlusMinusButtons("Brightness", True, False)
         brightness.connectClicked(self.exposure)
         layout.addWidget(brightness, 0, 5, 4, 1)
         
@@ -176,7 +176,7 @@ class CameraControl(QWidget):
     def exposure(self):
         sender = self.sender()
         try:
-            return self.controller.exposure(self.cameraID, sender.cameraBinding)
+            return self.controller.backlightComp(self.cameraID, sender.cameraBinding)
         except AttributeError:
             return -1
         except NamingError:

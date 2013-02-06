@@ -75,6 +75,12 @@ class VISCACamera(SerialDevice):
     
     def autoExposure(self):
         return self.sendVISCA([0x01, 0x04, 0x39, 0x00])
+    
+    def backlightCompOn(self):
+        return self.sendVISCA([0x01, 0x04, 0x33, 0x02])
+    
+    def backlightCompOff(self):
+        return self.sendVISCA([0x01, 0x04, 0x33, 0x03])
         
     def storePreset(self, preset):
         if preset < 0 or preset > 5:
