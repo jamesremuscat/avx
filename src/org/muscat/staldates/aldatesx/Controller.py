@@ -1,4 +1,4 @@
-from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
+from org.muscat.staldates.aldatesx.Sequencer import Sequencer
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
