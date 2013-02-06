@@ -21,7 +21,7 @@ class VideoSwitcher(QMainWindow):
         
     def setupUi(self):
         self.setWindowTitle("Video Switcher")
-        self.resize(1024, 768)
+        self.resize(1024, 600)
         
         mainScreen = QWidget()
         
@@ -43,7 +43,6 @@ class VideoSwitcher(QMainWindow):
         inputsGrid.addWidget(self.btnDVD)
         self.inputs.addButton(self.btnDVD, 4)
         self.btnDVD.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/media-cdrom.svg"))
-        self.btnDVD.setIconSize(QSize(64, 64))
         self.btnDVD
         
         self.btnCamera1 = InputButton()
@@ -51,27 +50,23 @@ class VideoSwitcher(QMainWindow):
         inputsGrid.addWidget(self.btnCamera1)
         self.inputs.addButton(self.btnCamera1, 1)
         self.btnCamera1.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
-        self.btnCamera1.setIconSize(QSize(64, 64))
         
         self.btnCamera2 = InputButton()
         self.btnCamera2.setText("Camera 2")
         inputsGrid.addWidget(self.btnCamera2)
         self.inputs.addButton(self.btnCamera2, 2)
         self.btnCamera2.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
-        self.btnCamera2.setIconSize(QSize(64, 64))
         
         self.btnCamera3 = InputButton()
         self.btnCamera3.setText("Camera 3")
         inputsGrid.addWidget(self.btnCamera3)
         self.inputs.addButton(self.btnCamera3, 3)
         self.btnCamera3.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/camera-video.svg"))
-        self.btnCamera3.setIconSize(QSize(64, 64))
         
         self.btnExtras = InputButton()
         self.btnExtras.setText("Extras")
         inputsGrid.addWidget(self.btnExtras)
         self.btnExtras.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/video-display.svg"))
-        self.btnExtras.setIconSize(QSize(64, 64))
         self.inputs.addButton(self.btnExtras, 5)
         
         self.btnVisualsPC = InputButton()
@@ -79,7 +74,6 @@ class VideoSwitcher(QMainWindow):
         inputsGrid.addWidget(self.btnVisualsPC)
         self.inputs.addButton(self.btnVisualsPC, 6)
         self.btnVisualsPC.setIcon(QIcon("/usr/share/icons/Tango/scalable/devices/computer.svg"))
-        self.btnVisualsPC.setIconSize(QSize(64, 64))
         
         self.btnBlank = InputButton()
         self.btnBlank.setText("Blank")

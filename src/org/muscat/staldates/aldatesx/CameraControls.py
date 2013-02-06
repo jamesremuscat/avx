@@ -10,6 +10,7 @@ class CameraButton(ExpandingButton):
     def __init__(self, cameraBinding):
         super(CameraButton, self).__init__()
         self.cameraBinding = cameraBinding
+        self.setIconSize(QSize(64,64))
         
 class PlusMinusButtons(QWidget):
     def __init__(self, caption, upBinding, downBinding):
@@ -68,28 +69,24 @@ class CameraControl(QWidget):
         btnUp.pressed.connect(self.move)
         btnUp.released.connect(self.stop)
         btnUp.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/up.svg"))
-        btnUp.setIconSize(QSize(64,64))
         
         btnLeft = CameraButton(CameraMove.Left)
         layout.addWidget(btnLeft, 1, 0, 2, 1)
         btnLeft.pressed.connect(self.move)
         btnLeft.released.connect(self.stop)
         btnLeft.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/back.svg"))
-        btnLeft.setIconSize(QSize(64,64))
         
         btnDown = CameraButton(CameraMove.Down)
         layout.addWidget(btnDown, 2, 1, 2, 1)
         btnDown.pressed.connect(self.move)
         btnDown.released.connect(self.stop)
         btnDown.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/down.svg"))
-        btnDown.setIconSize(QSize(64,64))
         
         btnRight = CameraButton(CameraMove.Right)
         layout.addWidget(btnRight, 1, 2, 2, 1)
         btnRight.pressed.connect(self.move)
         btnRight.released.connect(self.stop)
         btnRight.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/forward.svg"))
-        btnRight.setIconSize(QSize(64,64))
         
         zoomInOut = PlusMinusButtons("Zoom", CameraZoom.Tele, CameraZoom.Wide)
         zoomInOut.connectPressed(self.zoom)
@@ -105,16 +102,22 @@ class CameraControl(QWidget):
         brightness.connectClicked(self.exposure)
         layout.addWidget(brightness, 0, 5, 4, 1)
         
+        presets = QGridLayout()
+        presets.setRowStretch(0, 2)
+        presets.setRowStretch(1, 1)
+        
         for i in range(1,7):
             btnPresetRecall = CameraButton(i)
-            layout.addWidget(btnPresetRecall, 4, i - 1, 2, 1)
+            presets.addWidget(btnPresetRecall, 0, i - 1, 1, 1)
             btnPresetRecall.setText(str(i))
             btnPresetRecall.clicked.connect(self.recallPreset)
             
             btnPresetSet = CameraButton(i)
-            layout.addWidget(btnPresetSet, 6, i-1, 2, 1)
+            presets.addWidget(btnPresetSet, 1, i-1, 1, 1)
             btnPresetSet.setText("Set")
             btnPresetSet.clicked.connect(self.storePreset)
+            
+        layout.addLayout(presets, 4, 0, 3, 6)
             
     def move(self):
         sender = self.sender()

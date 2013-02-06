@@ -5,6 +5,7 @@ class ExpandingButton(QToolButton):
     def __init__(self, parent = None):
         super(ExpandingButton, self).__init__(parent)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setIconSize(QSize(48, 48))
         
 class InputButton(ExpandingButton):
     def __init__(self, parent = None):
@@ -22,4 +23,3 @@ class OptionButton(ExpandingButton):
         super(OptionButton, self).__init__(parent)
         self.setCheckable(True)
         self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        self.setIconSize(QSize(64, 64))
