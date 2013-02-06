@@ -1,4 +1,4 @@
-from PySide.QtGui import QMainWindow, QFrame, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
+from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
 from PySide.QtCore import QMetaObject
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
@@ -148,12 +148,12 @@ class VideoSwitcher(QMainWindow):
     def configureInnerControlPanels(self):
         self.panels = [
                        QWidget(), # Blank
-                       CameraControl(self.controller, "Camera 1"),
-                       CameraControl(self.controller, "Camera 2"),
-                       CameraControl(self.controller, "Camera 3"),
+                       CameraControl(self.controller, "Camera 1") if self.controller.hasDevice("Camera 1") else QLabel("No Device"),
+                       CameraControl(self.controller, "Camera 2") if self.controller.hasDevice("Camera 2") else QLabel("No Device"),
+                       CameraControl(self.controller, "Camera 3") if self.controller.hasDevice("Camera 3") else QLabel("No Device"),
                        QWidget(), # DVD - no controls
                        ExtrasSwitcher(self.controller), # Extras
-                       EclipseControls(self.controller, "Main Scan Converter") #QWidget() # Visuals PC - no controls - yet...
+                       EclipseControls(self.controller, "Main Scan Converter") if self.controller.hasDevice("Main Scan Converter") else QLabel("No Device") # Visuals PC
                        ]
         
         
