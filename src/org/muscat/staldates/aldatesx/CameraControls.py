@@ -24,7 +24,7 @@ class PlusMinusButtons(QWidget):
         self.downButton.setIconSize(QSize(64,64))
         
         self.caption = QLabel("<b>" + caption + "</b>")
-        self.caption.setAlignment(Qt.AlignCenter)
+        self.caption.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         
         self.initLayout()
         
