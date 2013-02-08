@@ -7,6 +7,7 @@ import unittest
 from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
 from org.muscat.staldates.aldatesx.devices.tests.MockSerialPort import MockSerialPort
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
+from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 
 
 class TestDevices(unittest.TestCase):
@@ -37,6 +38,22 @@ class TestDevices(unittest.TestCase):
         
         vp88.sendInputToOutput(2, 8)
         self.assertBytesEqual([0x01, 0x82, 0x88, 0x81], port.bytes)
+        
+        
+    def testKramer602(self):
+        port = MockSerialPort()
+        k602 = Kramer602("Test", port)
+        
+        k602.initialise()
+        self.assertEqual([], port.bytes)
+        
+        k602.sendInputToOutput(2, 1)
+        self.assertBytesEqual([0x0, 0x83], port.bytes)
+        
+        port.clear()
+        
+        k602.sendInputToOutput(1, 2)
+        self.assertBytesEqual([0x0, 0x82], port.bytes)
         
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):

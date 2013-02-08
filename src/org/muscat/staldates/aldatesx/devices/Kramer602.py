@@ -4,6 +4,7 @@ Created on 13 Nov 2012
 @author: jrem
 '''
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
+import logging
 
 class Kramer602(SerialDevice):
     '''
@@ -15,5 +16,8 @@ class Kramer602(SerialDevice):
         super(Kramer602, self).__init__(deviceID, serialDevice)
         
     def sendInputToOutput(self, inChannel, outChannel):
-        code = [0, (2 * inChannel) - (2 - outChannel)]
-        self.sendCommand(SerialDevice.byteArrayToString(code))
+        if outChannel > 2:
+            logging.error("Output channel " + str(outChannel) + " does not exist on switcher " + self.deviceID)
+        else:
+            code = [0, 0x80 + (2 * inChannel) - (2 - outChannel)]
+            self.sendCommand(SerialDevice.byteArrayToString(code))
