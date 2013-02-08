@@ -12,8 +12,8 @@ def shutdownDaemon(daemon):
     daemon.shutdown()
 
 if __name__ == "__main__":
-    controller = Controller()
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
+    controller = Controller()
     
     
     ##### Aldates configuration below
