@@ -1,4 +1,4 @@
-ALIX - St Aldates In-House AMX Replacement
+AldatesX - St Aldates In-House AMX Replacement
 ==========================================
 
 Configuration and Miscellaneous Notes
@@ -13,6 +13,16 @@ the right version.
 You'll also need the Tango icon theme installed - it needs to be under
 `/usr/share/icons/Tango`. This is where the tango-icon-theme package gets
 installed to.
+
+So you'll need to install the following packages and any dependencies:
+
+* python2.7
+* python-serial
+* python-pyside
+* python-setuptools
+* tango-icon-theme
+
+... and then `sudo easy_install Pyro4`.
 
 Mapping of physical hardware devices through serial ports to virtual devices is
 done in the `runController.py` script. Be sure to map devices based on their USB
