@@ -4,6 +4,7 @@ Contains all you need to queue up a sequence of actions to be carried out in the
 from threading import Thread, RLock
 from Queue import Queue
 import time
+import logging
 
 class Sequencer(Thread):
     '''
@@ -31,7 +32,7 @@ class Sequencer(Thread):
         self.lock = RLock()
         
     def run(self):
-        print "Starting sequencer loop"
+        logging.info("Starting sequencer loop")
         while 1:
             time.sleep(1)
             event = self.queue.get()
@@ -50,7 +51,7 @@ class Sequencer(Thread):
         Convenience method for scheduling a wait of a given number of seconds. Returns an Event you can then sequence.
         '''
         def annotatedSleep(secs):
-            print "Sleeping sequencer for " + str(secs) + " seconds"
+            logging.info("Sleeping sequencer for " + str(secs) + " seconds")
             time.sleep(secs)
         return Event(annotatedSleep, secs)
             

@@ -1,5 +1,6 @@
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from serial import Serial
+import logging
 
 class SerialDevice(Device):
     '''
@@ -18,9 +19,9 @@ class SerialDevice(Device):
             self.port = serialDevice
         
     def sendCommand(self, commandString):
-        print "Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr
+        logging.debug("Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr)
         sentBytes = self.port.write(commandString)
-        print str(sentBytes) + " bytes sent"
+        logging.debug(str(sentBytes) + " bytes sent")
         return sentBytes
         
     @staticmethod

@@ -1,4 +1,5 @@
 from org.muscat.staldates.aldatesx.Sequencer import Sequencer
+import logging
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
@@ -25,7 +26,7 @@ class Controller(object):
         if self.devices.has_key(deviceID) :
             return self.devices[deviceID].sendInputToOutput(inChannel, outChannel)
         else:
-            print "No device with ID " + deviceID
+            logging.warn("No device with ID " + deviceID)
             return -1
         
     def move(self, camDeviceID, direction):
@@ -42,7 +43,7 @@ class Controller(object):
             elif direction == CameraMove.Stop:
                 return camera.stop()
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def zoom(self, camDeviceID, zoomType):
@@ -55,7 +56,7 @@ class Controller(object):
             elif zoomType == CameraZoom.Stop:
                 return camera.zoomStop()
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def focus(self, camDeviceID, focusType):
@@ -70,7 +71,7 @@ class Controller(object):
             elif focusType == CameraFocus.Stop:
                 return camera.focusStop()
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def exposure(self, camDeviceID, exposureType):
@@ -83,7 +84,7 @@ class Controller(object):
             elif exposureType == CameraExposure.Auto:
                 return camera.autoExposure()
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def backlightComp(self, camDeviceID, compensation):
@@ -94,7 +95,7 @@ class Controller(object):
             else:
                 return camera.backlightCompOff()
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def savePreset(self, camDeviceID, preset):
@@ -102,7 +103,7 @@ class Controller(object):
             camera = self.devices[camDeviceID]
             camera.storePreset(preset)
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def recallPreset(self, camDeviceID, preset):
@@ -110,7 +111,7 @@ class Controller(object):
             camera = self.devices[camDeviceID]
             camera.recallPreset(preset)
         else:
-            print "No device with ID " + camDeviceID
+            logging.warn("No device with ID " + camDeviceID)
         return -1
     
     def toggleOverscan(self, scDevice, overscan):
@@ -121,7 +122,7 @@ class Controller(object):
             else:
                 sc.overscanOff()
         else:
-            print "No device with ID " + scDevice
+            logging.warn("No device with ID " + scDevice)
         return -1
     
     def toggleFreeze(self, scDevice, freeze):
@@ -132,7 +133,7 @@ class Controller(object):
             else:
                 sc.unfreeze()
         else:
-            print "No device with ID " + scDevice
+            logging.warn("No device with ID " + scDevice)
         return -1
     
     def toggleOverlay(self, scDevice, overlay):
@@ -143,7 +144,7 @@ class Controller(object):
             else:
                 sc.overlayOff()
         else:
-            print "No device with ID " + scDevice
+            logging.warn("No device with ID " + scDevice)
         return -1
     
     def toggleFade(self, scDevice, fade):
@@ -154,7 +155,7 @@ class Controller(object):
             else:
                 sc.fadeIn()
         else:
-            print "No device with ID " + scDevice
+            logging.warn("No device with ID " + scDevice)
         return -1
     
     def systemPowerOn(self):

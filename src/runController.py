@@ -4,6 +4,7 @@ from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 import Pyro4
 import subprocess
 import atexit
+import logging
 from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 
@@ -12,6 +13,8 @@ def shutdownDaemon(daemon):
 
 if __name__ == "__main__":
     controller = Controller()
+    logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
+    
     
     ##### Aldates configuration below
     
@@ -32,7 +35,7 @@ if __name__ == "__main__":
     controller.initialise()
 
     ip = subprocess.check_output( ["hostname", "-I"]  ).rstrip()
-    print "Using " + ip + " as hostname"
+    logging.info("Using " + ip + " as hostname")
     Pyro4.config.HOST = ip 
     daemon = Pyro4.Daemon()
     ns = Pyro4.locateNS()
