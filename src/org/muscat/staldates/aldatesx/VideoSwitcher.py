@@ -8,6 +8,7 @@ from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
 from org.muscat.staldates.aldatesx.widgets.SystemPowerWidget import SystemPowerWidget
+import logging
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
@@ -200,7 +201,7 @@ class VideoSwitcher(QMainWindow):
         
     def handleInputSelect(self):
         inputID = self.inputs.checkedId()
-        print "Input selected: " + str(inputID)
+        logging.debug("Input selected: " + str(inputID))
         if inputID > 0:
             try:
                 self.controller.switch("Preview", inputID, 1)
@@ -258,6 +259,7 @@ class VideoSwitcher(QMainWindow):
         self.stack.removeWidget(self.stack.widget(0))
         
     def errorBox(self, text):
+        logging.error(text)
         msgBox = QMessageBox()
         msgBox.setText(text)
         msgBox.setIcon(QMessageBox.Critical)

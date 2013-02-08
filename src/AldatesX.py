@@ -9,6 +9,7 @@ from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
 import Pyro4
 import sys
+import logging
 
 class AldatesX(VideoSwitcher):
     
@@ -16,6 +17,7 @@ class AldatesX(VideoSwitcher):
         super(AldatesX, self).__init__(controller)
             
 if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
     app = QApplication(sys.argv)
 
     try:
@@ -23,7 +25,7 @@ if __name__ == "__main__":
         app.setStyleSheet(stylesheet.read())
     except IOError:
         # never mind
-        print("Cannot find stylesheet, using default system styles.")
+        logging.warn("Cannot find stylesheet, using default system styles.")
     
     controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
     
