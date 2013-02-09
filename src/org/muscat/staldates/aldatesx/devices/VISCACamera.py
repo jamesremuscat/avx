@@ -15,7 +15,7 @@ class VISCACamera(SerialDevice):
     tiltSpeed = 0x06
     
     # Zoom speed can vary from 0x02-0x07
-    zoomSpeed = 0x04
+    zoomSpeed = 0x06
 
     def __init__(self, deviceID, serialDevice, cameraID):
         super(VISCACamera, self).__init__(deviceID, serialDevice)
