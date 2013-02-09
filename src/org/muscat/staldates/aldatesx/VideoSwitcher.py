@@ -204,7 +204,13 @@ class VideoSwitcher(QMainWindow):
         logging.debug("Input selected: " + str(inputID))
         if inputID > 0:
             try:
-                self.controller.switch("Preview", inputID, 1)
+                # HACK HACK HACK someone wired these up the wrong way around
+                if inputID == 5:
+                    self.controller.switch("Preview", 6, 1)
+                elif inputID == 6:
+                    self.controller.switch("Preview", 5, 1)
+                else:
+                    self.controller.switch("Preview", inputID, 1)
             except NamingError:
                 self.errorBox(StringConstants.nameErrorText)
             except ProtocolError:
@@ -236,10 +242,15 @@ class VideoSwitcher(QMainWindow):
         if outputChannel != 2:
             raise RuntimeError("This isn't PC Mix...")
         
-        if inputChannel == 5:
-            self.extrasSwitcher.takePreview()
         try:
-            self.controller.switch("Preview", inputChannel, outputChannel)
+            if inputChannel == 5:
+                self.extrasSwitcher.takePreview()
+                # HACK HACK HACK someone wired these up the wrong way
+                self.controller.switch("Preview", 6, outputChannel)
+            elif inputChannel != 6:
+                self.controller.switch("Preview", inputChannel, outputChannel)
+            else :
+                print "Tried to do in " + str(inputChannel) + " to out " + str(outputChannel) 
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
