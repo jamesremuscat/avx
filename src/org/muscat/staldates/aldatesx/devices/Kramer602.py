@@ -13,7 +13,7 @@ class Kramer602(SerialDevice):
 
 
     def __init__(self, deviceID, serialDevice):
-        super(Kramer602, self).__init__(deviceID, serialDevice)
+        super(Kramer602, self).__init__(deviceID, serialDevice, 1200)
         
     def sendInputToOutput(self, inChannel, outChannel):
         if outChannel > 2:
