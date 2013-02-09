@@ -250,7 +250,7 @@ class VideoSwitcher(QMainWindow):
             elif inputChannel != 6:
                 self.controller.switch("Preview", inputChannel, outputChannel)
             else :
-                print "Tried to do in " + str(inputChannel) + " to out " + str(outputChannel) 
+                logging.error("Tried to send PC to PC Mix. Bad things would have happened!")
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
