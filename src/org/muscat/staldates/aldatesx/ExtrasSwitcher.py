@@ -8,6 +8,7 @@ from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputBut
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import OverscanFreezeWidget
+import logging
 
 class ExtrasSwitcher(QWidget):
     '''
@@ -69,10 +70,10 @@ class ExtrasSwitcher(QWidget):
     def takePreview(self):
         self.take(2)
         
-        
     def take(self, output=1):
         '''Send the currently selected input to the main switcher's input. '''
         try:
+            logging.debug("Extras: " + str(self.inputs.checkedId()) + " => " + str(output))
             self.controller.switch("Extras", self.inputs.checkedId(), output)
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)

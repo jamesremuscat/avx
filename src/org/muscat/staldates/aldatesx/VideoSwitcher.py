@@ -153,7 +153,7 @@ class VideoSwitcher(QMainWindow):
                        CameraControl(self.controller, "Camera 2") if self.controller.hasDevice("Camera 2") else QLabel("No Device"),
                        CameraControl(self.controller, "Camera 3") if self.controller.hasDevice("Camera 3") else QLabel("No Device"),
                        QWidget(), # DVD - no controls
-                       ExtrasSwitcher(self.controller), # Extras
+                       self.extrasSwitcher, # Extras
                        EclipseControls(self.controller, "Main Scan Converter") if self.controller.hasDevice("Main Scan Converter") else QLabel("No Device") # Visuals PC
                        ]
         
