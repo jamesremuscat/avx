@@ -67,10 +67,10 @@ class ExtrasSwitcher(QWidget):
         
         
     def takePreview(self):
-        self.take(1)
+        self.take(2)
         
         
-    def take(self, output=2):
+    def take(self, output=1):
         '''Send the currently selected input to the main switcher's input. '''
         try:
             self.controller.switch("Extras", self.inputs.checkedId(), output)
