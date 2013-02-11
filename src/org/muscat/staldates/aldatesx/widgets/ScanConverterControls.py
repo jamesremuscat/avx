@@ -10,11 +10,11 @@ class OverscanFreezeWidget(QWidget):
         self.btnOverscan = OptionButton()
         self.btnOverscan.setText("Overscan")
         self.btnOverscan.setChecked(True)
-        self.btnOverscan.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/gtk-fullscreen.svg"))
+        self.btnOverscan.setIcon(QIcon("icons/gtk-fullscreen.svg"))
         
         self.btnFreeze = OptionButton()
         self.btnFreeze.setText("Freeze")
-        self.btnFreeze.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/player_pause.svg"))
+        self.btnFreeze.setIcon(QIcon("icons/player_pause.svg"))
         
         self.layout()
         
@@ -30,11 +30,11 @@ class EclipseWidget(OverscanFreezeWidget):
     def __init__(self, parent = None):        
         self.btnFade = OptionButton()
         self.btnFade.setText("Fade")
-        self.btnFade.setIcon(QIcon("/usr/share/icons/Tango/scalable/apps/screensaver.svg"))
+        self.btnFade.setIcon(QIcon("icons/screensaver.svg"))
         
         self.btnOverlay = OptionButton()
         self.btnOverlay.setText("Overlay")
-        self.btnOverlay.setIcon(QIcon("/usr/share/icons/Tango/scalable/apps/preferences-system-windows.svg"))
+        self.btnOverlay.setIcon(QIcon("icons/preferences-system-windows.svg"))
         
         super(EclipseWidget, self).__init__(parent)
         

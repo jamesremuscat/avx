@@ -16,11 +16,11 @@ class PlusMinusButtons(QWidget):
     def __init__(self, caption, upBinding, downBinding):
         super(PlusMinusButtons, self).__init__()
         self.upButton = CameraButton(upBinding)
-        self.upButton.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/gtk-add.svg"))
+        self.upButton.setIcon(QIcon("icons/gtk-add.svg"))
         self.upButton.setIconSize(QSize(64,64))
         
         self.downButton = CameraButton(downBinding)
-        self.downButton.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/gtk-remove.svg"))
+        self.downButton.setIcon(QIcon("icons/gtk-remove.svg"))
         self.downButton.setIconSize(QSize(64,64))
         
         self.caption = QLabel("<b>" + caption + "</b>")
@@ -92,25 +92,25 @@ class CameraControl(QWidget):
         layout.addWidget(btnUp, 0, 1, 2, 1)
         btnUp.pressed.connect(self.move)
         btnUp.released.connect(self.stop)
-        btnUp.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/up.svg"))
+        btnUp.setIcon(QIcon("icons/up.svg"))
         
         btnLeft = CameraButton(CameraMove.Left)
         layout.addWidget(btnLeft, 1, 0, 2, 1)
         btnLeft.pressed.connect(self.move)
         btnLeft.released.connect(self.stop)
-        btnLeft.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/back.svg"))
+        btnLeft.setIcon(QIcon("icons/back.svg"))
         
         btnDown = CameraButton(CameraMove.Down)
         layout.addWidget(btnDown, 2, 1, 2, 1)
         btnDown.pressed.connect(self.move)
         btnDown.released.connect(self.stop)
-        btnDown.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/down.svg"))
+        btnDown.setIcon(QIcon("icons/down.svg"))
         
         btnRight = CameraButton(CameraMove.Right)
         layout.addWidget(btnRight, 1, 2, 2, 1)
         btnRight.pressed.connect(self.move)
         btnRight.released.connect(self.stop)
-        btnRight.setIcon(QIcon("/usr/share/icons/Tango/scalable/actions/forward.svg"))
+        btnRight.setIcon(QIcon("icons/forward.svg"))
         
         zoomInOut = PlusMinusButtons("Zoom", CameraZoom.Tele, CameraZoom.Wide)
         zoomInOut.connectPressed(self.zoom)
