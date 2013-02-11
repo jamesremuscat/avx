@@ -102,6 +102,7 @@ class Controller(object):
     def savePreset(self, camDeviceID, preset):
         if self.devices.has_key(camDeviceID):
             camera = self.devices[camDeviceID]
+            logging.debug("Saving preset " + str(preset) + " on device " + camDeviceID)
             camera.storePreset(preset)
         else:
             logging.warn("No device with ID " + camDeviceID)
@@ -110,6 +111,7 @@ class Controller(object):
     def recallPreset(self, camDeviceID, preset):
         if self.devices.has_key(camDeviceID):
             camera = self.devices[camDeviceID]
+            logging.debug("Recalling preset " + str(preset) + " on device " + camDeviceID)
             camera.recallPreset(preset)
         else:
             logging.warn("No device with ID " + camDeviceID)

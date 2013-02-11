@@ -131,14 +131,14 @@ class CameraControl(QWidget):
         presets.setRowStretch(0, 2)
         presets.setRowStretch(1, 1)
         
-        for i in range(1,7):
+        for i in range(0,6):
             btnPresetRecall = CameraButton(i)
-            presets.addWidget(btnPresetRecall, 0, i - 1, 1, 1)
-            btnPresetRecall.setText(str(i))
+            presets.addWidget(btnPresetRecall, 0, i, 1, 1)
+            btnPresetRecall.setText(str(i + 1))
             btnPresetRecall.clicked.connect(self.recallPreset)
             
             btnPresetSet = CameraButton(i)
-            presets.addWidget(btnPresetSet, 1, i-1, 1, 1)
+            presets.addWidget(btnPresetSet, 1, i, 1, 1)
             btnPresetSet.setText("Set")
             btnPresetSet.clicked.connect(self.storePreset)
             
