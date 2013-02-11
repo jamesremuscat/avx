@@ -10,17 +10,12 @@ You will need a Python (2.7 is what I've used) with python-serial, PySide, and
 Pyro4 . Ubuntu packages all but Pyro4: you'll need to `easy_install` it to get
 the right version.
 
-You'll also need the Tango icon theme installed - it needs to be under
-`/usr/share/icons/Tango`. This is where the tango-icon-theme package gets
-installed to.
-
 So you'll need to install the following packages and any dependencies:
 
 * python2.7
 * python-serial
 * python-pyside
 * python-setuptools
-* tango-icon-theme
 
 ... and then `sudo easy_install Pyro4`.
 
