@@ -11,8 +11,8 @@ class CoriogenEclipse(SerialDevice):
     '''
 
 
-    def __init__(self, serialDevice):
-        super(CoriogenEclipse, self).__init__(1, serialDevice)
+    def __init__(self, deviceID, serialDevice):
+        super(CoriogenEclipse, self).__init__(deviceID, serialDevice)
 
     def overlayOn(self):
         self.sendCommand("Mode = 3\r\n")
