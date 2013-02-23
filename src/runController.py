@@ -19,28 +19,29 @@ if __name__ == "__main__":
     
     
     ##### Aldates configuration below
-    
-    mainSwitcher = KramerVP88("Main", "/dev/usb-ports/1-1.3.1.2", 1)
-    controller.addDevice(mainSwitcher)
+    try:
+        mainSwitcher = KramerVP88("Main", "/dev/usb-ports/1-1.3.1.2", 1)
+        controller.addDevice(mainSwitcher)
 
-    prevSwitcher = Kramer602("Preview", "/dev/usb-ports/1-1.3.3:1.0")
-    controller.addDevice(prevSwitcher)
+        prevSwitcher = Kramer602("Preview", "/dev/usb-ports/1-1.3.3:1.0")
+        controller.addDevice(prevSwitcher)
 
-    cam1 = VISCACamera("Camera 1", "/dev/usb-ports/1-1.3.1.3", 1)
-    controller.addDevice(cam1)
+        cam1 = VISCACamera("Camera 1", "/dev/usb-ports/1-1.3.1.3", 1)
+        controller.addDevice(cam1)
 
-    cam2 = VISCACamera("Camera 2", "/dev/usb-ports/1-1.3.1.4", 1)
-    controller.addDevice(cam2)
+        cam2 = VISCACamera("Camera 2", "/dev/usb-ports/1-1.3.1.4", 1)
+        controller.addDevice(cam2)
 
-    cam3 = VISCACamera("Camera 3", "/dev/usb-ports/1-1.3.2:1.0", 1)
-    controller.addDevice(cam3)
+        cam3 = VISCACamera("Camera 3", "/dev/usb-ports/1-1.3.2:1.0", 1)
+        controller.addDevice(cam3)
 
-    #scan1 = KramerVP703("Extras Scan Converter", "/dev/usb-ports/1-1.3.1.4")
-    #controller.addDevice(scan1)
+        #scan1 = KramerVP703("Extras Scan Converter", "/dev/usb-ports/1-1.3.1.4")
+        #controller.addDevice(scan1)
 
-    extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
-    controller.addDevice(extrasSwitcher)
-
+        extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
+        controller.addDevice(extrasSwitcher)
+    except Exception:
+        logging.warn("Could not connect to devices - running in test mode")
     
     ##### Aldates configuration above
     
