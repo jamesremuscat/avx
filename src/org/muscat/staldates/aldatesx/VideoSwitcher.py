@@ -137,7 +137,6 @@ class VideoSwitcher(QMainWindow):
         
         gridlayout.addWidget(Clock(), 2, 6)
 
-        gridlayout.setRowMinimumHeight(1, 500)      
         gridlayout.setRowStretch(0, 1)  
         gridlayout.setRowStretch(1, 5)  
         QMetaObject.connectSlotsByName(self)
