@@ -196,6 +196,11 @@ class VideoSwitcher(QMainWindow):
             self.btnVisualsPC.click()
         elif e.key() == Qt.Key_Space:
             self.btnAll.click()
+        else:
+            self.panels[self.inputs.checkedId()].keyPressEvent(e)
+
+    def keyReleaseEvent(self, e):
+        self.panels[self.inputs.checkedId()].keyReleaseEvent(e)
 
         
     def handleInputSelect(self):

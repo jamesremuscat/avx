@@ -88,29 +88,29 @@ class CameraControl(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
         
-        btnUp = CameraButton(CameraMove.Up)
-        layout.addWidget(btnUp, 0, 1, 2, 1)
-        btnUp.pressed.connect(self.move)
-        btnUp.released.connect(self.stop)
-        btnUp.setIcon(QIcon("icons/up.svg"))
+        self.btnUp = CameraButton(CameraMove.Up)
+        layout.addWidget(self.btnUp, 0, 1, 2, 1)
+        self.btnUp.pressed.connect(self.move)
+        self.btnUp.released.connect(self.stop)
+        self.btnUp.setIcon(QIcon("icons/up.svg"))
         
-        btnLeft = CameraButton(CameraMove.Left)
-        layout.addWidget(btnLeft, 1, 0, 2, 1)
-        btnLeft.pressed.connect(self.move)
-        btnLeft.released.connect(self.stop)
-        btnLeft.setIcon(QIcon("icons/back.svg"))
+        self.btnLeft = CameraButton(CameraMove.Left)
+        layout.addWidget(self.btnLeft, 1, 0, 2, 1)
+        self.btnLeft.pressed.connect(self.move)
+        self.btnLeft.released.connect(self.stop)
+        self.btnLeft.setIcon(QIcon("icons/back.svg"))
         
-        btnDown = CameraButton(CameraMove.Down)
-        layout.addWidget(btnDown, 2, 1, 2, 1)
-        btnDown.pressed.connect(self.move)
-        btnDown.released.connect(self.stop)
-        btnDown.setIcon(QIcon("icons/down.svg"))
+        self.btnDown = CameraButton(CameraMove.Down)
+        layout.addWidget(self.btnDown, 2, 1, 2, 1)
+        self.btnDown.pressed.connect(self.move)
+        self.btnDown.released.connect(self.stop)
+        self.btnDown.setIcon(QIcon("icons/down.svg"))
         
-        btnRight = CameraButton(CameraMove.Right)
-        layout.addWidget(btnRight, 1, 2, 2, 1)
-        btnRight.pressed.connect(self.move)
-        btnRight.released.connect(self.stop)
-        btnRight.setIcon(QIcon("icons/forward.svg"))
+        self.btnRight = CameraButton(CameraMove.Right)
+        layout.addWidget(self.btnRight, 1, 2, 2, 1)
+        self.btnRight.pressed.connect(self.move)
+        self.btnRight.released.connect(self.stop)
+        self.btnRight.setIcon(QIcon("icons/forward.svg"))
         
         zoomInOut = PlusMinusButtons("Zoom", CameraZoom.Tele, CameraZoom.Wide)
         zoomInOut.connectPressed(self.zoom)
@@ -143,6 +143,27 @@ class CameraControl(QWidget):
             btnPresetSet.clicked.connect(self.storePreset)
             
         layout.addLayout(presets, 4, 0, 3, 6)
+        
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Left:
+            self.btnLeft.pressed.emit()
+        elif e.key() == Qt.Key.Right:
+            self.btnRight.pressed.emit()
+        elif e.key() == Qt.Key.Up:
+            self.btnUp.pressed.emit()
+        elif e.key() == Qt.Key.Down:
+            self.btnDown.pressed.emit()
+            
+    def keyReleaseEvent(self, e):
+        if e.key() == Qt.Key_Left:
+            self.btnLeft.released.emit()
+        elif e.key() == Qt.Key.Right:
+            self.btnRight.released.emit()
+        elif e.key() == Qt.Key.Up:
+            self.btnUp.released.emit()
+        elif e.key() == Qt.Key.Down:
+            self.btnDown.released.emit()
+            
             
     def move(self):
         sender = self.sender()
