@@ -1,4 +1,4 @@
-from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
+from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QVBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
 from PySide.QtCore import QMetaObject, Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
@@ -28,8 +28,6 @@ class VideoSwitcher(QMainWindow):
         
         self.stack = QStackedWidget()
         self.stack.addWidget(mainScreen)
-        
-        self.setCentralWidget(self.stack)
         
         gridlayout = QGridLayout()
         mainScreen.setLayout(gridlayout)
@@ -130,13 +128,6 @@ class VideoSwitcher(QMainWindow):
         
         gridlayout.addWidget(outputsHolder, 1, 5, 1, 2)
         
-        syspower = ExpandingButton()
-        syspower.setText("System Power")
-        syspower.clicked.connect(self.showSystemPower)
-        gridlayout.addWidget(syspower, 2, 0, 1, 2)
-        
-        gridlayout.addWidget(Clock(), 2, 6)
-
         gridlayout.setRowStretch(0, 1)  
         gridlayout.setRowStretch(1, 5)  
         QMetaObject.connectSlotsByName(self)
@@ -144,6 +135,31 @@ class VideoSwitcher(QMainWindow):
         self.setOutputClickHandlers()
         self.configureInnerControlPanels()
         self.gridlayout = gridlayout
+        
+        outer = QWidget()
+        mainLayout = QGridLayout()
+        mainLayout.addWidget(self.stack, 0, 0, 1, 7)
+        
+        spc = SystemPowerWidget()
+        self.powerControlIndex = self.stack.addWidget(spc)
+        spc.b.clicked.connect(self.hideSystemPower)
+        
+        spc.btnOn.clicked.connect(self.controller.systemPowerOn)
+        spc.btnOff.clicked.connect(self.controller.systemPowerOff)
+        
+        syspower = ExpandingButton()
+        syspower.setText("System Power")
+        syspower.clicked.connect(self.showSystemPower)
+        mainLayout.addWidget(syspower, 1, 0, 1, 2)
+        
+        mainLayout.addWidget(Clock(), 1, 6)
+        
+        mainLayout.setRowStretch(0, 8)  
+        mainLayout.setRowStretch(1, 0)  
+        
+        outer.setLayout(mainLayout)
+        
+        self.setCentralWidget(outer)
         
     def configureInnerControlPanels(self):
         self.panels = [
@@ -261,17 +277,10 @@ class VideoSwitcher(QMainWindow):
             self.errorBox(StringConstants.protocolErrorText)
             
     def showSystemPower(self):
-        spc = SystemPowerWidget()
-        self.stack.insertWidget(0, spc)
-        spc.b.clicked.connect(self.hideSystemPower)
-        
-        spc.btnOn.clicked.connect(self.controller.systemPowerOn)
-        spc.btnOff.clicked.connect(self.controller.systemPowerOff)
-        
-        self.stack.setCurrentIndex(0)
+        self.stack.setCurrentIndex(self.powerControlIndex)
 
     def hideSystemPower(self):
-        self.stack.removeWidget(self.stack.widget(0))
+        self.stack.setCurrentIndex(0)
         
     def errorBox(self, text):
         logging.error(text)
