@@ -147,21 +147,21 @@ class CameraControl(QWidget):
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Left:
             self.btnLeft.pressed.emit()
-        elif e.key() == Qt.Key.Right:
+        elif e.key() == Qt.Key_Right:
             self.btnRight.pressed.emit()
-        elif e.key() == Qt.Key.Up:
+        elif e.key() == Qt.Key_Up:
             self.btnUp.pressed.emit()
-        elif e.key() == Qt.Key.Down:
+        elif e.key() == Qt.Key_Down:
             self.btnDown.pressed.emit()
             
     def keyReleaseEvent(self, e):
         if e.key() == Qt.Key_Left:
             self.btnLeft.released.emit()
-        elif e.key() == Qt.Key.Right:
+        elif e.key() == Qt.Key_Right:
             self.btnRight.released.emit()
-        elif e.key() == Qt.Key.Up:
+        elif e.key() == Qt.Key_Up:
             self.btnUp.released.emit()
-        elif e.key() == Qt.Key.Down:
+        elif e.key() == Qt.Key_Down:
             self.btnDown.released.emit()
             
             
