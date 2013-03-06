@@ -1,4 +1,4 @@
-from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QVBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
+from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
 from PySide.QtCore import QMetaObject, Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
@@ -9,6 +9,7 @@ from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
 from org.muscat.staldates.aldatesx.widgets.SystemPowerWidget import SystemPowerWidget
 import logging
+from org.muscat.staldates.aldatesx.widgets.LogViewer import LogViewer
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
@@ -142,7 +143,7 @@ class VideoSwitcher(QMainWindow):
         
         spc = SystemPowerWidget()
         self.powerControlIndex = self.stack.addWidget(spc)
-        spc.b.clicked.connect(self.hideSystemPower)
+        spc.b.clicked.connect(self.showMainScreen)
         
         spc.btnOn.clicked.connect(self.controller.systemPowerOn)
         spc.btnOff.clicked.connect(self.controller.systemPowerOff)
@@ -150,7 +151,17 @@ class VideoSwitcher(QMainWindow):
         syspower = ExpandingButton()
         syspower.setText("System Power")
         syspower.clicked.connect(self.showSystemPower)
-        mainLayout.addWidget(syspower, 1, 0, 1, 2)
+        mainLayout.addWidget(syspower, 1, 0)
+        
+        self.lv = LogViewer()
+        self.logIndex = self.stack.addWidget(self.lv)
+        self.lv.b.clicked.connect(self.showMainScreen)
+        
+        log = ExpandingButton()
+        log.setText("Log")
+        log.clicked.connect(self.showLog)
+        mainLayout.addWidget(log, 1, 5)
+        
         
         mainLayout.addWidget(Clock(), 1, 6)
         
@@ -278,8 +289,12 @@ class VideoSwitcher(QMainWindow):
             
     def showSystemPower(self):
         self.stack.setCurrentIndex(self.powerControlIndex)
+        
+    def showLog(self):
+        self.stack.setCurrentIndex(self.logIndex)
+        self.lv.displayLog(self.controller.getLog())
 
-    def hideSystemPower(self):
+    def showMainScreen(self):
         self.stack.setCurrentIndex(0)
         
     def errorBox(self, text):

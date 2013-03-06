@@ -1,5 +1,6 @@
 from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
 import logging
+from logging import Handler
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
@@ -10,6 +11,8 @@ class Controller(object):
         self.devices = {}
         self.sequencer = Sequencer()
         self.sequencer.start()
+        self.logHandler = ControllerLogHandler()
+        logging.getLogger().addHandler(self.logHandler)
     
     def addDevice(self, device):
         self.devices[device.deviceID] = device
@@ -188,6 +191,9 @@ class Controller(object):
                 self.sequencer.wait(3),
                 Event(power.off, 4)
             )
+            
+    def getLog(self):
+        return self.logHandler.entries
     
     
 class CameraMove():
@@ -202,3 +208,13 @@ class CameraFocus():
 class CameraExposure():
     Brighter, Darker, Auto = range(3)
     
+class ControllerLogHandler(Handler):
+    
+    def __init__(self):
+        super(ControllerLogHandler, self).__init__()
+        self.entries = []
+            
+    def emit(self, record):
+        self.entries.append(record)
+        if len(self.entries) > 100:
+            self.entries.pop(0)

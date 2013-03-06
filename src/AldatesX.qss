@@ -30,3 +30,12 @@ QMainWindow QLabel {
 	font-size: 16pt;
 	color: white;
 }
+
+QTableWidget {
+  font-family: arial, sans-serif;
+  font-size: 16pt;
+}
+
+QScrollBar:vertical {
+  width: 32px;
+}
