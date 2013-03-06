@@ -1,4 +1,4 @@
-from org.muscat.staldates.aldatesx.Sequencer import Sequencer
+from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
 import logging
 class Controller(object):
     '''
@@ -162,10 +162,32 @@ class Controller(object):
         return -1
     
     def systemPowerOn(self):
-        pass
+        if self.devices.has_key("Power"):
+            power = self.devices["Power"]
+        
+            self.sequencer.sequence(
+                Event(power.on, 1),
+                self.sequencer.wait(3),
+                Event(power.on, 2),
+                self.sequencer.wait(3),
+                Event(power.on, 3),
+                self.sequencer.wait(10),
+                Event(power.on, 4)
+            )
     
     def systemPowerOff(self):
-        pass
+        if self.devices.has_key("Power"):
+            power = self.devices["Power"]
+        
+            self.sequencer.sequence(
+                Event(power.off, 4),
+                self.sequencer.wait(3),
+                Event(power.off, 2),
+                self.sequencer.wait(3),
+                Event(power.off, 3),
+                self.sequencer.wait(3),
+                Event(power.off, 4)
+            )
     
     
 class CameraMove():

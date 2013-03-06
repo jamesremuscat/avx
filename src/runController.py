@@ -9,6 +9,7 @@ import Pyro4
 import subprocess
 import atexit
 import logging
+from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
 
 def shutdownDaemon(daemon):
     daemon.shutdown()
@@ -39,6 +40,9 @@ if __name__ == "__main__":
 
     extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
     controller.addDevice(extrasSwitcher)
+    
+    powerSwitches = SerialRelayCard("Power", "/dev/usb-ports/DOESNTEXISTYET")
+    controller.addDevice(powerSwitches)
     
     ##### Aldates configuration above
     
