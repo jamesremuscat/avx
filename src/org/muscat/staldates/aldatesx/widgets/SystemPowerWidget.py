@@ -1,4 +1,4 @@
-from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy
+from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
 
@@ -29,6 +29,8 @@ class SystemPowerWidget(QWidget):
         
         self.b = ExpandingButton()
         self.b.setText("Back")
-        self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         layout.addWidget(self.b)
         
+        layout.setStretch(0,1)
+        layout.setStretch(1,3)
+        layout.setStretch(2,2)
