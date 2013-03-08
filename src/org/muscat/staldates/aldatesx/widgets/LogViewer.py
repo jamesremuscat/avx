@@ -36,3 +36,5 @@ class LogViewer(QWidget):
             i = i + 1
             
         self.table.resizeColumnsToContents()
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.scrollToBottom()
