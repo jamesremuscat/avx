@@ -1,3 +1,8 @@
+QWidget {
+  font-family: Arial, sans-serif;
+  font-size: 16pt;
+}
+
 QMainWindow {
 	background-color: #003E5F;
 }
@@ -8,8 +13,6 @@ OutputsHolderPanel {
 
 InputButton, OutputButton, OptionButton, ExpandingButton {
 	background-color: #1693A5;
-	font-family: arial, sans-serif;
-	font-size: 16pt;
 	color: white;
 }
 
@@ -19,21 +22,15 @@ ExpandingButton:pressed, InputButton:checked, OptionButton:checked {
 }
 
 CameraButton {
-	font-family: arial, sans-serif;
-	font-size: 16pt;
 	color: black;
 	background-color: #E4E4FF;
 }
 
 QMainWindow QLabel {
-	font-family: arial, sans-serif;
-	font-size: 16pt;
 	color: white;
 }
 
 QTableWidget {
-  font-family: arial, sans-serif;
-  font-size: 16pt;
 }
 
 QScrollBar:vertical {
