@@ -4,7 +4,7 @@ Created on 8 Nov 2012
 
 @author: james
 '''
-from PySide.QtGui import QApplication, QCursor
+from PySide.QtGui import QApplication
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
