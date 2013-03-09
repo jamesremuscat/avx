@@ -4,7 +4,7 @@ from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
-#from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
+from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 import Pyro4
 import subprocess
 import atexit
@@ -35,8 +35,8 @@ if __name__ == "__main__":
     cam3 = VISCACamera("Camera 3", "/dev/usb-ports/1-1.3.2:1.0", 1)
     controller.addDevice(cam3)
 
-    #scan1 = KramerVP703("Extras Scan Converter", "/dev/usb-ports/1-1.3.1.4")
-    #controller.addDevice(scan1)
+    scan1 = KramerVP703("Extras Scan Converter", "/dev/usb-ports/1-1.3.6:1.0")
+    controller.addDevice(scan1)
 
     extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
     controller.addDevice(extrasSwitcher)
