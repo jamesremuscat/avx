@@ -276,7 +276,29 @@ class AdvancedCameraControl(QWidget):
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
         
+        btnGetPos = ExpandingButton()
+        btnGetPos.setText("Get Position")
+        btnGetPos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        layout.addWidget(btnGetPos)
+        btnGetPos.clicked.connect(self.displayPosition)
+        
+        self.posDisplay = QGridLayout()
+        
+        self.posDisplay.addWidget(QLabel("Pan:"), 0, 0)
+        self.posDisplay.addWidget(QLabel("Tilt:"), 1, 0)
+        self.posDisplay.addWidget(QLabel("Zoom:"), 2, 0)
+        
+        layout.addLayout(self.posDisplay)
+        
         self.b = ExpandingButton()
         self.b.setText("Back")
         self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         layout.addWidget(self.b)
+        
+    def displayPosition(self):
+        pos = self.controller.getPosition(self.cameraID)
+        
+        self.posDisplay.addWidget(QLabel(str(pos.pan)), 0, 1)
+        self.posDisplay.addWidget(QLabel(str(pos.tilt)), 1, 1)
+        self.posDisplay.addWidget(QLabel(str(pos.zoom)), 2, 1)
+        
