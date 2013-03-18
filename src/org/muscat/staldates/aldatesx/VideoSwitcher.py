@@ -1,6 +1,7 @@
 from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
 from PySide.QtCore import QMetaObject, Qt
-from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton
+from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton,\
+    CameraSelectionButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.CameraControls import CameraControl
@@ -14,7 +15,7 @@ from org.muscat.staldates.aldatesx.widgets.LogViewer import LogViewer
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
         super(OutputsHolderPanel, self).__init__(parent)
-
+        
 class VideoSwitcher(QMainWindow):
     def __init__(self, controller):
         super(VideoSwitcher, self).__init__()
@@ -38,19 +39,19 @@ class VideoSwitcher(QMainWindow):
         
         inputsGrid = QHBoxLayout()
         
-        self.btnCamera1 = InputButton()
+        self.btnCamera1 = CameraSelectionButton()
         self.btnCamera1.setText("Camera 1")
         inputsGrid.addWidget(self.btnCamera1)
         self.inputs.addButton(self.btnCamera1, 1)
         self.btnCamera1.setIcon(QIcon("icons/camera-video.svg"))
         
-        self.btnCamera2 = InputButton()
+        self.btnCamera2 = CameraSelectionButton()
         self.btnCamera2.setText("Camera 2")
         inputsGrid.addWidget(self.btnCamera2)
         self.inputs.addButton(self.btnCamera2, 2)
         self.btnCamera2.setIcon(QIcon("icons/camera-video.svg"))
         
-        self.btnCamera3 = InputButton()
+        self.btnCamera3 = CameraSelectionButton()
         self.btnCamera3.setText("Camera 3")
         inputsGrid.addWidget(self.btnCamera3)
         self.inputs.addButton(self.btnCamera3, 3)
@@ -288,7 +289,8 @@ class VideoSwitcher(QMainWindow):
             self.errorBox(StringConstants.protocolErrorText)
             
     def showSystemPower(self):
-        self.stack.setCurrentIndex(self.powerControlIndex)
+        if hasattr(self, "powerControlIndex"):
+            self.stack.setCurrentIndex(self.powerControlIndex)
         
     def showLog(self):
         self.stack.setCurrentIndex(self.logIndex)
