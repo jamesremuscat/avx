@@ -120,6 +120,15 @@ class Controller(object):
             logging.warn("No device with ID " + camDeviceID)
         return -1
     
+    def getPosition(self, camDeviceID):
+        if self.devices.has_key(camDeviceID):
+            camera = self.devices[camDeviceID]
+            logging.debug("Querying position of device " + camDeviceID)
+            return camera.getPosition()
+        else:
+            logging.warn("No device with ID " + camDeviceID)
+        return None
+    
     def toggleOverscan(self, scDevice, overscan):
         if self.devices.has_key(scDevice):
             sc = self.devices[scDevice]
