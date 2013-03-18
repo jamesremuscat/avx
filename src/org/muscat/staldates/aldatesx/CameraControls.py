@@ -1,4 +1,4 @@
-from PySide.QtGui import QGridLayout, QLabel, QWidget, QIcon, QMessageBox
+from PySide.QtGui import QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy, QVBoxLayout
 from PySide.QtCore import QSize, Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
@@ -261,3 +261,22 @@ class CameraControl(QWidget):
         msgBox.setIcon(QMessageBox.Critical)
         msgBox.exec_()
         
+        
+class AdvancedCameraControl(QWidget):
+
+    def __init__(self, controller, cameraID, parent = None):
+        super(AdvancedCameraControl, self).__init__(parent)
+        self.controller = controller
+        self.cameraID = cameraID
+        
+        layout = QVBoxLayout(self)
+        
+        title = QLabel(self.cameraID)
+        title.setStyleSheet("font-size: 48px;")
+        title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title)
+        
+        self.b = ExpandingButton()
+        self.b.setText("Back")
+        self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        layout.addWidget(self.b)

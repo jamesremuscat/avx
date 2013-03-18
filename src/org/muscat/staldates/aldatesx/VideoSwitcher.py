@@ -4,7 +4,8 @@ from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputBut
     CameraSelectionButton
 from org.muscat.staldates.aldatesx.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
-from org.muscat.staldates.aldatesx.CameraControls import CameraControl
+from org.muscat.staldates.aldatesx.CameraControls import CameraControl,\
+    AdvancedCameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
@@ -44,18 +45,21 @@ class VideoSwitcher(QMainWindow):
         inputsGrid.addWidget(self.btnCamera1)
         self.inputs.addButton(self.btnCamera1, 1)
         self.btnCamera1.setIcon(QIcon("icons/camera-video.svg"))
+        self.btnCamera1.longpress.connect(lambda: self.showCameraAdvanced("Camera 1"))
         
         self.btnCamera2 = CameraSelectionButton()
         self.btnCamera2.setText("Camera 2")
         inputsGrid.addWidget(self.btnCamera2)
         self.inputs.addButton(self.btnCamera2, 2)
         self.btnCamera2.setIcon(QIcon("icons/camera-video.svg"))
+        self.btnCamera2.longpress.connect(lambda: self.showCameraAdvanced("Camera 2"))
         
         self.btnCamera3 = CameraSelectionButton()
         self.btnCamera3.setText("Camera 3")
         inputsGrid.addWidget(self.btnCamera3)
         self.inputs.addButton(self.btnCamera3, 3)
         self.btnCamera3.setIcon(QIcon("icons/camera-video.svg"))
+        self.btnCamera3.longpress.connect(lambda: self.showCameraAdvanced("Camera 3"))
         
         self.btnDVD = InputButton()
         self.btnDVD.setText("DVD")
@@ -295,6 +299,12 @@ class VideoSwitcher(QMainWindow):
     def showLog(self):
         self.stack.setCurrentIndex(self.logIndex)
         self.lv.displayLog(self.controller.getLog())
+
+    def showCameraAdvanced(self, camDevice):
+        ctls = AdvancedCameraControl(self.controller, camDevice)
+        ctls.b.clicked.connect(self.showMainScreen)
+        idx = self.stack.addWidget(ctls)
+        self.stack.setCurrentIndex(idx)
 
     def showMainScreen(self):
         self.stack.setCurrentIndex(0)
