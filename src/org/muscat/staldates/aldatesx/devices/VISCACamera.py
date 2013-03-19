@@ -107,6 +107,52 @@ class VISCACamera(SerialDevice):
         pos.zoom = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
         
         return pos
+    
+    def goto(self, pos, speed):
+        '''
+        Takes a CameraPosition to directly set the required tilt, pan and zoom of the camera, and the speed at which to get there.
+        '''
+        p = pos.pan
+        t = pos.tilt
+        z = pos.zoom
+        
+        setPT = [
+                 0x01,
+                 0x06,
+                 0x02,
+                 speed & 0xFF, 
+                 speed & 0xFF, 
+                 # Pan x 4 bytes
+                 (p & 0xF000) >> 12,
+                 (p & 0x0F00) >> 8,
+                 (p & 0x00F0) >> 4,
+                 (p & 0x000F),
+                 # Tilt x 4 bytes
+                 (t & 0xF000) >> 12,
+                 (t & 0x0F00) >> 8,
+                 (t & 0x00F0) >> 4,
+                 (t & 0x000F),
+                 0xFF
+                 ]
+        
+        ret = self.sendVISCA(setPT)
+        
+        setZ = [
+                0x01,
+                0x04,
+                0x47,
+                 (z & 0xF000) >> 12,
+                 (z & 0x0F00) >> 8,
+                 (z & 0x00F0) >> 4,
+                 (z & 0x000F),
+                0xFF
+                ]
+        
+        ret += self.sendVISCA(setZ)
+        
+        return ret
+        
+        
         
         
         
