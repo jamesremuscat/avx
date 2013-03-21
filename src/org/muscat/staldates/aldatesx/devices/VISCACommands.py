@@ -67,4 +67,28 @@ class FocusManual(VISCACommand):
     def getInnerBytes(self):
         return [0x01, 0x04, 0x38, 0x03]
     
+# CAM_Memory
+class MemorySet(VISCACommand):
     
+    def __init__(self, preset, cameraID = 1):
+        super(MemorySet, self).__init__(cameraID)
+        self.preset = preset
+    
+    def getInnerBytes(self):
+        return [0x01, 0x04, 0x3F, 0x01, self.preset]
+    
+class MemoryRecall(VISCACommand):
+    
+    def __init__(self, preset, cameraID = 1):
+        super(MemorySet, self).__init__(cameraID)
+        self.preset = preset
+    
+    def getInnerBytes(self):
+        return [0x01, 0x04, 0x3F, 0x02, self.preset]
+
+# Pan-tiltDrive
+
+class MoveUp(VISCACommand):
+    def __init__(self, speed, cameraID = 1):
+        super(MoveUp, self).__init__(cameraID)
+        self.speed = speed
