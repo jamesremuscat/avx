@@ -129,11 +129,11 @@ class Controller(object):
             logging.warn("No device with ID " + camDeviceID)
         return None
     
-    def goto(self, camDeviceID, pos, speed):
+    def goto(self, camDeviceID, pos, panSpeed, tiltSpeed):
         if self.devices.has_key(camDeviceID):
             camera = self.devices[camDeviceID]
             logging.debug("Setting position of device " + camDeviceID)
-            return camera.goto(pos, speed)
+            return camera.goto(pos, panSpeed, tiltSpeed)
         else:
             logging.warn("No device with ID " + camDeviceID)
         return None
