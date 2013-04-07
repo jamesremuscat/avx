@@ -12,6 +12,7 @@ import Pyro4
 import sys
 import logging
 import argparse
+import fcntl
 
 class AldatesX(VideoSwitcher):
     
@@ -19,6 +20,16 @@ class AldatesX(VideoSwitcher):
         super(AldatesX, self).__init__(controller)
             
 if __name__ == "__main__":
+    
+    pid_file = 'aldatesx.pid'
+    fp = open(pid_file, 'w')
+    try:
+        fcntl.lockf(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+    # another instance is running
+        print "AldatesX is already running."
+        sys.exit(1)
+    
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
     app = QApplication(sys.argv)
     

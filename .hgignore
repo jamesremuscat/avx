@@ -1,2 +1,5 @@
 syntax: glob
 *.pyc
+
+syntax: regexp
+^src/aldatesx\.pid$
