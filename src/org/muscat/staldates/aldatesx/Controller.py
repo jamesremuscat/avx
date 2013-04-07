@@ -204,11 +204,11 @@ class Controller(object):
             self.sequencer.sequence(
                 Event(power.off, 4),
                 self.sequencer.wait(3),
-                Event(power.off, 2),
-                self.sequencer.wait(3),
                 Event(power.off, 3),
                 self.sequencer.wait(3),
-                Event(power.off, 4)
+                Event(power.off, 2),
+                self.sequencer.wait(3),
+                Event(power.off, 1)
             )
             
     def getLog(self):
