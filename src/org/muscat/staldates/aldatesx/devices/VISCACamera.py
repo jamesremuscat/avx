@@ -96,14 +96,14 @@ class VISCACamera(SerialDevice):
         pos = CameraPosition()
         self.port.flushInput()
         self.sendVISCA([0x09, 0x06, 0x12, 0xFF])
-        cameraInfo = self.port.read(11) # returns Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF where WWWW = pan, ZZZZ = tilt
+        cameraInfo = [int(elem.encode("hex"), base=16) for elem in self.port.read(11)] # returns Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF where WWWW = pan, ZZZZ = tilt
 
         pos.pan = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
         pos.tilt = (cameraInfo[6] << 12) + (cameraInfo[7] << 8) + (cameraInfo[8] << 4) + cameraInfo[9]
         
         self.port.flushInput()
         self.sendVISCA([0x09, 0x04, 0x47, 0xFF])
-        cameraInfo = self.port.read(7) # returns Y0 50 0Z 0Z 0Z 0Z FF where ZZZZ = zoom
+        cameraInfo = [int(elem.encode("hex"), base=16) for elem in self.port.read(7)] # returns Y0 50 0Z 0Z 0Z 0Z FF where ZZZZ = zoom
         pos.zoom = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
         
         return pos
@@ -166,4 +166,10 @@ class CameraPosition(object):
     tilt = 0
     pan = 0
     zoom = 0
+    
+    def __init__(self, pan, tilt, zoom):
+        object.__init__(self)
+        self.tilt = tilt
+        self.pan = pan
+        self.zoom = zoom
         
