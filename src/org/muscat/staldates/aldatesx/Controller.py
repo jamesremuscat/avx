@@ -193,7 +193,7 @@ class Controller(object):
                 Event(power.on, 2),
                 self.sequencer.wait(3),
                 Event(power.on, 3),
-                self.sequencer.wait(10),
+                self.sequencer.wait(3),
                 Event(power.on, 4)
             )
     
