@@ -1,6 +1,7 @@
 from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
 import logging
 from logging import Handler
+import Pyro4
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
@@ -13,6 +14,18 @@ class Controller(object):
         self.sequencer.start()
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
+        self.clients = {}
+        
+    def registerClient(self, clientURI):
+        client = Pyro4.Proxy(clientURI)
+        self.clients[clientURI] = client
+        logging.info("Registered client " + str(clientURI))
+        logging.info(str(len(self.clients)) + " client(s) now connected")
+
+    def unregisterClient(self, clientURI):
+        self.clients.pop(clientURI)
+        logging.info("Unregistered client " + str(clientURI))
+        logging.info(str(len(self.clients)) + " client(s) still connected")
     
     def addDevice(self, device):
         self.devices[device.deviceID] = device

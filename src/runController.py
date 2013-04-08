@@ -6,10 +6,10 @@ from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 import Pyro4
-import subprocess
 import atexit
 import logging
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
+from org.muscat.staldates.aldatesx import PyroUtils
 
 def shutdownDaemon(daemon):
     daemon.shutdown()
@@ -48,9 +48,8 @@ if __name__ == "__main__":
     
     controller.initialise()
 
-    ip = subprocess.check_output( ["hostname", "-I"]  ).rstrip()
-    logging.info("Using " + ip + " as hostname")
-    Pyro4.config.HOST = ip 
+    PyroUtils.setHostname()
+
     daemon = Pyro4.Daemon()
     ns = Pyro4.locateNS()
     uri = daemon.register(controller)

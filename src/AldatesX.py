@@ -13,6 +13,8 @@ import sys
 import logging
 import argparse
 import fcntl
+import atexit
+from org.muscat.staldates.aldatesx.Client import Client
 
 class AldatesX(VideoSwitcher):
     
@@ -47,6 +49,16 @@ if __name__ == "__main__":
     controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
     
     myapp = AldatesX(controller)
+    
+    client = Client(myapp)
+    client.setDaemon(True)
+    client.start()
+    client.started.wait()
+    atexit.register(lambda : controller.unregisterClient(client.uri))
+    
+    controller.registerClient(client.uri)
+    
+    
     if args.fullscreen:
         QApplication.setOverrideCursor(Qt.BlankCursor)
         myapp.showFullScreen()
