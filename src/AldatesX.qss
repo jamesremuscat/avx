@@ -26,6 +26,11 @@ CameraButton {
 	background-color: #E4E4FF;
 }
 
+CameraButton:checked {
+	color: white;
+	background-color: #1693A5;
+}
+
 QMainWindow QLabel {
 	color: white;
 }

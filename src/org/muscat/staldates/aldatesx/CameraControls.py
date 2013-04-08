@@ -1,4 +1,4 @@
-from PySide.QtGui import QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy, QVBoxLayout
+from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy, QVBoxLayout
 from PySide.QtCore import QSize, Qt
 from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
@@ -131,11 +131,15 @@ class CameraControl(QWidget):
         presets.setRowStretch(0, 2)
         presets.setRowStretch(1, 1)
         
+        self.presetGroup = QButtonGroup()
+        
         for i in range(0,6):
             btnPresetRecall = CameraButton(i)
             presets.addWidget(btnPresetRecall, 0, i, 1, 1)
             btnPresetRecall.setText(str(i + 1))
             btnPresetRecall.clicked.connect(self.recallPreset)
+            btnPresetRecall.setCheckable(True)
+            self.presetGroup.addButton(btnPresetRecall, i)
             
             btnPresetSet = CameraButton(i)
             presets.addWidget(btnPresetSet, 1, i, 1, 1)
@@ -168,7 +172,9 @@ class CameraControl(QWidget):
     def move(self):
         sender = self.sender()
         try:
-            return self.controller.move(self.cameraID, sender.cameraBinding)
+            result = self.controller.move(self.cameraID, sender.cameraBinding)
+            self.deselectPreset()
+            return result
         except AttributeError:
             return -1
         except NamingError:
@@ -187,7 +193,9 @@ class CameraControl(QWidget):
     def focus(self):
         sender = self.sender()
         try:
-            return self.controller.focus(self.cameraID, sender.cameraBinding)
+            result = self.controller.focus(self.cameraID, sender.cameraBinding)
+            self.deselectPreset()
+            return result
         except AttributeError:
             return -1
         except NamingError:
@@ -206,7 +214,9 @@ class CameraControl(QWidget):
     def zoom(self):
         sender = self.sender()
         try:
-            return self.controller.zoom(self.cameraID, sender.cameraBinding)
+            result = self.controller.zoom(self.cameraID, sender.cameraBinding)
+            self.deselectPreset()
+            return result;
         except AttributeError:
             return -1
         except NamingError:
@@ -225,7 +235,9 @@ class CameraControl(QWidget):
     def exposure(self):
         sender = self.sender()
         try:
-            return self.controller.backlightComp(self.cameraID, sender.cameraBinding)
+            result = self.controller.backlightComp(self.cameraID, sender.cameraBinding)
+            self.deselectPreset()
+            return result
         except AttributeError:
             return -1
         except NamingError:
@@ -236,7 +248,9 @@ class CameraControl(QWidget):
     def storePreset(self):
         sender = self.sender()
         try:
-            return self.controller.savePreset(self.cameraID, sender.cameraBinding)
+            result = self.controller.savePreset(self.cameraID, sender.cameraBinding)
+            self.presetGroup.buttons()[sender.cameraBinding].setChecked(True)
+            return result
         except AttributeError:
             return -1
         except NamingError:
@@ -254,6 +268,13 @@ class CameraControl(QWidget):
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
             self.errorBox(StringConstants.protocolErrorText)
+            
+    def deselectPreset(self):
+        b = self.presetGroup.checkedButton();
+        # Yuck.
+        self.presetGroup.setExclusive(False)
+        b.setChecked(False)
+        self.presetGroup.setExclusive(True)
             
     def errorBox(self, text):
         msgBox = QMessageBox()
