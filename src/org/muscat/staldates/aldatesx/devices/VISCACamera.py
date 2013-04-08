@@ -127,12 +127,12 @@ class VISCACamera(SerialDevice):
                  0x02,
                  panSpeed & 0xFF, 
                  tiltSpeed & 0xFF, 
-                 # Pan x 4 bytes, padded to eight (ABCD -> 0A 0B 0C 0D) 
+                 # Pan x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D) 
                  (p & 0xF000) >> 12,
                  (p & 0x0F00) >> 8,
                  (p & 0x00F0) >> 4,
                  (p & 0x000F),
-                 # Tilt x 4 bytes, padded to eight (ABCD -> 0A 0B 0C 0D) 
+                 # Tilt x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D) 
                  (t & 0xF000) >> 12,
                  (t & 0x0F00) >> 8,
                  (t & 0x00F0) >> 4,
