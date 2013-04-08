@@ -4,6 +4,7 @@ Created on 13 Nov 2012
 @author: james
 '''
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
+from org.muscat.staldates.aldatesx.CameraPosition import CameraPosition
 
 class VISCACamera(SerialDevice):
     '''
@@ -156,19 +157,3 @@ class VISCACamera(SerialDevice):
         ret += self.sendVISCA(setZ)
         
         return ret
-        
-        
-        
-        
-        
-class CameraPosition(object):
-    tilt = 0
-    pan = 0
-    zoom = 0
-    
-    def __init__(self, pan, tilt, zoom):
-        object.__init__(self)
-        self.tilt = tilt
-        self.pan = pan
-        self.zoom = zoom
-        
