@@ -23,6 +23,9 @@ class Client(Pyro4.threadutil.Thread):
         atexit.register(lambda : daemon.shutdown())
         daemon.requestLoop()
         
+    def getHostIP(self):
+        return Pyro4.config.HOST
+        
     def errorBox(self, text):
         invoke_in_main_thread(self.aldatesx.errorBox, text)
 

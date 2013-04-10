@@ -19,12 +19,12 @@ class Controller(object):
     def registerClient(self, clientURI):
         client = Pyro4.Proxy(clientURI)
         self.clients[clientURI] = client
-        logging.info("Registered client " + str(clientURI))
+        logging.info("Registered client at " + client.getHostIP())
         logging.info(str(len(self.clients)) + " client(s) now connected")
 
     def unregisterClient(self, clientURI):
-        self.clients.pop(clientURI)
-        logging.info("Unregistered client " + str(clientURI))
+        client = self.clients.pop(clientURI)
+        logging.info("Unregistered client at " + client.getHostIP())
         logging.info(str(len(self.clients)) + " client(s) still connected")
     
     def addDevice(self, device):
