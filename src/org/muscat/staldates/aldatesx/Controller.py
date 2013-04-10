@@ -26,6 +26,11 @@ class Controller(object):
         client = self.clients.pop(clientURI)
         logging.info("Unregistered client at " + client.getHostIP())
         logging.info(str(len(self.clients)) + " client(s) still connected")
+        
+    def callAllClients(self, function):
+        ''' function should take a client and do things to it'''
+        for client in self.clients.itervalues():
+            function(client)
     
     def addDevice(self, device):
         self.devices[device.deviceID] = device
@@ -201,6 +206,7 @@ class Controller(object):
             power = self.devices["Power"]
         
             self.sequencer.sequence(
+                Event(lambda : self.callAllClients(lambda c : c.errorBox("Powering on"))),
                 Event(power.on, 1),
                 self.sequencer.wait(3),
                 Event(power.on, 2),
@@ -221,7 +227,8 @@ class Controller(object):
                 self.sequencer.wait(3),
                 Event(power.off, 2),
                 self.sequencer.wait(3),
-                Event(power.off, 1)
+                Event(power.off, 1),
+                Event(lambda : self.callAllClients(lambda c : c.errorBox("Powered off")))
             )
             
     def getLog(self):

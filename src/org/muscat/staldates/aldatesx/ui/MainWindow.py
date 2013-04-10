@@ -1,9 +1,10 @@
-from PySide.QtGui import QGridLayout, QMainWindow, QStackedWidget, QWidget
+from PySide.QtGui import QGridLayout, QMainWindow, QMessageBox, QStackedWidget, QWidget
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.ui.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
 from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPowerWidget
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
+import logging
 
 class MainWindow(QMainWindow):
     def __init__(self, controller):
@@ -66,3 +67,10 @@ class MainWindow(QMainWindow):
     
     def stepBack(self):
         self.stack.removeWidget(self.stack.currentWidget())
+
+    def errorBox(self, text):
+        logging.error(text)
+        msgBox = QMessageBox()
+        msgBox.setText(text)
+        msgBox.setIcon(QMessageBox.Critical)
+        msgBox.exec_()

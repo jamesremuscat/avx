@@ -1,4 +1,4 @@
-from PySide.QtGui import QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
+from PySide.QtGui import QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon
 from PySide.QtCore import QMetaObject, Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, OutputButton, CameraSelectionButton
 from org.muscat.staldates.aldatesx.ui.ExtrasSwitcher import ExtrasSwitcher
@@ -203,9 +203,9 @@ class VideoSwitcher(QWidget):
                 else:
                     self.controller.switch("Preview", inputID, 1)
             except NamingError:
-                self.errorBox(StringConstants.nameErrorText)
+                self.mainWindow.errorBox(StringConstants.nameErrorText)
             except ProtocolError:
-                self.errorBox(StringConstants.protocolErrorText)
+                self.mainWindow.errorBox(StringConstants.protocolErrorText)
         self.gridlayout.removeWidget(self.gridlayout.itemAtPosition(1,0).widget())
         for p in self.panels:
             p.hide()
@@ -222,9 +222,9 @@ class VideoSwitcher(QWidget):
         try:
             self.controller.switch("Main", inputChannel, outputChannel)
         except NamingError:
-            self.errorBox(StringConstants.nameErrorText)
+            self.mainWindow.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
-            self.errorBox(StringConstants.protocolErrorText)
+            self.mainWindow.errorBox(StringConstants.protocolErrorText)
             
     def handlePCMixSelect(self):
         outputChannel = self.sender().ID
@@ -243,20 +243,13 @@ class VideoSwitcher(QWidget):
             else :
                 logging.error("Tried to send PC to PC Mix. Bad things would have happened!")
         except NamingError:
-            self.errorBox(StringConstants.nameErrorText)
+            self.mainWindow.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
-            self.errorBox(StringConstants.protocolErrorText)
+            self.mainWindow.errorBox(StringConstants.protocolErrorText)
             
     def showCameraAdvanced(self, camDevice):
         ctls = AdvancedCameraControl(self.controller, camDevice)
         ctls.b.clicked.connect(self.mainWindow.stepBack)
         self.mainWindow.stack.insertWidget(0, ctls)
         self.mainWindow.stack.setCurrentIndex(0)
-        
-    def errorBox(self, text):
-        logging.error(text)
-        msgBox = QMessageBox()
-        msgBox.setText(text)
-        msgBox.setIcon(QMessageBox.Critical)
-        msgBox.exec_()
         
