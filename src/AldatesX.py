@@ -7,7 +7,7 @@ Created on 8 Nov 2012
 from PySide.QtGui import QApplication
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.Controller import Controller
-from org.muscat.staldates.aldatesx.VideoSwitcher import VideoSwitcher
+from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 import Pyro4
 import sys
 import logging

@@ -1,10 +1,9 @@
 from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy, QVBoxLayout
 from PySide.QtCore import QSize, Qt
-from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
-from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus,\
-    CameraZoom
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
+from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, CameraZoom
 from Pyro4.errors import NamingError, ProtocolError
-from StringConstants import StringConstants
+from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
 class CameraButton(ExpandingButton):
     def __init__(self, cameraBinding):

@@ -1,5 +1,5 @@
 from PySide.QtGui import QWidget, QVBoxLayout
-from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import EclipseWidget
+from org.muscat.staldates.aldatesx.ui.widgets.ScanConverterControls import EclipseWidget
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 

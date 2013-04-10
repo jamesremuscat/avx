@@ -1,6 +1,6 @@
 from PySide.QtGui import QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QSizePolicy
 from PySide.QtCore import Qt
-from org.muscat.staldates.aldatesx.widgets.Buttons import ExpandingButton
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 
 class LogViewer(QWidget):
 

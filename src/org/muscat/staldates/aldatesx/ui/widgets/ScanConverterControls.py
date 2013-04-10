@@ -1,5 +1,5 @@
 from PySide.QtGui import QWidget, QGridLayout, QVBoxLayout, QIcon
-from org.muscat.staldates.aldatesx.widgets.Buttons import OptionButton
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import OptionButton
 
 class OverscanFreezeWidget(QWidget):
 

@@ -1,17 +1,15 @@
 from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
 from PySide.QtCore import QMetaObject, Qt
-from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton, ExpandingButton,\
-    CameraSelectionButton
-from org.muscat.staldates.aldatesx.widgets.Clock import Clock
-from org.muscat.staldates.aldatesx.ExtrasSwitcher import ExtrasSwitcher
-from org.muscat.staldates.aldatesx.CameraControls import CameraControl,\
-    AdvancedCameraControl
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, OutputButton, ExpandingButton, CameraSelectionButton
+from org.muscat.staldates.aldatesx.ui.widgets.Clock import Clock
+from org.muscat.staldates.aldatesx.ui.ExtrasSwitcher import ExtrasSwitcher
+from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl, AdvancedCameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
-from org.muscat.staldates.aldatesx.EclipseControls import EclipseControls
-from org.muscat.staldates.aldatesx.widgets.SystemPowerWidget import SystemPowerWidget
+from org.muscat.staldates.aldatesx.ui.EclipseControls import EclipseControls
+from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPowerWidget
 import logging
-from org.muscat.staldates.aldatesx.widgets.LogViewer import LogViewer
+from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):

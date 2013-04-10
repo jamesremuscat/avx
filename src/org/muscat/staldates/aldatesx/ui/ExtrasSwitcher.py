@@ -4,10 +4,10 @@ Created on 10 Nov 2012
 @author: james
 '''
 from PySide.QtGui import QWidget, QGridLayout, QButtonGroup, QMessageBox
-from org.muscat.staldates.aldatesx.widgets.Buttons import InputButton, OutputButton
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, OutputButton
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
-from org.muscat.staldates.aldatesx.widgets.ScanConverterControls import OverscanFreezeWidget
+from org.muscat.staldates.aldatesx.ui.widgets.ScanConverterControls import OverscanFreezeWidget
 import logging
 
 class ExtrasSwitcher(QWidget):
