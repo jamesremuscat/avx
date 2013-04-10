@@ -21,12 +21,10 @@ class MainWindow(QMainWindow):
         mainLayout = QGridLayout()
         mainLayout.addWidget(self.stack, 0, 0, 1, 7)
         
-        spc = SystemPowerWidget()
-        self.powerControlIndex = self.stack.addWidget(spc)
-        spc.b.clicked.connect(self.showMainScreen)
-        
-        spc.btnOn.clicked.connect(self.controller.systemPowerOn)
-        spc.btnOff.clicked.connect(self.controller.systemPowerOff)
+        self.spc = SystemPowerWidget()
+        self.spc.b.clicked.connect(self.stepBack)
+        self.spc.btnOn.clicked.connect(self.controller.systemPowerOn)
+        self.spc.btnOff.clicked.connect(self.controller.systemPowerOff)
         
         syspower = ExpandingButton()
         syspower.setText("System Power")
@@ -34,8 +32,7 @@ class MainWindow(QMainWindow):
         mainLayout.addWidget(syspower, 1, 0)
         
         self.lv = LogViewer()
-        self.logIndex = self.stack.addWidget(self.lv)
-        self.lv.b.clicked.connect(self.showMainScreen)
+        self.lv.b.clicked.connect(self.stepBack)
         
         log = ExpandingButton()
         log.setText("Log")
@@ -52,13 +49,20 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(outer)
         
     def showSystemPower(self):
-        if hasattr(self, "powerControlIndex"):
-            self.stack.setCurrentIndex(self.powerControlIndex)
+        if self.stack.currentWidget() == self.spc:
+            self.stepBack()
+        else:
+            self.stack.insertWidget(0, self.spc)
+            self.stack.setCurrentWidget(self.spc)
         
     def showLog(self):
-        self.stack.setCurrentIndex(self.logIndex)
-        self.lv.displayLog(self.controller.getLog())
+        if self.stack.currentWidget() == self.lv:
+            self.stepBack()
+        else:
+            self.stack.insertWidget(0, self.lv)
+            self.stack.setCurrentWidget(self.lv)
+            self.lv.displayLog(self.controller.getLog())
         
     
-    def showMainScreen(self):
-        self.stack.setCurrentIndex(0)
+    def stepBack(self):
+        self.stack.removeWidget(self.stack.currentWidget())

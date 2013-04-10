@@ -249,9 +249,9 @@ class VideoSwitcher(QWidget):
             
     def showCameraAdvanced(self, camDevice):
         ctls = AdvancedCameraControl(self.controller, camDevice)
-        ctls.b.clicked.connect(self.mainWindow.showMainScreen)
-        idx = self.mainWindow.stack.addWidget(ctls)
-        self.mainWindow.stack.setCurrentIndex(idx)
+        ctls.b.clicked.connect(self.mainWindow.stepBack)
+        self.mainWindow.stack.insertWidget(0, ctls)
+        self.mainWindow.stack.setCurrentIndex(0)
         
     def errorBox(self, text):
         logging.error(text)
