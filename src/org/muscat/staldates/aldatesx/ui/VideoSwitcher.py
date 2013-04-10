@@ -1,37 +1,28 @@
-from PySide.QtGui import QMainWindow, QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox, QStackedWidget
+from PySide.QtGui import QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon, QMessageBox
 from PySide.QtCore import QMetaObject, Qt
-from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, OutputButton, ExpandingButton, CameraSelectionButton
-from org.muscat.staldates.aldatesx.ui.widgets.Clock import Clock
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, OutputButton, CameraSelectionButton
 from org.muscat.staldates.aldatesx.ui.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl, AdvancedCameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.ui.EclipseControls import EclipseControls
-from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPowerWidget
 import logging
-from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
 
 class OutputsHolderPanel(QFrame):
     def __init__(self, parent = None):
         super(OutputsHolderPanel, self).__init__(parent)
         
-class VideoSwitcher(QMainWindow):
-    def __init__(self, controller):
+class VideoSwitcher(QWidget):
+    def __init__(self, controller, mainWindow):
         super(VideoSwitcher, self).__init__()
         self.controller = controller
+        self.mainWindow = mainWindow
         self.setupUi()
         
     def setupUi(self):
-        self.setWindowTitle("Video Switcher")
-        self.resize(1024, 600)
-        
-        mainScreen = QWidget()
-        
-        self.stack = QStackedWidget()
-        self.stack.addWidget(mainScreen)
         
         gridlayout = QGridLayout()
-        mainScreen.setLayout(gridlayout)
+        self.setLayout(gridlayout)
         
         ''' Buttons added to inputs should have a numeric ID set equal to their input number on the Aldates main switcher. '''
         self.inputs = QButtonGroup()
@@ -140,40 +131,6 @@ class VideoSwitcher(QMainWindow):
         self.configureInnerControlPanels()
         self.gridlayout = gridlayout
         
-        outer = QWidget()
-        mainLayout = QGridLayout()
-        mainLayout.addWidget(self.stack, 0, 0, 1, 7)
-        
-        spc = SystemPowerWidget()
-        self.powerControlIndex = self.stack.addWidget(spc)
-        spc.b.clicked.connect(self.showMainScreen)
-        
-        spc.btnOn.clicked.connect(self.controller.systemPowerOn)
-        spc.btnOff.clicked.connect(self.controller.systemPowerOff)
-        
-        syspower = ExpandingButton()
-        syspower.setText("System Power")
-        syspower.clicked.connect(self.showSystemPower)
-        mainLayout.addWidget(syspower, 1, 0)
-        
-        self.lv = LogViewer()
-        self.logIndex = self.stack.addWidget(self.lv)
-        self.lv.b.clicked.connect(self.showMainScreen)
-        
-        log = ExpandingButton()
-        log.setText("Log")
-        log.clicked.connect(self.showLog)
-        mainLayout.addWidget(log, 1, 5)
-        
-        
-        mainLayout.addWidget(Clock(), 1, 6)
-        
-        mainLayout.setRowStretch(0, 8)  
-        mainLayout.setRowStretch(1, 0)  
-        
-        outer.setLayout(mainLayout)
-        
-        self.setCentralWidget(outer)
         
     def configureInnerControlPanels(self):
         self.panels = [
@@ -290,22 +247,11 @@ class VideoSwitcher(QMainWindow):
         except ProtocolError:
             self.errorBox(StringConstants.protocolErrorText)
             
-    def showSystemPower(self):
-        if hasattr(self, "powerControlIndex"):
-            self.stack.setCurrentIndex(self.powerControlIndex)
-        
-    def showLog(self):
-        self.stack.setCurrentIndex(self.logIndex)
-        self.lv.displayLog(self.controller.getLog())
-
     def showCameraAdvanced(self, camDevice):
         ctls = AdvancedCameraControl(self.controller, camDevice)
-        ctls.b.clicked.connect(self.showMainScreen)
-        idx = self.stack.addWidget(ctls)
-        self.stack.setCurrentIndex(idx)
-
-    def showMainScreen(self):
-        self.stack.setCurrentIndex(0)
+        ctls.b.clicked.connect(self.mainWindow.showMainScreen)
+        idx = self.mainWindow.stack.addWidget(ctls)
+        self.mainWindow.stack.setCurrentIndex(idx)
         
     def errorBox(self, text):
         logging.error(text)

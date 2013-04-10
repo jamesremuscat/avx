@@ -3,7 +3,7 @@ QWidget {
   font-size: 16pt;
 }
 
-QMainWindow {
+MainWindow {
 	background-color: #003E5F;
 }
 

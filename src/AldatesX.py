@@ -4,19 +4,19 @@ Created on 8 Nov 2012
 
 @author: james
 '''
-from PySide.QtGui import QApplication
 from PySide.QtCore import Qt
-from org.muscat.staldates.aldatesx.Controller import Controller
-from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
-import Pyro4
-import sys
-import logging
-import argparse
-import fcntl  # @UnresolvedImport
-import atexit
+from PySide.QtGui import QApplication
 from org.muscat.staldates.aldatesx.Client import Client
+from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow
+import Pyro4
+import argparse
+import atexit
+import fcntl # @UnresolvedImport
+import logging
+import sys
 
-class AldatesX(VideoSwitcher):
+class AldatesX(MainWindow):
     
     def __init__(self, controller):
         super(AldatesX, self).__init__(controller)
