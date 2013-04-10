@@ -12,7 +12,7 @@ import Pyro4
 import sys
 import logging
 import argparse
-import fcntl
+import fcntl  # @UnresolvedImport
 import atexit
 from org.muscat.staldates.aldatesx.Client import Client
 
