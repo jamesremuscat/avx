@@ -5,6 +5,7 @@ from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
 from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPowerWidget
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 import logging
+from org.muscat.staldates.aldatesx.ui.widgets.Dialogs import PowerNotificationDialog
 
 class MainWindow(QMainWindow):
     def __init__(self, controller):
@@ -49,6 +50,8 @@ class MainWindow(QMainWindow):
         
         self.setCentralWidget(outer)
         
+        self.pnd = PowerNotificationDialog()
+        
     def showSystemPower(self):
         if self.stack.currentWidget() == self.spc:
             self.stepBack()
@@ -74,3 +77,14 @@ class MainWindow(QMainWindow):
         msgBox.setText(text)
         msgBox.setIcon(QMessageBox.Critical)
         msgBox.exec_()
+        
+    def showPowerDialog(self, message):
+        self.pnd.message = message
+        self.pnd.exec_()
+        
+    def hidePowerDialog(self):
+        self.pnd.close()
+        if self.stack.currentWidget() == self.spc:
+            self.stepBack()
+            
+        

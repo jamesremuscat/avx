@@ -7,6 +7,7 @@ import Pyro4
 import atexit
 from PySide import QtCore
 from org.muscat.staldates.aldatesx import PyroUtils
+from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
 class Client(Pyro4.threadutil.Thread):
 
@@ -28,6 +29,15 @@ class Client(Pyro4.threadutil.Thread):
         
     def errorBox(self, text):
         invoke_in_main_thread(self.aldatesx.errorBox, text)
+        
+    def showPowerOnDialog(self):
+        invoke_in_main_thread(self.aldatesx.showPowerDialog, StringConstants.poweringOn)
+        
+    def showPowerOffDialog(self):
+        invoke_in_main_thread(self.aldatesx.showPowerDialog, StringConstants.poweringOff)
+        
+    def hidePowerDialog(self):
+        invoke_in_main_thread(self.aldatesx.hidePowerDialog)
 
 
 class InvokeEvent(QtCore.QEvent):

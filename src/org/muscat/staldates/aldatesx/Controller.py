@@ -206,14 +206,15 @@ class Controller(object):
             power = self.devices["Power"]
         
             self.sequencer.sequence(
-                Event(lambda : self.callAllClients(lambda c : c.errorBox("Powering on"))),
+                Event(lambda : self.callAllClients(lambda c : c.showPowerOnDialog())),
                 Event(power.on, 1),
                 self.sequencer.wait(3),
                 Event(power.on, 2),
                 self.sequencer.wait(3),
                 Event(power.on, 3),
                 self.sequencer.wait(3),
-                Event(power.on, 4)
+                Event(power.on, 4),
+                Event(lambda : self.callAllClients(lambda c : c.hidePowerDialog())),
             )
     
     def systemPowerOff(self):
@@ -221,6 +222,7 @@ class Controller(object):
             power = self.devices["Power"]
         
             self.sequencer.sequence(
+                Event(lambda : self.callAllClients(lambda c : c.showPowerOffDialog())),
                 Event(power.off, 4),
                 self.sequencer.wait(3),
                 Event(power.off, 3),
@@ -228,7 +230,7 @@ class Controller(object):
                 Event(power.off, 2),
                 self.sequencer.wait(3),
                 Event(power.off, 1),
-                Event(lambda : self.callAllClients(lambda c : c.errorBox("Powered off")))
+                Event(lambda : self.callAllClients(lambda c : c.hidePowerDialog()))
             )
             
     def getLog(self):

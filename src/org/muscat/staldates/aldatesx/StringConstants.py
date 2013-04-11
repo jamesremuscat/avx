@@ -16,4 +16,7 @@ class StringConstants():
     '''Text displayed when we can talk to the nameserver, but can't find the controller object or something else goes wrong.'''
     protocolErrorText = "Can't talk to control server. Please check network connectivity and restart the controller if necessary."
     
-    noDevice = "No controllable device"        
+    noDevice = "No controllable device"
+    
+    poweringOn = "System powering on. Please wait..."
+    poweringOff = "System powering off. Please wait..."
