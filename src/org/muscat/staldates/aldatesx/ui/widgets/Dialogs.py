@@ -1,4 +1,4 @@
-from PySide.QtGui import QDialog, QVBoxLayout, QLabel
+from PySide.QtGui import QDialog, QHBoxLayout, QLabel, QMovie
 from PySide.QtCore import Qt
 
 class PowerNotificationDialog(QDialog):
@@ -12,9 +12,16 @@ class PowerNotificationDialog(QDialog):
         super(PowerNotificationDialog, self).__init__(parent)
         self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
         
-        layout = QVBoxLayout()
+        layout = QHBoxLayout()
+        
+        spinBox = QLabel()
+        spinner = QMovie("icons/spinner.gif")
+        spinner.start()
+        spinBox.setMovie(spinner)
+        layout.addWidget(spinBox)
         
         self.textBox = QLabel()
+        
         layout.addWidget(self.textBox)
         
         self.setLayout(layout)
