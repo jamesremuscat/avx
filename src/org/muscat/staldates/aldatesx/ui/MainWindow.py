@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         
         self.setCentralWidget(outer)
         
-        self.pnd = PowerNotificationDialog()
+        self.pnd = PowerNotificationDialog(self)
         
     def showSystemPower(self):
         if self.stack.currentWidget() == self.spc:
