@@ -9,33 +9,34 @@ from PySide import QtCore
 from org.muscat.staldates.aldatesx import PyroUtils
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
+
 class Client(Pyro4.threadutil.Thread):
 
     def __init__(self, aldatesx):
         Pyro4.threadutil.Thread.__init__(self)
         self.aldatesx = aldatesx
-        self.started=Pyro4.threadutil.Event()
-        
+        self.started = Pyro4.threadutil.Event()
+
     def run(self):
         PyroUtils.setHostname()
-        daemon=Pyro4.Daemon()
-        self.uri=daemon.register(self)
+        daemon = Pyro4.Daemon()
+        self.uri = daemon.register(self)
         self.started.set()
-        atexit.register(lambda : daemon.shutdown())
+        atexit.register(lambda: daemon.shutdown())
         daemon.requestLoop()
-        
+
     def getHostIP(self):
         return Pyro4.config.HOST
-        
+
     def errorBox(self, text):
         invoke_in_main_thread(self.aldatesx.errorBox, text)
-        
+
     def showPowerOnDialog(self):
         invoke_in_main_thread(self.aldatesx.showPowerDialog, StringConstants.poweringOn)
-        
+
     def showPowerOffDialog(self):
         invoke_in_main_thread(self.aldatesx.showPowerDialog, StringConstants.poweringOff)
-        
+
     def hidePowerDialog(self):
         invoke_in_main_thread(self.aldatesx.hidePowerDialog)
 

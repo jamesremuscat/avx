@@ -11,14 +11,15 @@ import logging
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
 from org.muscat.staldates.aldatesx import PyroUtils
 
+
 def shutdownDaemon(daemon):
     daemon.shutdown()
+
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
     controller = Controller()
-    
-    
+
     ##### Aldates configuration below
     mainSwitcher = KramerVP88("Main", "/dev/usb-ports/1-1.3.1.2", 1)
     controller.addDevice(mainSwitcher)
@@ -40,12 +41,12 @@ if __name__ == "__main__":
 
     extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
     controller.addDevice(extrasSwitcher)
-    
+
     powerSwitches = SerialRelayCard("Power", "/dev/usb-ports/DOESNTEXISTYET")
     controller.addDevice(powerSwitches)
-    
+
     ##### Aldates configuration above
-    
+
     controller.initialise()
 
     PyroUtils.setHostname()
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     ns = Pyro4.locateNS()
     uri = daemon.register(controller)
     ns.register(Controller.pyroName, uri)
-    
-    atexit.register(shutdownDaemon, daemon = daemon)
-    
+
+    atexit.register(shutdownDaemon, daemon=daemon)
+
     daemon.requestLoop()
