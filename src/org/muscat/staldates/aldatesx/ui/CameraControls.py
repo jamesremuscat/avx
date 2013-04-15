@@ -177,8 +177,6 @@ class CameraControl(QWidget):
             result = self.controller.move(self.cameraID, sender.cameraBinding)
             self.deselectPreset()
             return result
-        except AttributeError:
-            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
@@ -198,8 +196,6 @@ class CameraControl(QWidget):
             result = self.controller.focus(self.cameraID, sender.cameraBinding)
             self.deselectPreset()
             return result
-        except AttributeError:
-            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
@@ -219,8 +215,6 @@ class CameraControl(QWidget):
             result = self.controller.zoom(self.cameraID, sender.cameraBinding)
             self.deselectPreset()
             return result
-        except AttributeError:
-            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
@@ -240,8 +234,6 @@ class CameraControl(QWidget):
             result = self.controller.backlightComp(self.cameraID, sender.cameraBinding)
             self.deselectPreset()
             return result
-        except AttributeError:
-            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
@@ -253,8 +245,6 @@ class CameraControl(QWidget):
             result = self.controller.savePreset(self.cameraID, sender.cameraBinding)
             self.presetGroup.buttons()[sender.cameraBinding].setChecked(True)
             return result
-        except AttributeError:
-            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
@@ -264,18 +254,16 @@ class CameraControl(QWidget):
         sender = self.sender()
         try:
             return self.controller.recallPreset(self.cameraID, sender.cameraBinding)
-        except AttributeError:
-            return -1
         except NamingError:
             self.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
             self.errorBox(StringConstants.protocolErrorText)
 
     def deselectPreset(self):
-        b = self.presetGroup.checkedButton()
         # Yuck.
         self.presetGroup.setExclusive(False)
-        b.setChecked(False)
+        while (self.presetGroup.checkedId() >= 0):
+            self.presetGroup.checkedButton().setChecked(False)
         self.presetGroup.setExclusive(True)
 
     def errorBox(self, text):
