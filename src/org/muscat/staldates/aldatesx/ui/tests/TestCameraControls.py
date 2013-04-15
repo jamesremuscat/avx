@@ -17,12 +17,12 @@ class Test(unittest.TestCase):
         self.app = QApplication([])
         self.mockController = Controller()
         
-        self.mockController.move = lambda x, y: {}
-        
         cam = Device("Test Camera")
         self.mockController.addDevice(cam)
+        cam.moveDown = lambda: {}
         cam.stop = lambda: {}
         cam.focusStop = lambda: {}
+        cam.recallPreset = lambda x: {}
 
 
     def testCannotSelectMultiplePresets(self):

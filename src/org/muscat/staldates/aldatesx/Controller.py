@@ -257,7 +257,7 @@ class CameraExposure():
 class ControllerLogHandler(Handler):
 
     def __init__(self):
-        super(ControllerLogHandler, self).__init__()
+        Handler.__init__(self)
         self.entries = []
 
     def emit(self, record):
