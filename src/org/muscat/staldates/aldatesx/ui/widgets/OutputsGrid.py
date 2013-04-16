@@ -6,6 +6,7 @@ Created on 16 Apr 2013
 from PySide.QtGui import QFrame, QGridLayout
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import OutputButton
 
+
 class OutputsGrid(QFrame):
     '''
     Grid of output buttons.
@@ -53,7 +54,7 @@ class OutputsGrid(QFrame):
         layout.setColumnStretch(1, 1)
 
         self.setLayout(layout)
-        
+
     def connectMainOutputs(self, function):
         self.btnProjectors.clicked.connect(function)
         self.btnChurch.clicked.connect(function)
@@ -63,6 +64,6 @@ class OutputsGrid(QFrame):
         self.btnFont.clicked.connect(function)
         self.btnRecord.clicked.connect(function)
         self.btnAll.clicked.connect(function)
-        
+
     def connectPreviewOutputs(self, function):
         self.btnPCMix.clicked.connect(function)

@@ -11,6 +11,7 @@ from org.muscat.staldates.aldatesx.ui.widgets.OutputsGrid import OutputsGrid
 
 
 class VideoSwitcher(QWidget):
+
     def __init__(self, controller, mainWindow):
         super(VideoSwitcher, self).__init__()
         self.controller = controller

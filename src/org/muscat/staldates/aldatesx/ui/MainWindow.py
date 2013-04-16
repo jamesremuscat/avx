@@ -9,6 +9,7 @@ from org.muscat.staldates.aldatesx.ui.widgets.Dialogs import PowerNotificationDi
 
 
 class MainWindow(QMainWindow):
+
     def __init__(self, controller):
         super(MainWindow, self).__init__()
         self.controller = controller

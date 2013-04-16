@@ -17,18 +17,17 @@ class TestVideoSwitcher(GuiTest):
     def setUp(self):
         GuiTest.setUp(self)
         self.mockController = Controller()
-        
+
         self.main = Device("Main")
         self.mockController.addDevice(self.main)
         self.main.sendInputToOutput = MagicMock(return_value=1)
-        
+
         self.preview = Device("Preview")
         self.mockController.addDevice(self.preview)
         self.preview.sendInputToOutput = MagicMock(return_value=1)
-        
+
         fakeMainWindow = object()
         self.vs = VideoSwitcher(self.mockController, fakeMainWindow)
-        
 
     def testSendInputsToOutputs(self):
         outputsGrid = self.vs.findChild(OutputsGrid)
@@ -39,7 +38,7 @@ class TestVideoSwitcher(GuiTest):
 
         outputsGrid.btnChurch.click()
         self.main.sendInputToOutput.assert_called_with(1, 4)  # Camera 1 sent to output 4 (church)
-        
+
         self.vs.btnCamera3.click()
         self.preview.sendInputToOutput.assert_called_with(3, 1)  # Camera 3 previewed
         outputsGrid.btnGallery.click()

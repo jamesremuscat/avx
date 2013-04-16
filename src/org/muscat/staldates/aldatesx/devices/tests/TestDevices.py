@@ -61,11 +61,11 @@ class TestDevices(unittest.TestCase):
         vp703.initialise()
         self.assertEqual(list(b"Overscan = 1\r\n"), port.bytes)
         port.clear()
-        
+
         vp703.overscanOff()
         self.assertEqual(list(b"Overscan = 0\r\n"), port.bytes)
         port.clear()
-        
+
         vp703.freeze()
         self.assertEqual(list(b"Image Freeze = 1\r\n"), port.bytes)
         port.clear()

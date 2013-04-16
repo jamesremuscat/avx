@@ -11,6 +11,6 @@ class GuiTest(unittest.TestCase):
 
     def setUp(self):
         unittest.TestCase.setUp(self)
-        self.app = QApplication.instance() # checks if QApplication already exists 
-        if not self.app: # create QApplication if it doesnt exist 
+        self.app = QApplication.instance() # checks if QApplication already exists
+        if not self.app: # create QApplication if it doesn't exist
             self.app = QApplication([])

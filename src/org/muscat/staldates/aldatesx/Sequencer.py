@@ -51,6 +51,7 @@ class Sequencer(Thread):
         '''
         Convenience method for scheduling a wait of a given number of seconds. Returns an Event you can then sequence.
         '''
+
         def annotatedSleep(secs):
             logging.debug("Sleeping sequencer for " + str(secs) + " seconds")
             time.sleep(secs)

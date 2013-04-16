@@ -10,6 +10,7 @@ class KramerVP88(SerialDevice):
     '''
     A Kramer VP88 switcher, controlled by Protocol 2000 over serial.
     '''
+
     def __init__(self, deviceID, serialDevice, machineNumber=1):
         super(KramerVP88, self).__init__(deviceID, serialDevice)
         self.machineNumber = machineNumber

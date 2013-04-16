@@ -52,6 +52,7 @@ class InvokeEvent(QtCore.QEvent):
 
 
 class Invoker(QtCore.QObject):
+
     def event(self, event):
         event.fn(*event.args, **event.kwargs)
 

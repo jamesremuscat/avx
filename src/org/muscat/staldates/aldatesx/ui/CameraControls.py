@@ -7,6 +7,7 @@ from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
 
 class CameraButton(ExpandingButton):
+
     def __init__(self, cameraBinding):
         super(CameraButton, self).__init__()
         self.cameraBinding = cameraBinding
