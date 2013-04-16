@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
     def setUp(self):
         self.app = QApplication([])
         self.mockController = Controller()
-        
+
         cam = Device("Test Camera")
         self.mockController.addDevice(cam)
         cam.moveDown = lambda: {}
@@ -29,9 +29,8 @@ class Test(unittest.TestCase):
         ''' See https://github.com/jamesremuscat/aldatesx/issues/23'''
         cc = CameraControl(self.mockController, "Test Camera")
         buttons = cc.presetGroup.buttons()
-        
+
         self.assertEqual(-1, cc.presetGroup.checkedId())
-        #cc.focusBtns.downButton.click()
         cc.btnDown.click()
         buttons[1].click()
         self.assertTrue(buttons[1].isChecked())
@@ -40,9 +39,7 @@ class Test(unittest.TestCase):
         self.assertEqual(0, cc.presetGroup.checkedId())
         self.assertTrue(buttons[0].isChecked())
         self.assertFalse(buttons[1].isChecked())
-        
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
