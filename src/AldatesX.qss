@@ -7,7 +7,7 @@ MainWindow, QDialog {
 	background-color: #003E5F;
 }
 
-OutputsHolderPanel {
+OutputsGrid {
 	background-color: #00527E;
 }
 

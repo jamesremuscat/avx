@@ -1,17 +1,13 @@
-from PySide.QtGui import QFrame, QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon
+from PySide.QtGui import QLabel, QWidget, QGridLayout, QHBoxLayout, QButtonGroup, QIcon
 from PySide.QtCore import QMetaObject, Qt
-from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, OutputButton, CameraSelectionButton
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import InputButton, CameraSelectionButton
 from org.muscat.staldates.aldatesx.ui.ExtrasSwitcher import ExtrasSwitcher
 from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl, AdvancedCameraControl
 from Pyro4.errors import ProtocolError, NamingError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.ui.EclipseControls import EclipseControls
 import logging
-
-
-class OutputsHolderPanel(QFrame):
-    def __init__(self, parent=None):
-        super(OutputsHolderPanel, self).__init__(parent)
+from org.muscat.staldates.aldatesx.ui.widgets.OutputsGrid import OutputsGrid
 
 
 class VideoSwitcher(QWidget):
@@ -81,55 +77,15 @@ class VideoSwitcher(QWidget):
         self.blank = QWidget(self)
         gridlayout.addWidget(self.blank, 1, 0, 1, 5)
 
-        outputsGrid = QGridLayout()
+        outputsGrid = OutputsGrid()
 
-        self.btnProjectors = OutputButton(ID=2)
-        self.btnProjectors.setText("Projectors")
-        outputsGrid.addWidget(self.btnProjectors, 0, 1)
-
-        self.btnChurch = OutputButton(ID=4)
-        self.btnChurch.setText("Church")
-        outputsGrid.addWidget(self.btnChurch, 1, 0)
-        self.btnSpecial = OutputButton(ID=7)
-        self.btnSpecial.setText("Special")
-        outputsGrid.addWidget(self.btnSpecial, 1, 1)
-
-        self.btnGallery = OutputButton(ID=6)
-        self.btnGallery.setText("Gallery")
-        outputsGrid.addWidget(self.btnGallery, 2, 0)
-        self.btnWelcome = OutputButton(ID=5)
-        self.btnWelcome.setText("Welcome")
-        outputsGrid.addWidget(self.btnWelcome, 2, 1)
-
-        self.btnFont = OutputButton(ID=3)
-        self.btnFont.setText("Font")
-        outputsGrid.addWidget(self.btnFont, 3, 0)
-        self.btnRecord = OutputButton(ID=8)
-        self.btnRecord.setText("Record")
-        outputsGrid.addWidget(self.btnRecord, 3, 1)
-
-        self.btnPCMix = OutputButton(ID=2)
-        self.btnPCMix.setText("PC Mix")
-        outputsGrid.addWidget(self.btnPCMix, 4, 0)
-        self.btnAll = OutputButton(ID=0)
-        self.btnAll.setText("All")
-        outputsGrid.addWidget(self.btnAll, 4, 1)
-
-        outputsGrid.setColumnMinimumWidth(0, 100)
-        outputsGrid.setColumnMinimumWidth(1, 100)
-        outputsGrid.setColumnStretch(0, 1)
-        outputsGrid.setColumnStretch(1, 1)
-
-        outputsHolder = OutputsHolderPanel()
-        outputsHolder.setLayout(outputsGrid)
-
-        gridlayout.addWidget(outputsHolder, 1, 5, 1, 2)
+        gridlayout.addWidget(outputsGrid, 1, 5, 1, 2)
 
         gridlayout.setRowStretch(0, 1)
         gridlayout.setRowStretch(1, 5)
         QMetaObject.connectSlotsByName(self)
         self.setInputClickHandlers()
-        self.setOutputClickHandlers()
+        self.setOutputClickHandlers(outputsGrid)
         self.configureInnerControlPanels()
         self.gridlayout = gridlayout
 
@@ -153,17 +109,10 @@ class VideoSwitcher(QWidget):
         self.btnVisualsPC.clicked.connect(self.handleInputSelect)
         self.btnBlank.clicked.connect(self.handleInputSelect)
 
-    def setOutputClickHandlers(self):
-        self.btnProjectors.clicked.connect(self.handleOutputSelect)
-        self.btnChurch.clicked.connect(self.handleOutputSelect)
-        self.btnSpecial.clicked.connect(self.handleOutputSelect)
-        self.btnGallery.clicked.connect(self.handleOutputSelect)
-        self.btnWelcome.clicked.connect(self.handleOutputSelect)
-        self.btnFont.clicked.connect(self.handleOutputSelect)
-        self.btnRecord.clicked.connect(self.handleOutputSelect)
-        self.btnAll.clicked.connect(self.handleOutputSelect)
+    def setOutputClickHandlers(self, outputsGrid):
+        outputsGrid.connectMainOutputs(self.handleOutputSelect)
         ''' btnPCMix is a special case since that's on a different switcher '''
-        self.btnPCMix.clicked.connect(self.handlePCMixSelect)
+        outputsGrid.connectPreviewOutputs(self.handlePCMixSelect)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_0:
