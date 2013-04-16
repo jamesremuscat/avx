@@ -9,6 +9,7 @@ from org.muscat.staldates.aldatesx.devices.tests.MockSerialPort import MockSeria
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
+from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclipse
 
 
 class TestDevices(unittest.TestCase):
@@ -68,9 +69,43 @@ class TestDevices(unittest.TestCase):
         vp703.freeze()
         self.assertEqual(list(b"Image Freeze = 1\r\n"), port.bytes)
         port.clear()
-        
+
         vp703.unfreeze()
         self.assertEqual(list(b"Image Freeze = 0\r\n"), port.bytes)
+
+    def testCoriogenEclipse(self):
+        port = MockSerialPort()
+        ce = CoriogenEclipse("Test", port)
+
+        ce.initialise()
+        self.assertEqual([], port.bytes)
+
+        ce.fadeIn()
+        self.assertEqual(list(b"Fade = 1\r\n"), port.bytes)
+        port.clear()
+
+        ce.fadeIn()
+        self.assertEqual(list(b"Fade = 1\r\n"), port.bytes)
+        port.clear()
+
+        ce.fadeOut()
+        self.assertEqual(list(b"Fade = 0\r\n"), port.bytes)
+        port.clear()
+
+        ce.freeze()
+        self.assertEqual(list(b"Freeze = On\r\n"), port.bytes)
+        port.clear()
+
+        ce.unfreeze()
+        self.assertEqual(list(b"Freeze = Off\r\n"), port.bytes)
+        port.clear()
+
+        ce.overlayOn()
+        self.assertEqual(list(b"Mode = 3\r\n"), port.bytes)
+        port.clear()
+
+        ce.overlayOff()
+        self.assertEqual(list(b"Mode = 0\r\n"), port.bytes)
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):
