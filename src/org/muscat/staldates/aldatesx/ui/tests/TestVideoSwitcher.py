@@ -3,20 +3,19 @@ Created on 16 Apr 2013
 
 @author: jrem
 '''
-from PySide.QtGui import QApplication
 import unittest
 from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 from org.muscat.staldates.aldatesx.ui.widgets.OutputsGrid import OutputsGrid
 from mock import MagicMock
+from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
 
 
-class TestVideoSwitcher(unittest.TestCase):
+class TestVideoSwitcher(GuiTest):
 
     def setUp(self):
-        self.app = QApplication([])
-        
+        GuiTest.setUp(self)
         self.mockController = Controller()
         
         self.main = Device("Main")
@@ -29,6 +28,7 @@ class TestVideoSwitcher(unittest.TestCase):
         
         fakeMainWindow = object()
         self.vs = VideoSwitcher(self.mockController, fakeMainWindow)
+        
 
     def testSendInputsToOutputs(self):
         outputsGrid = self.vs.findChild(OutputsGrid)

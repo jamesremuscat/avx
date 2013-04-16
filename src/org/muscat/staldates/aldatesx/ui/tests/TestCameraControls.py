@@ -3,18 +3,17 @@ Created on 15 Apr 2013
 
 @author: jrem
 '''
-from PySide.QtGui import QApplication
 import unittest
 from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl
 from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.Device import Device
+from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
 
 
-class Test(unittest.TestCase):
-
+class Test(GuiTest):
 
     def setUp(self):
-        self.app = QApplication([])
+        GuiTest.setUp(self)
         self.mockController = Controller()
 
         cam = Device("Test Camera")
@@ -24,6 +23,8 @@ class Test(unittest.TestCase):
         cam.focusStop = lambda: {}
         cam.recallPreset = lambda x: {}
 
+    def tearDown(self):
+        self.app = None
 
     def testCannotSelectMultiplePresets(self):
         ''' See https://github.com/jamesremuscat/aldatesx/issues/23'''
