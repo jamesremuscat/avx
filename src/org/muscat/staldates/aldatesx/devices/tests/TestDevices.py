@@ -8,6 +8,7 @@ from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
 from org.muscat.staldates.aldatesx.devices.tests.MockSerialPort import MockSerialPort
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
+from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 
 
 class TestDevices(unittest.TestCase):
@@ -51,6 +52,25 @@ class TestDevices(unittest.TestCase):
 
         k602.sendInputToOutput(1, 2)
         self.assertBytesEqual([0x0, 0x82], port.bytes)
+
+    def testKramerVP703(self):
+        port = MockSerialPort()
+        vp703 = KramerVP703("Test", port)
+
+        vp703.initialise()
+        self.assertEqual(list(b"Overscan = 1\r\n"), port.bytes)
+        port.clear()
+        
+        vp703.overscanOff()
+        self.assertEqual(list(b"Overscan = 0\r\n"), port.bytes)
+        port.clear()
+        
+        vp703.freeze()
+        self.assertEqual(list(b"Image Freeze = 1\r\n"), port.bytes)
+        port.clear()
+        
+        vp703.unfreeze()
+        self.assertEqual(list(b"Image Freeze = 0\r\n"), port.bytes)
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):
