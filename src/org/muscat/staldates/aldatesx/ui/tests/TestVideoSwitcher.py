@@ -25,7 +25,7 @@ class TestVideoSwitcher(GuiTest):
         self.preview = Device("Preview")
         self.mockController.addDevice(self.preview)
         self.preview.sendInputToOutput = MagicMock(return_value=1)
-        
+
         self.extras = Device("Extras")
         self.mockController.addDevice(self.extras)
         self.extras.sendInputToOutput = MagicMock(return_value=1)
