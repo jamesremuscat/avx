@@ -78,15 +78,15 @@ class VideoSwitcher(QWidget):
         self.blank = QWidget(self)
         gridlayout.addWidget(self.blank, 1, 0, 1, 5)
 
-        outputsGrid = OutputsGrid()
+        self.outputsGrid = OutputsGrid()
 
-        gridlayout.addWidget(outputsGrid, 1, 5, 1, 2)
+        gridlayout.addWidget(self.outputsGrid, 1, 5, 1, 2)
 
         gridlayout.setRowStretch(0, 1)
         gridlayout.setRowStretch(1, 5)
         QMetaObject.connectSlotsByName(self)
         self.setInputClickHandlers()
-        self.setOutputClickHandlers(outputsGrid)
+        self.setOutputClickHandlers(self.outputsGrid)
         self.configureInnerControlPanels()
         self.gridlayout = gridlayout
 
@@ -131,7 +131,7 @@ class VideoSwitcher(QWidget):
         elif e.key() == Qt.Key_6:
             self.btnVisualsPC.click()
         elif e.key() == Qt.Key_Space:
-            self.btnAll.click()
+            self.outputsGrid.btnAll.click()
         else:
             self.panels[self.inputs.checkedId()].keyPressEvent(e)
 

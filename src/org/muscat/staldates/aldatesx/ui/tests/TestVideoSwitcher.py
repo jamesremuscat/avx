@@ -10,6 +10,8 @@ from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 from org.muscat.staldates.aldatesx.ui.widgets.OutputsGrid import OutputsGrid
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
+from PySide.QtTest import QTest
+from PySide.QtCore import Qt
 
 
 class TestVideoSwitcher(GuiTest):
@@ -55,11 +57,15 @@ class TestVideoSwitcher(GuiTest):
         self.main.sendInputToOutput.assert_called_with(0, 0)  # Everything blanked
 
         self.vs.btnExtras.click()
-        self.preview.sendInputToOutput.assert_called_with(6, 1)  # This is wired up the wrong way around - 5 vs 6
+        self.preview.sendInputToOutput.assert_called_with(6, 1)  # This is wired up the wrong way around - 5 on main vs 6 on preview
         self.vs.extrasSwitcher.inputs.buttons()[4].click()  # Visuals PC video
         outputsGrid.btnAll.click()  # This one click should trigger two takes, one on each switcher
         self.extras.sendInputToOutput.assert_called_with(8, 1)
         self.main.sendInputToOutput.assert_called_with(5, 0)  # Extras to everywhere
+        outputsGrid.btnPCMix.click()
+        self.extras.sendInputToOutput.assert_called_with(8, 2)
+        self.preview.sendInputToOutput.assert_called_with(6, 2)  # Extras to PC Mix
+        
 
     def testCantSendPCMixToItself(self):
         outputsGrid = self.vs.findChild(OutputsGrid)
@@ -70,6 +76,50 @@ class TestVideoSwitcher(GuiTest):
         outputsGrid.btnPCMix.click()
         self.assertFalse(self.preview.sendInputToOutput.called)
         self.assertFalse(self.main.sendInputToOutput.called)
+
+    def testKeyboardControls(self):
+        QTest.keyClick(self.vs, Qt.Key_0)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(0, 0)
+
+        QTest.keyClick(self.vs, Qt.Key_1)
+        self.preview.sendInputToOutput.assert_called_with(1, 1)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(1, 0)
+
+        QTest.keyClick(self.vs, Qt.Key_2)
+        self.preview.sendInputToOutput.assert_called_with(2, 1)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(2, 0)
+
+        QTest.keyClick(self.vs, Qt.Key_3)
+        self.preview.sendInputToOutput.assert_called_with(3, 1)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(3, 0)
+
+        QTest.keyClick(self.vs, Qt.Key_4)
+        self.preview.sendInputToOutput.assert_called_with(4, 1)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(4, 0)
+
+        QTest.keyClick(self.vs, Qt.Key_5)
+        self.preview.sendInputToOutput.assert_called_with(6, 1)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(5, 0)
+
+        QTest.keyClick(self.vs, Qt.Key_6)
+        self.preview.sendInputToOutput.assert_called_with(5, 1)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(6, 0)
+        
+        self.main.sendInputToOutput.reset_mock()
+        self.preview.sendInputToOutput.reset_mock()
+        QTest.keyClick(self.vs, Qt.Key_7)
+        self.assertFalse(self.preview.sendInputToOutput.called)
+        QTest.keyClick(self.vs, Qt.Key_Space)
+        self.main.sendInputToOutput.assert_called_with(6, 0)  # which was the last valid input key pressed
+        
+        
 
 
 if __name__ == "__main__":
