@@ -65,7 +65,6 @@ class TestVideoSwitcher(GuiTest):
         outputsGrid.btnPCMix.click()
         self.extras.sendInputToOutput.assert_called_with(8, 2)
         self.preview.sendInputToOutput.assert_called_with(6, 2)  # Extras to PC Mix
-        
 
     def testCantSendPCMixToItself(self):
         outputsGrid = self.vs.findChild(OutputsGrid)
@@ -111,15 +110,13 @@ class TestVideoSwitcher(GuiTest):
         self.preview.sendInputToOutput.assert_called_with(5, 1)
         QTest.keyClick(self.vs, Qt.Key_Space)
         self.main.sendInputToOutput.assert_called_with(6, 0)
-        
+
         self.main.sendInputToOutput.reset_mock()
         self.preview.sendInputToOutput.reset_mock()
         QTest.keyClick(self.vs, Qt.Key_7)
         self.assertFalse(self.preview.sendInputToOutput.called)
         QTest.keyClick(self.vs, Qt.Key_Space)
         self.main.sendInputToOutput.assert_called_with(6, 0)  # which was the last valid input key pressed
-        
-        
 
 
 if __name__ == "__main__":
