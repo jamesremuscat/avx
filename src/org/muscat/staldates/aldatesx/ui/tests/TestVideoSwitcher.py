@@ -25,6 +25,10 @@ class TestVideoSwitcher(GuiTest):
         self.preview = Device("Preview")
         self.mockController.addDevice(self.preview)
         self.preview.sendInputToOutput = MagicMock(return_value=1)
+        
+        self.extras = Device("Extras")
+        self.mockController.addDevice(self.extras)
+        self.extras.sendInputToOutput = MagicMock(return_value=1)
 
         fakeMainWindow = object()
         self.vs = VideoSwitcher(self.mockController, fakeMainWindow)
@@ -49,6 +53,24 @@ class TestVideoSwitcher(GuiTest):
         self.vs.btnBlank.click()
         outputsGrid.btnAll.click()
         self.main.sendInputToOutput.assert_called_with(0, 0)  # Everything blanked
+
+        self.vs.btnExtras.click()
+        self.preview.sendInputToOutput.assert_called_with(6, 1)  # This is wired up the wrong way around - 5 vs 6
+        self.vs.extrasSwitcher.inputs.buttons()[4].click()  # Visuals PC video
+        outputsGrid.btnAll.click()  # This one click should trigger two takes, one on each switcher
+        self.extras.sendInputToOutput.assert_called_with(8, 1)
+        self.main.sendInputToOutput.assert_called_with(5, 0)  # Extras to everywhere
+
+    def testCantSendPCMixToItself(self):
+        outputsGrid = self.vs.findChild(OutputsGrid)
+
+        self.vs.btnVisualsPC.click()
+        self.preview.sendInputToOutput.assert_called_with(5, 1)
+        self.preview.sendInputToOutput.reset_mock()
+        outputsGrid.btnPCMix.click()
+        self.assertFalse(self.preview.sendInputToOutput.called)
+        self.assertFalse(self.main.sendInputToOutput.called)
+
 
 if __name__ == "__main__":
     unittest.main()
