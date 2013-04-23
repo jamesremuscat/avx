@@ -140,6 +140,23 @@ class Controller(object):
             logging.warn("No device with ID " + camDeviceID)
         return -1
 
+    def whiteBalance(self, camDeviceID, wbSetting):
+        if self.hasDevice(camDeviceID):
+            camera = self.devices[camDeviceID]
+            if wbSetting == CameraWhiteBalance.Auto:
+                return camera.whiteBalanceAuto()
+            elif wbSetting == CameraWhiteBalance.Indoor:
+                return camera.whiteBalanceIndoor()
+            elif wbSetting == CameraWhiteBalance.Outdoor:
+                return camera.whiteBalanceOutdoor()
+            elif wbSetting == CameraWhiteBalance.OnePush:
+                return camera.whiteBalanceOnePush()
+            elif wbSetting == CameraWhiteBalance.Trigger:
+                return camera.whiteBalanceOnePushTrigger
+        else:
+            logging.warn("No device with ID " + camDeviceID)
+        return -1
+
     def getPosition(self, camDeviceID):
         if self.hasDevice(camDeviceID):
             camera = self.devices[camDeviceID]
@@ -252,6 +269,10 @@ class CameraFocus():
 
 class CameraExposure():
     Brighter, Darker, Auto = range(3)
+
+
+class CameraWhiteBalance():
+    Auto, Indoor, Outdoor, OnePush, Trigger = range(5)
 
 
 class ControllerLogHandler(Handler):

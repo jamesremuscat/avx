@@ -94,6 +94,21 @@ class VISCACamera(SerialDevice):
             return -1
         self.sendVISCA([0x01, 0x04, 0x3F, 0x02, preset])
 
+    def whiteBalanceAuto(self):
+        self.sendVISCA([0x01, 0x04, 0x35, 0x00])
+
+    def whiteBalanceIndoor(self):
+        self.sendVISCA([0x01, 0x04, 0x35, 0x01])
+
+    def whiteBalanceOutdoor(self):
+        self.sendVISCA([0x01, 0x04, 0x35, 0x02])
+
+    def whiteBalanceOnePush(self):
+        self.sendVISCA([0x01, 0x04, 0x35, 0x03])
+
+    def whiteBalanceOnePushTrigger(self):
+        self.sendVISCA([0x01, 0x04, 0x10, 0x05])
+
     def getPosition(self):
         self.port.flushInput()
         self.sendVISCA([0x09, 0x06, 0x12, 0xFF])
