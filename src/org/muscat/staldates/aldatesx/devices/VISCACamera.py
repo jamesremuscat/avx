@@ -5,6 +5,7 @@ Created on 13 Nov 2012
 '''
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
 from org.muscat.staldates.aldatesx.CameraPosition import CameraPosition
+from org.muscat.staldates.aldatesx.devices.VISCACommands import VISCACommand
 
 
 class VISCACamera(SerialDevice):
@@ -25,6 +26,10 @@ class VISCACamera(SerialDevice):
 
     def sendVISCA(self, commandBytes):
         return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+    def execute(self, command):
+        if isinstance(command, VISCACommand):
+            return self.sendCommand(SerialDevice.byteArrayToString(command.getBytes(self.cameraID)))
 
     def moveUp(self):
         return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x01])

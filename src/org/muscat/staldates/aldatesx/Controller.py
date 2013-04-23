@@ -175,6 +175,14 @@ class Controller(object):
             logging.warn("No device with ID " + camDeviceID)
         return None
 
+    def cameraCommand(self, camDeviceID, command):
+        if self.hasDevice(camDeviceID):
+            camera = self.devices[camDeviceID]
+            return camera.execute(command)
+        else:
+            logging.warn("No device with ID " + camDeviceID)
+        return -1
+
     def toggleOverscan(self, scDevice, overscan):
         if self.hasDevice(scDevice):
             sc = self.devices[scDevice]
