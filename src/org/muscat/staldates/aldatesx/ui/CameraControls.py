@@ -300,6 +300,10 @@ class AdvancedCameraControl(QWidget):
         self.posDisplay.addWidget(QLabel("Tilt:"), 1, 0)
         self.posDisplay.addWidget(QLabel("Zoom:"), 2, 0)
 
+        self.posDisplay.addWidget(QLabel(), 0, 1)
+        self.posDisplay.addWidget(QLabel(), 1, 1)
+        self.posDisplay.addWidget(QLabel(), 2, 1)
+
         layout.addLayout(self.posDisplay)
 
         self.b = ExpandingButton()
@@ -310,6 +314,6 @@ class AdvancedCameraControl(QWidget):
     def displayPosition(self):
         pos = self.controller.getPosition(self.cameraID)
 
-        self.posDisplay.addWidget(QLabel(str(pos.pan)), 0, 1)
-        self.posDisplay.addWidget(QLabel(str(pos.tilt)), 1, 1)
-        self.posDisplay.addWidget(QLabel(str(pos.zoom)), 2, 1)
+        self.posDisplay.itemAtPosition(0, 1).widget().setText(str(pos.pan))
+        self.posDisplay.itemAtPosition(1, 1).widget().setText(str(pos.tilt))
+        self.posDisplay.itemAtPosition(2, 1).widget().setText(str(pos.zoom))

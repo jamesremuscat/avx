@@ -4,12 +4,14 @@ Created on 15 Apr 2013
 @author: jrem
 '''
 from mock import MagicMock
-from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl
+from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl,\
+    AdvancedCameraControl
 from org.muscat.staldates.aldatesx.Controller import Controller, CameraMove
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
 from PySide.QtTest import QTest
 from PySide.QtCore import Qt
+from org.muscat.staldates.aldatesx.CameraPosition import CameraPosition
 
 
 class Test(GuiTest):
@@ -80,3 +82,15 @@ class Test(GuiTest):
         self.mockController.move.assert_called_with("Test Camera", CameraMove.Right)
         QTest.keyRelease(cc, Qt.Key_Right)
         self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+
+# Tests for advanced camera controls
+
+    def testGetCameraPosition(self):
+        fakePosition = CameraPosition(111, 222, 333)
+        self.mockController.getPosition = MagicMock(return_value=fakePosition)
+        acc = AdvancedCameraControl(self.mockController, "Test Camera")
+        self.findButton(acc, "Get Position").click()
+        self.mockController.getPosition.assert_called_once_with("Test Camera")
+        self.assertEqual("111", acc.posDisplay.itemAtPosition(0, 1).widget().text())
+        self.assertEqual("222", acc.posDisplay.itemAtPosition(1, 1).widget().text())
+        self.assertEqual("333", acc.posDisplay.itemAtPosition(2, 1).widget().text())
