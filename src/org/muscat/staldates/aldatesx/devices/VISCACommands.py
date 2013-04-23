@@ -10,18 +10,12 @@ class VISCACommand(object):
     Encapsulates a VISCA command.
     '''
 
-    def __init__(self, cameraID=1):
-        self.cameraID = cameraID
-
-    def getBytes(self):
-        return [0x80 + self.cameraID] + self.getInnerBytes() + [0xFF]
+    def getBytes(self, cameraID=1):
+        return [0x80 + cameraID] + self.getInnerBytes() + [0xFF]
 
 
 # CAM_Zoom
 class ZoomStop(VISCACommand):
-
-    def __init__(self, cameraID=1):
-        super(ZoomStop, self).__init__(cameraID)
 
     def getInnerBytes(self):
         return [0x01, 0x04, 0x07, 0x00]
@@ -29,8 +23,7 @@ class ZoomStop(VISCACommand):
 
 class ZoomIn(VISCACommand):
 
-    def __init__(self, speed=2, cameraID=1):
-        super(ZoomIn, self).__init__(cameraID)
+    def __init__(self, speed=2):
         if 1 < speed < 8:
             self.speed = speed
         else:
@@ -42,8 +35,7 @@ class ZoomIn(VISCACommand):
 
 class ZoomOut(VISCACommand):
 
-    def __init__(self, speed=2, cameraID=1):
-        super(ZoomOut, self).__init__(cameraID)
+    def __init__(self, speed=2):
         if 1 < speed < 8:
             self.speed = speed
         else:
@@ -55,8 +47,7 @@ class ZoomOut(VISCACommand):
 
 class ZoomDirect(VISCACommand):
 
-    def __init__(self, zoom, cameraID=1):
-        super(ZoomDirect, self).__init__(cameraID)
+    def __init__(self, zoom):
         if 0 <= zoom < 0x3FF:
             self.zoom = zoom
         else:
@@ -77,17 +68,11 @@ class ZoomDirect(VISCACommand):
 # CAM_Focus
 class FocusStop(VISCACommand):
 
-    def __init__(self, cameraID=1):
-        super(FocusStop, self).__init__(cameraID)
-
     def getInnerBytes(self):
         return [0x01, 0x04, 0x08, 0x00]
 
 
 class FocusFar(VISCACommand):
-
-    def __init__(self, cameraID=1):
-        super(FocusFar, self).__init__(cameraID)
 
     def getInnerBytes(self):
         return [0x01, 0x04, 0x08, 0x02]
@@ -95,26 +80,17 @@ class FocusFar(VISCACommand):
 
 class FocusNear(VISCACommand):
 
-    def __init__(self, cameraID=1):
-        super(FocusNear, self).__init__(cameraID)
-
     def getInnerBytes(self):
         return [0x01, 0x04, 0x08, 0x03]
 
 
 class FocusAuto(VISCACommand):
 
-    def __init__(self, cameraID=1):
-        super(FocusAuto, self).__init__(cameraID)
-
     def getInnerBytes(self):
         return [0x01, 0x04, 0x38, 0x02]
 
 
 class FocusManual(VISCACommand):
-
-    def __init__(self, cameraID=1):
-        super(FocusManual, self).__init__(cameraID)
 
     def getInnerBytes(self):
         return [0x01, 0x04, 0x38, 0x03]
@@ -123,8 +99,7 @@ class FocusManual(VISCACommand):
 # CAM_Memory
 class MemorySet(VISCACommand):
 
-    def __init__(self, preset, cameraID=1):
-        super(MemorySet, self).__init__(cameraID)
+    def __init__(self, preset):
         self.preset = preset
 
     def getInnerBytes(self):
@@ -133,8 +108,7 @@ class MemorySet(VISCACommand):
 
 class MemoryRecall(VISCACommand):
 
-    def __init__(self, preset, cameraID=1):
-        super(MemoryRecall, self).__init__(cameraID)
+    def __init__(self, preset):
         self.preset = preset
 
     def getInnerBytes(self):
@@ -144,8 +118,7 @@ class MemoryRecall(VISCACommand):
 # Pan-tiltDrive
 class MoveUp(VISCACommand):
 
-    def __init__(self, speed, cameraID=1):
-        super(MoveUp, self).__init__(cameraID)
+    def __init__(self, speed):
         self.speed = speed
 
     def getInnerBytes(self):
@@ -154,8 +127,7 @@ class MoveUp(VISCACommand):
 
 class MoveDown(VISCACommand):
 
-    def __init__(self, speed, cameraID=1):
-        super(MoveDown, self).__init__(cameraID)
+    def __init__(self, speed):
         self.speed = speed
 
     def getInnerBytes(self):
@@ -164,8 +136,7 @@ class MoveDown(VISCACommand):
 
 class MoveLeft(VISCACommand):
 
-    def __init__(self, speed, cameraID=1):
-        super(MoveLeft, self).__init__(cameraID)
+    def __init__(self, speed):
         self.speed = speed
 
     def getInnerBytes(self):
@@ -174,8 +145,7 @@ class MoveLeft(VISCACommand):
 
 class MoveRight(VISCACommand):
 
-    def __init__(self, speed, cameraID=1):
-        super(MoveRight, self).__init__(cameraID)
+    def __init__(self, speed):
         self.speed = speed
 
     def getInnerBytes(self):
@@ -184,17 +154,13 @@ class MoveRight(VISCACommand):
 
 class MoveStop(VISCACommand):
 
-    def __init__(self, cameraID=1):
-        super(MoveStop, self).__init__(cameraID)
-
     def getInnerBytes(self):
         return [0x01, 0x06, 0x01, 0, 0, 0x03, 0x03]
 
 
 class MoveTo(VISCACommand):
 
-    def __init__(self, speed, position, cameraID=1):
-        super(MoveTo, self).__init__(cameraID)
+    def __init__(self, speed, position):
         self.speed = speed
         self.position = position
 
