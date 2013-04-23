@@ -10,6 +10,7 @@ from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclipse
+from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
 
 
 class TestDevices(unittest.TestCase):
@@ -106,6 +107,24 @@ class TestDevices(unittest.TestCase):
 
         ce.overlayOff()
         self.assertEqual(list(b"Mode = 0\r\n"), port.bytes)
+
+    def testSerialRelayCard(self):
+        port = MockSerialPort()
+        card = SerialRelayCard("Test", port)
+
+        card.initialise()
+        self.assertEqual([], port.bytes)
+
+        card.on(1)
+        self.assertEqual(['\xFF', '\x01', '\x01'], port.bytes)
+        port.clear()
+
+        channel = card.createDevice("channel", 2)
+        channel.on()
+        self.assertEqual(['\xFF', '\x02', '\x01'], port.bytes)
+        port.clear()
+        channel.off()
+        self.assertEqual(['\xFF', '\x02', '\x00'], port.bytes)
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):
