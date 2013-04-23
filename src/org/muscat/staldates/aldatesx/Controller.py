@@ -152,7 +152,7 @@ class Controller(object):
             elif wbSetting == CameraWhiteBalance.OnePush:
                 return camera.whiteBalanceOnePush()
             elif wbSetting == CameraWhiteBalance.Trigger:
-                return camera.whiteBalanceOnePushTrigger
+                return camera.whiteBalanceOnePushTrigger()
         else:
             logging.warn("No device with ID " + camDeviceID)
         return -1
