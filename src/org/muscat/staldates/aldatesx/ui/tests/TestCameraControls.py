@@ -3,11 +3,13 @@ Created on 15 Apr 2013
 
 @author: jrem
 '''
-import unittest
+from mock import MagicMock
 from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.Controller import Controller, CameraMove
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
+from PySide.QtTest import QTest
+from PySide.QtCore import Qt
 
 
 class Test(GuiTest):
@@ -15,12 +17,12 @@ class Test(GuiTest):
     def setUp(self):
         GuiTest.setUp(self)
         self.mockController = Controller()
+        self.mockController.move = MagicMock(return_value=1)
+        self.mockController.zoom = MagicMock(return_value=1)
+        self.mockController.focus = MagicMock(return_value=1)
 
         cam = Device("Test Camera")
         self.mockController.addDevice(cam)
-        cam.moveDown = lambda: {}
-        cam.stop = lambda: {}
-        cam.focusStop = lambda: {}
         cam.recallPreset = lambda x: {}
 
     def tearDown(self):
@@ -41,6 +43,40 @@ class Test(GuiTest):
         self.assertTrue(buttons[0].isChecked())
         self.assertFalse(buttons[1].isChecked())
 
+    def testMoveCamera(self):
+        cc = CameraControl(self.mockController, "Test Camera")
+        cc.btnUp.pressed.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Up)
+        cc.btnUp.released.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+        cc.btnDown.pressed.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Down)
+        cc.btnDown.released.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+        cc.btnLeft.pressed.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Left)
+        cc.btnLeft.released.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+        cc.btnRight.pressed.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Right)
+        cc.btnRight.released.emit()
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
 
-if __name__ == "__main__":
-    unittest.main()
+    def testMoveCameraWithKeyboard(self):
+        cc = CameraControl(self.mockController, "Test Camera")
+        QTest.keyPress(cc, Qt.Key_Up)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Up)
+        QTest.keyRelease(cc, Qt.Key_Up)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+        QTest.keyPress(cc, Qt.Key_Down)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Down)
+        QTest.keyRelease(cc, Qt.Key_Down)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+        QTest.keyPress(cc, Qt.Key_Left)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Left)
+        QTest.keyRelease(cc, Qt.Key_Left)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
+        QTest.keyPress(cc, Qt.Key_Right)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Right)
+        QTest.keyRelease(cc, Qt.Key_Right)
+        self.mockController.move.assert_called_with("Test Camera", CameraMove.Stop)
