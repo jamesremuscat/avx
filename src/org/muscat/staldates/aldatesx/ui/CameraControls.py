@@ -1,4 +1,4 @@
-from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy, QVBoxLayout
+from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy
 from PySide.QtCore import QSize, Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, CameraZoom
@@ -281,18 +281,12 @@ class AdvancedCameraControl(QWidget):
         self.controller = controller
         self.cameraID = cameraID
 
-        layout = QVBoxLayout(self)
+        layout = QGridLayout(self)
 
         title = QLabel(self.cameraID)
         title.setStyleSheet("font-size: 48px;")
         title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
-
-        btnGetPos = ExpandingButton()
-        btnGetPos.setText("Get Position")
-        btnGetPos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(btnGetPos)
-        btnGetPos.clicked.connect(self.displayPosition)
+        layout.addWidget(title, 0, 0)
 
         self.posDisplay = QGridLayout()
 
@@ -304,12 +298,18 @@ class AdvancedCameraControl(QWidget):
         self.posDisplay.addWidget(QLabel(), 1, 1)
         self.posDisplay.addWidget(QLabel(), 2, 1)
 
-        layout.addLayout(self.posDisplay)
+        layout.addLayout(self.posDisplay, 1, 0)
+
+        btnGetPos = ExpandingButton()
+        btnGetPos.setText("Get Position")
+        btnGetPos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        layout.addWidget(btnGetPos, 2, 0)
+        btnGetPos.clicked.connect(self.displayPosition)
 
         self.b = ExpandingButton()
         self.b.setText("Back")
         self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(self.b)
+        layout.addWidget(self.b, 3, 0)
 
     def displayPosition(self):
         pos = self.controller.getPosition(self.cameraID)
