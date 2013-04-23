@@ -1,7 +1,8 @@
 from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy
 from PySide.QtCore import QSize, Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
-from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, CameraZoom
+from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, CameraZoom,\
+    CameraWhiteBalance
 from Pyro4.errors import NamingError, ProtocolError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 
@@ -286,7 +287,7 @@ class AdvancedCameraControl(QWidget):
         title = QLabel(self.cameraID)
         title.setStyleSheet("font-size: 48px;")
         title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title, 0, 0)
+        layout.addWidget(title, 0, 0, 1, 2)
 
         self.posDisplay = QGridLayout()
 
@@ -306,10 +307,42 @@ class AdvancedCameraControl(QWidget):
         layout.addWidget(btnGetPos, 2, 0)
         btnGetPos.clicked.connect(self.displayPosition)
 
+        whiteBalanceGrid = QGridLayout()
+        wbTitle = QLabel("White Balance")
+        wbTitle.setAlignment(Qt.AlignCenter)
+        whiteBalanceGrid.addWidget(wbTitle, 0, 0, 1, 2)
+
+        btnAuto = ExpandingButton()
+        btnAuto.setText("Auto")
+        btnAuto.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Auto))
+        whiteBalanceGrid.addWidget(btnAuto, 1, 0)
+
+        btnIndoor = ExpandingButton()
+        btnIndoor.setText("Indoor")
+        btnIndoor.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Indoor))
+        whiteBalanceGrid.addWidget(btnIndoor, 2, 0)
+
+        btnOutdoor = ExpandingButton()
+        btnOutdoor.setText("Outdoor")
+        btnOutdoor.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Outdoor))
+        whiteBalanceGrid.addWidget(btnOutdoor, 3, 0)
+
+        btnOnePush = ExpandingButton()
+        btnOnePush.setText("One Push")
+        btnOnePush.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.OnePush))
+        whiteBalanceGrid.addWidget(btnOnePush, 4, 0)
+
+        btnOnePushTrigger = ExpandingButton()
+        btnOnePushTrigger.setText("Set")
+        btnOnePushTrigger.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Trigger))
+        whiteBalanceGrid.addWidget(btnOnePushTrigger, 4, 1)
+
+        layout.addLayout(whiteBalanceGrid, 1, 1, 2, 1)
+
         self.b = ExpandingButton()
         self.b.setText("Back")
         self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(self.b, 3, 0)
+        layout.addWidget(self.b, 3, 0, 1, 2)
 
     def displayPosition(self):
         pos = self.controller.getPosition(self.cameraID)
