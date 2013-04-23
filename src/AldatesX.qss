@@ -21,6 +21,10 @@ ExpandingButton:pressed, InputButton:checked, OptionButton:checked {
 	color: black;
 }
 
+InputButton:disabled, OutputButton:disabled, OptionButton:disabled, ExpandingButton:disabled {
+	background-color: #9FA5A5;
+}
+
 CameraButton {
 	color: black;
 	background-color: #E4E4FF;

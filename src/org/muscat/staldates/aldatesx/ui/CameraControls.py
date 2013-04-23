@@ -1,6 +1,7 @@
 from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy
 from PySide.QtCore import QSize, Qt
-from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton,\
+    OptionButton
 from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, CameraZoom,\
     CameraWhiteBalance
 from Pyro4.errors import NamingError, ProtocolError
@@ -312,22 +313,22 @@ class AdvancedCameraControl(QWidget):
         wbTitle.setAlignment(Qt.AlignCenter)
         whiteBalanceGrid.addWidget(wbTitle, 0, 0, 1, 2)
 
-        btnAuto = ExpandingButton()
+        btnAuto = OptionButton()
         btnAuto.setText("Auto")
         btnAuto.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Auto))
         whiteBalanceGrid.addWidget(btnAuto, 1, 0)
 
-        btnIndoor = ExpandingButton()
+        btnIndoor = OptionButton()
         btnIndoor.setText("Indoor")
         btnIndoor.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Indoor))
         whiteBalanceGrid.addWidget(btnIndoor, 2, 0)
 
-        btnOutdoor = ExpandingButton()
+        btnOutdoor = OptionButton()
         btnOutdoor.setText("Outdoor")
         btnOutdoor.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Outdoor))
         whiteBalanceGrid.addWidget(btnOutdoor, 3, 0)
 
-        btnOnePush = ExpandingButton()
+        btnOnePush = OptionButton()
         btnOnePush.setText("One Push")
         btnOnePush.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.OnePush))
         whiteBalanceGrid.addWidget(btnOnePush, 4, 0)
@@ -335,7 +336,15 @@ class AdvancedCameraControl(QWidget):
         btnOnePushTrigger = ExpandingButton()
         btnOnePushTrigger.setText("Set")
         btnOnePushTrigger.clicked.connect(lambda: self.controller.whiteBalance(self.cameraID, CameraWhiteBalance.Trigger))
+        btnOnePushTrigger.setEnabled(False)
         whiteBalanceGrid.addWidget(btnOnePushTrigger, 4, 1)
+
+        self.wbOpts = QButtonGroup()
+        self.wbOpts.addButton(btnAuto, 1)
+        self.wbOpts.addButton(btnIndoor, 2)
+        self.wbOpts.addButton(btnOutdoor, 3)
+        self.wbOpts.addButton(btnOnePush, 4)
+        self.wbOpts.buttonClicked.connect(lambda: btnOnePushTrigger.setEnabled(self.wbOpts.checkedId() == 4))
 
         layout.addLayout(whiteBalanceGrid, 1, 1, 2, 1)
 
