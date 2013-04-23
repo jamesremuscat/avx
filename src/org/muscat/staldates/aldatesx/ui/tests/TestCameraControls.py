@@ -6,7 +6,8 @@ Created on 15 Apr 2013
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl,\
     AdvancedCameraControl
-from org.muscat.staldates.aldatesx.Controller import Controller, CameraMove
+from org.muscat.staldates.aldatesx.Controller import Controller, CameraMove,\
+    CameraWhiteBalance
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
 from PySide.QtTest import QTest
@@ -94,3 +95,27 @@ class Test(GuiTest):
         self.assertEqual("111", acc.posDisplay.itemAtPosition(0, 1).widget().text())
         self.assertEqual("222", acc.posDisplay.itemAtPosition(1, 1).widget().text())
         self.assertEqual("333", acc.posDisplay.itemAtPosition(2, 1).widget().text())
+
+    def testChangeWhiteBalance(self):
+        self.mockController.whiteBalance = MagicMock(return_value=1)
+        acc = AdvancedCameraControl(self.mockController, "Test Camera")
+        self.assertFalse(self.findButton(acc, "Set").isEnabled())
+
+        self.findButton(acc, "Auto").click()
+        self.mockController.whiteBalance.assert_called_with("Test Camera", CameraWhiteBalance.Auto)
+        self.assertFalse(self.findButton(acc, "Set").isEnabled())
+
+        self.findButton(acc, "Indoor").click()
+        self.mockController.whiteBalance.assert_called_with("Test Camera", CameraWhiteBalance.Indoor)
+        self.assertFalse(self.findButton(acc, "Set").isEnabled())
+
+        self.findButton(acc, "Outdoor").click()
+        self.mockController.whiteBalance.assert_called_with("Test Camera", CameraWhiteBalance.Outdoor)
+        self.assertFalse(self.findButton(acc, "Set").isEnabled())
+
+        self.findButton(acc, "One Push").click()
+        self.mockController.whiteBalance.assert_called_with("Test Camera", CameraWhiteBalance.OnePush)
+        self.assertTrue(self.findButton(acc, "Set").isEnabled())
+
+        self.findButton(acc, "Set").click()
+        self.mockController.whiteBalance.assert_called_with("Test Camera", CameraWhiteBalance.Trigger)
