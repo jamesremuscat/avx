@@ -6,11 +6,12 @@ Created on 3 Jan 2013
 import unittest
 from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
 from org.muscat.staldates.aldatesx.devices.tests.MockSerialPort import MockSerialPort
-from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
+from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclipse
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
+from mock import MagicMock
 
 
 class TestDevices(unittest.TestCase):
@@ -125,6 +126,23 @@ class TestDevices(unittest.TestCase):
         port.clear()
         channel.off()
         self.assertEqual(['\xFF', '\x02', '\x00'], port.bytes)
+
+    def testKramerVP88Listener(self):
+        port = MockSerialPort()
+        port.setDataForRead([chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
+        kl = KramerVP88Listener(port, machineNumber=1)
+
+        class NullDispatcher(object):
+
+            def updateOutputMappings(self):
+                pass
+
+        dispatcher = NullDispatcher()
+        dispatcher.updateOutputMappings = MagicMock()
+        kl.registerDispatcher(dispatcher)
+
+        kl.start()
+        dispatcher.updateOutputMappings.assert_called_with({3: 2})
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):
