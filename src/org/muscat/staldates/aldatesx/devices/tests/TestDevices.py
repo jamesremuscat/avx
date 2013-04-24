@@ -12,6 +12,7 @@ from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclipse
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
 from mock import MagicMock
+import threading
 
 
 class TestDevices(unittest.TestCase):
@@ -140,10 +141,11 @@ class TestDevices(unittest.TestCase):
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
         kl.registerDispatcher(dispatcher)
-
         kl.start()
-        dispatcher.updateOutputMappings.assert_called_with({3: 2})
+        threading.Event().wait(0.1)
         kl.stop()
+
+        dispatcher.updateOutputMappings.assert_called_with({3: 2})
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):

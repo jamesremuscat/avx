@@ -50,3 +50,4 @@ class KramerVP88Listener(Thread):
                     outp = message[2] - 0x80
                     for d in self.dispatchers:
                         d.updateOutputMappings({outp: inp})
+        logging.info("No longer listening to Kramer VP-88 at " + self.port.portstr)
