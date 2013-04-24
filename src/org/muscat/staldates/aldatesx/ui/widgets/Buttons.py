@@ -1,4 +1,4 @@
-from PySide.QtGui import QToolButton, QSizePolicy
+from PySide.QtGui import QLabel, QToolButton, QSizePolicy, QVBoxLayout
 from PySide.QtCore import Qt, QSize, Signal, QEvent
 
 
@@ -24,6 +24,15 @@ class OutputButton(ExpandingButton):
     def __init__(self, ID):
         super(OutputButton, self).__init__()
         self.ID = ID
+        self.inputDisplay = QLabel()
+        self.inputDisplay.setText("-")
+        layout = QVBoxLayout()
+        layout.addWidget(self.inputDisplay)
+        layout.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
+        self.setLayout(layout)
+
+    def setInputText(self, text):
+        self.inputDisplay.setText(text)
 
 
 class OptionButton(ExpandingButton):

@@ -25,6 +25,10 @@ InputButton:disabled, OutputButton:disabled, OptionButton:disabled, ExpandingBut
 	background-color: #9FA5A5;
 }
 
+OutputButton>QLabel {
+	font-size: 12pt;
+}
+
 CameraButton {
 	color: black;
 	background-color: #E4E4FF;

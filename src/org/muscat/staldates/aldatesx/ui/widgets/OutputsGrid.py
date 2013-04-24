@@ -12,6 +12,8 @@ class OutputsGrid(QFrame):
     Grid of output buttons.
     '''
 
+    inputNames = {0: "Blank", 1: "Camera 1", 2: "Camera 2", 3: "Camera 3", 4: "DVD", 5: "Extras", 6: "Visuals PC"}
+
     def __init__(self):
         QFrame.__init__(self)
         layout = QGridLayout()
@@ -48,6 +50,8 @@ class OutputsGrid(QFrame):
         self.btnAll.setText("All")
         layout.addWidget(self.btnAll, 4, 1)
 
+        self.outputButtons = {2: self.btnProjectors, 3: self.btnFont, 4: self.btnChurch, 5: self.btnWelcome, 6: self.btnGallery, 7: self.btnSpecial, 8: self.btnRecord}
+
         layout.setColumnMinimumWidth(0, 100)
         layout.setColumnMinimumWidth(1, 100)
         layout.setColumnStretch(0, 1)
@@ -67,3 +71,9 @@ class OutputsGrid(QFrame):
 
     def connectPreviewOutputs(self, function):
         self.btnPCMix.clicked.connect(function)
+
+    def updateOutputMappings(self, mapping):
+        ''' mapping should be a numeric map of the form [outp => input] '''
+        for outp, inp in mapping.iteritems():
+            if outp in self.outputButtons.keys():
+                self.outputButtons[outp].setInputText(self.inputNames[inp])
