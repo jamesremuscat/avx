@@ -200,3 +200,6 @@ class VideoSwitcher(QWidget):
         ctls.b.clicked.connect(self.mainWindow.stepBack)
         self.mainWindow.stack.insertWidget(0, ctls)
         self.mainWindow.stack.setCurrentIndex(0)
+
+    def updateOutputMappings(self, mapping):
+        self.outputsGrid.updateOutputMappings(mapping)

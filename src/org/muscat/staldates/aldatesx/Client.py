@@ -40,6 +40,9 @@ class Client(Pyro4.threadutil.Thread):
     def hidePowerDialog(self):
         invoke_in_main_thread(self.aldatesx.hidePowerDialog)
 
+    def updateOutputMappings(self, mapping):
+        invoke_in_main_thread(self.aldatesx.updateOutputMappings(mapping))
+
 
 class InvokeEvent(QtCore.QEvent):
     EVENT_TYPE = QtCore.QEvent.Type(QtCore.QEvent.registerEventType())

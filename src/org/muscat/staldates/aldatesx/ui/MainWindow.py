@@ -17,9 +17,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("AldatesX")
         self.resize(1024, 600)
 
-        mainScreen = VideoSwitcher(controller, self)
+        self.mainScreen = VideoSwitcher(controller, self)
         self.stack = QStackedWidget()
-        self.stack.addWidget(mainScreen)
+        self.stack.addWidget(self.mainScreen)
 
         outer = QWidget()
         mainLayout = QGridLayout()
@@ -87,3 +87,6 @@ class MainWindow(QMainWindow):
         self.pnd.close()
         if self.stack.currentWidget() == self.spc:
             self.stepBack()
+
+    def updateOutputMappings(self, mapping):
+        self.mainScreen.updateOutputMappings(mapping)
