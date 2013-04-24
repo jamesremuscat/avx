@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from org.muscat.staldates.aldatesx.Controller import Controller
-from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88
+from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88,\
+    KramerVP88Listener
 from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
@@ -23,6 +24,9 @@ if __name__ == "__main__":
     ##### Aldates configuration below
     mainSwitcher = KramerVP88("Main", "/dev/usb-ports/1-1.3.1.2", 1)
     controller.addDevice(mainSwitcher)
+    mainListener = KramerVP88Listener(mainSwitcher.port, machineNumber=1)
+    mainListener.registerDispatcher(controller)
+    mainListener.start()
 
     prevSwitcher = Kramer602("Preview", "/dev/usb-ports/1-1.3.3:1.0")
     controller.addDevice(prevSwitcher)

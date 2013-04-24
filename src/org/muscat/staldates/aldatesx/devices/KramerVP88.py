@@ -5,6 +5,7 @@ Created on 10 Nov 2012
 '''
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
 from threading import Thread
+import logging
 
 
 class KramerVP88(SerialDevice):
@@ -37,6 +38,7 @@ class KramerVP88Listener(Thread):
         self.dispatchers.append(dispatcher)
 
     def run(self):
+        logging.info("Listening for responses from Kramer VP-88 at " + self.port.portstr)
         while True:
             message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
             if (message[3] == 0x80 + self.machineNumber):

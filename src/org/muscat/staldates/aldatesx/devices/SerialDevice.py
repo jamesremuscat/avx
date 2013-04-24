@@ -1,6 +1,7 @@
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from serial import Serial, SerialException
 import logging
+import threading
 
 
 class SerialDevice(Device):
@@ -43,3 +44,6 @@ class FakeSerialPort(object):
 
     def write(self, stuff):
         return 0
+
+    def read(self, length):
+        threading.Condition().wait()  # Block forever since we're never sending data here...

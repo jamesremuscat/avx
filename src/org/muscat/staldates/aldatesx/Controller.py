@@ -263,6 +263,9 @@ class Controller(object):
     def getLog(self):
         return self.logHandler.entries
 
+    def updateOutputMappings(self, mapping):
+        self.callAllClients(lambda c: c.updateOutputMappings(mapping))
+
 
 class CameraMove():
     Left, Right, Up, Down, Stop = range(5)
