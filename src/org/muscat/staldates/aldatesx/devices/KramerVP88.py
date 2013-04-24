@@ -32,14 +32,17 @@ class KramerVP88Listener(Thread):
         Thread.__init__(self)
         self.port = port
         self.machineNumber = machineNumber
-        self.setDaemon(True)
+        self.running = True
 
     def registerDispatcher(self, dispatcher):
         self.dispatchers.append(dispatcher)
 
+    def stop(self):
+        self.running = False
+
     def run(self):
         logging.info("Listening for responses from Kramer VP-88 at " + self.port.portstr)
-        while True:
+        while self.running:
             message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
             if (message[3] == 0x80 + self.machineNumber):
                 if (message[0] == 0x41) or (message[0] == 0x45):  # Notification of video switch or response to query

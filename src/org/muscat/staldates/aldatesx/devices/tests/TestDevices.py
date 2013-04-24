@@ -129,7 +129,7 @@ class TestDevices(unittest.TestCase):
 
     def testKramerVP88Listener(self):
         port = MockSerialPort()
-        port.setDataForRead([chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
+        port.read = MagicMock(return_value=[chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
         kl = KramerVP88Listener(port, machineNumber=1)
 
         class NullDispatcher(object):
@@ -143,6 +143,7 @@ class TestDevices(unittest.TestCase):
 
         kl.start()
         dispatcher.updateOutputMappings.assert_called_with({3: 2})
+        kl.stop()
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):

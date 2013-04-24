@@ -27,6 +27,7 @@ if __name__ == "__main__":
     mainListener = KramerVP88Listener(mainSwitcher.port, machineNumber=1)
     mainListener.registerDispatcher(controller)
     mainListener.start()
+    atexit.register(mainListener.stop)
 
     prevSwitcher = Kramer602("Preview", "/dev/usb-ports/1-1.3.3:1.0")
     controller.addDevice(prevSwitcher)
