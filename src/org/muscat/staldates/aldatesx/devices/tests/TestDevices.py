@@ -10,7 +10,7 @@ from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88, KramerV
 from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclipse
-from org.muscat.staldates.aldatesx.devices.SerialRelayCard import SerialRelayCard
+from org.muscat.staldates.aldatesx.devices.SerialRelayCard import JBSerialRelayCard, KMtronicSerialRelayCard
 from mock import MagicMock
 import threading
 
@@ -110,9 +110,9 @@ class TestDevices(unittest.TestCase):
         ce.overlayOff()
         self.assertEqual(list(b"Mode = 0\r\n"), port.bytes)
 
-    def testSerialRelayCard(self):
+    def testKMtronicSerialRelayCard(self):
         port = MockSerialPort()
-        card = SerialRelayCard("Test", port)
+        card = KMtronicSerialRelayCard("Test", port)
 
         card.initialise()
         self.assertEqual([], port.bytes)
@@ -127,6 +127,24 @@ class TestDevices(unittest.TestCase):
         port.clear()
         channel.off()
         self.assertEqual(['\xFF', '\x02', '\x00'], port.bytes)
+
+    def testJBSerialRelayCard(self):
+        port = MockSerialPort()
+        card = JBSerialRelayCard("Test", port)
+
+        card.initialise()
+        self.assertEqual([], port.bytes)
+
+        card.on(1)
+        self.assertEqual(['\x32'], port.bytes)
+        port.clear()
+
+        channel = card.createDevice("channel", 2)
+        channel.on()
+        self.assertEqual(['\x34'], port.bytes)
+        port.clear()
+        channel.off()
+        self.assertEqual(['\x35'], port.bytes)
 
     def testKramerVP88Listener(self):
         port = MockSerialPort()
