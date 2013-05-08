@@ -2,6 +2,7 @@ from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
 import logging
 from logging import Handler
 import Pyro4
+from Pyro4.errors import NamingError, ProtocolError
 
 
 class Controller(object):
@@ -32,7 +33,12 @@ class Controller(object):
     def callAllClients(self, function):
         ''' function should take a client and do things to it'''
         for client in self.clients.itervalues():
-            function(client)
+            try:
+                function(client)
+            except NamingError:
+                logging.exception("Failed to call function on registered client")
+            except ProtocolError:
+                logging.exception("Failed to call function on registered client")
 
     def addDevice(self, device):
         self.devices[device.deviceID] = device
