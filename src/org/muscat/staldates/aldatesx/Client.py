@@ -41,7 +41,7 @@ class Client(Pyro4.threadutil.Thread):
         invoke_in_main_thread(self.aldatesx.hidePowerDialog)
 
     def updateOutputMappings(self, mapping):
-        invoke_in_main_thread(self.aldatesx.updateOutputMappings(mapping))
+        invoke_in_main_thread(self.aldatesx.updateOutputMappings, mapping)
 
 
 class InvokeEvent(QtCore.QEvent):
