@@ -24,3 +24,14 @@ class TestOutputsGrid(GuiTest):
         self.assertEqual("Extras", self.findButton(og, "Gallery").inputDisplay.text())
         self.assertEqual("Visuals PC", self.findButton(og, "Special").inputDisplay.text())
         self.assertEqual("Blank", self.findButton(og, "Record").inputDisplay.text())
+
+    def testDisplayInputSentToAll(self):
+        og = OutputsGrid()
+        og.updateOutputMappings({0: 1})
+        self.assertEqual("Camera 1", self.findButton(og, "Projectors").inputDisplay.text())
+        self.assertEqual("Camera 1", self.findButton(og, "Font").inputDisplay.text())
+        self.assertEqual("Camera 1", self.findButton(og, "Church").inputDisplay.text())
+        self.assertEqual("Camera 1", self.findButton(og, "Welcome").inputDisplay.text())
+        self.assertEqual("Camera 1", self.findButton(og, "Gallery").inputDisplay.text())
+        self.assertEqual("Camera 1", self.findButton(og, "Special").inputDisplay.text())
+        self.assertEqual("Camera 1", self.findButton(og, "Record").inputDisplay.text())
