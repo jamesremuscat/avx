@@ -44,10 +44,13 @@ class KramerVP88Listener(Thread):
         logging.info("Listening for responses from Kramer VP-88 at " + self.port.portstr)
         while self.running:
             message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
-            if (message[3] == 0x80 + self.machineNumber):
-                if (message[0] == 0x41) or (message[0] == 0x45):  # Notification of video switch or response to query
-                    inp = message[1] - 0x80
-                    outp = message[2] - 0x80
-                    for d in self.dispatchers:
-                        d.updateOutputMappings({outp: inp})
+            self.process(message)
         logging.info("No longer listening to Kramer VP-88 at " + self.port.portstr)
+
+    def process(self, message):
+        if (message[3] == 0x80 + self.machineNumber):
+            if (message[0] == 0x41) or (message[0] == 0x45):  # Notification of video switch or response to query
+                inp = message[1] - 0x80
+                outp = message[2] - 0x80
+                for d in self.dispatchers:
+                    d.updateOutputMappings({outp: inp})
