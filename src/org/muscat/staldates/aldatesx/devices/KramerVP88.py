@@ -3,9 +3,7 @@ Created on 10 Nov 2012
 
 @author: james
 '''
-from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
-from threading import Thread
-import logging
+from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice, SerialListener
 
 
 class KramerVP88(SerialDevice):
@@ -22,30 +20,15 @@ class KramerVP88(SerialDevice):
         return self.sendCommand(SerialDevice.byteArrayToString(toSend))
 
 
-class KramerVP88Listener(Thread):
+class KramerVP88Listener(SerialListener):
     ''' Class to listen to and interpret incoming messages from a VP88. '''
 
     dispatchers = []
 
     def __init__(self, port, machineNumber=1):
         ''' Initialise this KramerVP88 listener. port should be the same Serial that's already been passed to a KramerVP88. '''
-        Thread.__init__(self)
-        self.port = port
+        super(KramerVP88Listener, self).__init__(port)
         self.machineNumber = machineNumber
-        self.running = True
-
-    def registerDispatcher(self, dispatcher):
-        self.dispatchers.append(dispatcher)
-
-    def stop(self):
-        self.running = False
-
-    def run(self):
-        logging.info("Listening for responses from Kramer VP-88 at " + self.port.portstr)
-        while self.running:
-            message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
-            self.process(message)
-        logging.info("No longer listening to Kramer VP-88 at " + self.port.portstr)
 
     def process(self, message):
         if (message[3] == 0x80 + self.machineNumber):

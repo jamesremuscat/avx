@@ -2,6 +2,7 @@ from org.muscat.staldates.aldatesx.devices.Device import Device
 from serial import Serial, SerialException
 import logging
 import threading
+from threading import Thread
 
 
 class SerialDevice(Device):
@@ -34,6 +35,33 @@ class SerialDevice(Device):
     @staticmethod
     def byteArrayToString(byteArray):
         return ''.join(chr(b) for b in byteArray)
+
+
+class SerialListener(Thread):
+    ''' Class to listen to and interpret incoming messages from a serial device.
+        Should implement a process(message) method where message is the hex array received.
+    '''
+
+    dispatchers = []
+
+    def __init__(self, port):
+        ''' port should be an already initialised Serial. '''
+        Thread.__init__(self)
+        self.port = port
+        self.running = True
+
+    def registerDispatcher(self, dispatcher):
+        self.dispatchers.append(dispatcher)
+
+    def stop(self):
+        self.running = False
+
+    def run(self):
+        logging.info("Listening for responses from Kramer VP-88 at " + self.port.portstr)
+        while self.running:
+            message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
+            self.process(message)
+        logging.info("No longer listening to Kramer VP-88 at " + self.port.portstr)
 
 
 class FakeSerialPort(object):
