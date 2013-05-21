@@ -77,6 +77,6 @@ class OutputsGrid(QFrame):
         for outp, inp in mapping.iteritems():
             if outp in self.outputButtons.keys():
                 self.outputButtons[outp].setInputText(self.inputNames[inp])
-            elif outp == 0:  # Because 0 is a magic value somewhere along the line
+            elif outp == 0:
                 for button in self.outputButtons.values():
                     button.setInputText(self.inputNames[inp])
