@@ -162,7 +162,7 @@ class TestDevices(unittest.TestCase):
         threading.Event().wait(0.1)
         kl.stop()
 
-        dispatcher.updateOutputMappings.assert_called_with({3: 2})
+        dispatcher.updateOutputMappings.assert_called_with({'Test': {3: 2}})
 
     def testKramer602Listener(self):
         port = MockSerialPort()
@@ -179,7 +179,7 @@ class TestDevices(unittest.TestCase):
         threading.Event().wait(0.1)
         kl.stop()
 
-        dispatcher.updateOutputMappings.assert_called_with({1: 1})
+        dispatcher.updateOutputMappings.assert_called_with({'Test': {1: 1}})
 
         port = MockSerialPort()
         port.read = MagicMock(return_value=[chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
@@ -194,7 +194,7 @@ class TestDevices(unittest.TestCase):
         threading.Event().wait(0.1)
         kl.stop()
 
-        dispatcher.updateOutputMappings.assert_called_with({2: 5})
+        dispatcher.updateOutputMappings.assert_called_with({'Test': {2: 5}})
 
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):

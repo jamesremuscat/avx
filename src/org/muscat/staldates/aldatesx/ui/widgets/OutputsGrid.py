@@ -73,10 +73,10 @@ class OutputsGrid(QFrame):
         self.btnPCMix.clicked.connect(function)
 
     def updateOutputMappings(self, mapping):
-        ''' mapping should be a numeric map of the form [outp => input] '''
-        for outp, inp in mapping.iteritems():
-            if outp in self.outputButtons.keys():
-                self.outputButtons[outp].setInputText(self.inputNames[inp])
-            elif outp == 0:
-                for button in self.outputButtons.values():
-                    button.setInputText(self.inputNames[inp])
+        if 'Main' in mapping:
+            for outp, inp in mapping['Main'].iteritems():
+                if outp in self.outputButtons.keys():
+                    self.outputButtons[outp].setInputText(self.inputNames[inp])
+                elif outp == 0:
+                    for button in self.outputButtons.values():
+                        button.setInputText(self.inputNames[inp])
