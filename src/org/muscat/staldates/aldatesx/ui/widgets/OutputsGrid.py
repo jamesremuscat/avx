@@ -4,7 +4,7 @@ Created on 16 Apr 2013
 @author: jrem
 '''
 from PySide.QtGui import QFrame, QGridLayout
-from org.muscat.staldates.aldatesx.ui.widgets.Buttons import OutputButton
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import IDedButton, OutputButton
 
 
 class OutputsGrid(QFrame):
@@ -46,7 +46,7 @@ class OutputsGrid(QFrame):
         self.btnPCMix = OutputButton(ID=2)
         self.btnPCMix.setText("PC Mix")
         layout.addWidget(self.btnPCMix, 4, 0)
-        self.btnAll = OutputButton(ID=0)
+        self.btnAll = IDedButton(ID=0)
         self.btnAll.setText("All")
         layout.addWidget(self.btnAll, 4, 1)
 
@@ -77,3 +77,6 @@ class OutputsGrid(QFrame):
         for outp, inp in mapping.iteritems():
             if outp in self.outputButtons.keys():
                 self.outputButtons[outp].setInputText(self.inputNames[inp])
+            elif outp == 0:
+                for button in self.outputButtons.values():
+                    button.setInputText(self.inputNames[inp])

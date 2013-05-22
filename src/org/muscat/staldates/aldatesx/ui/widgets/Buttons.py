@@ -19,11 +19,17 @@ class InputButton(ExpandingButton):
         self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
 
 
-class OutputButton(ExpandingButton):
+class IDedButton(ExpandingButton):
 
-    def __init__(self, ID):
-        super(OutputButton, self).__init__()
+    def __init__(self, ID, parent=None):
+        super(IDedButton, self).__init__(parent)
         self.ID = ID
+
+
+class OutputButton(IDedButton):
+
+    def __init__(self, ID, parent=None):
+        super(OutputButton, self).__init__(ID, parent)
         self.inputDisplay = QLabel()
         self.inputDisplay.setText("-")
         layout = QVBoxLayout()
