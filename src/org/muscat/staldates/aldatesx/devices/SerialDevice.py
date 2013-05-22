@@ -57,11 +57,11 @@ class SerialListener(Thread):
         self.running = False
 
     def run(self):
-        logging.info("Listening for responses from Kramer VP-88 at " + self.port.portstr)
+        logging.info("Listening to serial port " + self.port.portstr)
         while self.running:
             message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
             self.process(message)
-        logging.info("No longer listening to Kramer VP-88 at " + self.port.portstr)
+        logging.info("No longer listening to serial port " + self.port.portstr)
 
 
 class FakeSerialPort(object):
