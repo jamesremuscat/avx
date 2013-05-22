@@ -38,5 +38,5 @@ class Kramer602Listener(SerialListener):
         if ((message[0] & 0x7) == (self.machineNumber - 1)):
             outp = (((message[1] & 0x1F) - 1) % 2) + 1
             inp = (((message[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
-            for d in self.dispatchers:
-                d.updateOutputMappings({outp: inp})
+            return {outp: inp}
+        return {}

@@ -61,7 +61,9 @@ class SerialListener(Thread):
         logging.info("Listening to serial port " + self.port.portstr)
         while self.running:
             message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
-            self.process(message)
+            mapp = self.process(message)
+            for d in self.dispatchers:
+                d.updateOutputMappings(mapp)
         logging.info("No longer listening to serial port " + self.port.portstr)
 
 
