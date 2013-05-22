@@ -7,7 +7,8 @@ import unittest
 from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
 from org.muscat.staldates.aldatesx.devices.tests.MockSerialPort import MockSerialPort
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
-from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
+from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602,\
+    Kramer602Listener
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclipse
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import JBSerialRelayCard, KMtronicSerialRelayCard
@@ -151,11 +152,6 @@ class TestDevices(unittest.TestCase):
         port.read = MagicMock(return_value=[chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
         kl = KramerVP88Listener(port, machineNumber=1)
 
-        class NullDispatcher(object):
-
-            def updateOutputMappings(self):
-                pass
-
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
         kl.registerDispatcher(dispatcher)
@@ -165,10 +161,42 @@ class TestDevices(unittest.TestCase):
 
         dispatcher.updateOutputMappings.assert_called_with({3: 2})
 
+    def testKramer602Listener(self):
+        port = MockSerialPort()
+        port.read = MagicMock(return_value=[chr(0x28), chr(0x81)])  # Notification that input 1 sent to output 1
+        kl = Kramer602Listener(port, machineNumber=1)
+
+        dispatcher = NullDispatcher()
+        dispatcher.updateOutputMappings = MagicMock()
+        kl.registerDispatcher(dispatcher)
+        kl.start()
+        threading.Event().wait(0.1)
+        kl.stop()
+
+        dispatcher.updateOutputMappings.assert_called_with({1: 1})
+
+        port = MockSerialPort()
+        port.read = MagicMock(return_value=[chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
+        kl = Kramer602Listener(port, machineNumber=1)
+
+        dispatcher = NullDispatcher()
+        dispatcher.updateOutputMappings = MagicMock()
+        kl.registerDispatcher(dispatcher)
+        kl.start()
+        threading.Event().wait(0.1)
+        kl.stop()
+
+        dispatcher.updateOutputMappings.assert_called_with({2: 5})
+
     def assertBytesEqual(self, expected, actual):
         for i in range(len(expected)):
             self.assertEqual(chr(expected[i]), actual[i], "Byte " + str(i) + ", expected " + str(expected[i]) + " but received " + str(ord(actual[i])))
 
+
+class NullDispatcher(object):
+
+    def updateOutputMappings(self):
+        pass
 
 if __name__ == "__main__":
     unittest.main()
