@@ -3,7 +3,8 @@ from org.muscat.staldates.aldatesx.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88,\
     KramerVP88Listener
 from org.muscat.staldates.aldatesx.devices.Inline3808 import Inline3808
-from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602
+from org.muscat.staldates.aldatesx.devices.Kramer602 import Kramer602,\
+    Kramer602Listener
 from org.muscat.staldates.aldatesx.devices.VISCACamera import VISCACamera
 from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 import Pyro4
@@ -31,6 +32,10 @@ if __name__ == "__main__":
 
     prevSwitcher = Kramer602("Preview", "/dev/usb-ports/1-1.3.3:1.0")
     controller.addDevice(prevSwitcher)
+    prevListener = Kramer602Listener(prevSwitcher, machineNumber=1)
+    prevListener.registerDispatcher(controller)
+    prevListener.start()
+    atexit.register(prevListener.stop)
 
     cam1 = VISCACamera("Camera 1", "/dev/usb-ports/1-1.3.1.3", 1)
     controller.addDevice(cam1)
