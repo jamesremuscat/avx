@@ -150,7 +150,10 @@ class TestDevices(unittest.TestCase):
     def testKramerVP88Listener(self):
         port = MockSerialPort()
         port.read = MagicMock(return_value=[chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
-        kl = KramerVP88Listener(port, machineNumber=1)
+
+        k = KramerVP88("Test", port)
+
+        kl = KramerVP88Listener(k, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
@@ -164,7 +167,10 @@ class TestDevices(unittest.TestCase):
     def testKramer602Listener(self):
         port = MockSerialPort()
         port.read = MagicMock(return_value=[chr(0x28), chr(0x81)])  # Notification that input 1 sent to output 1
-        kl = Kramer602Listener(port, machineNumber=1)
+
+        k = Kramer602("Test", port)
+
+        kl = Kramer602Listener(k, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
@@ -177,7 +183,9 @@ class TestDevices(unittest.TestCase):
 
         port = MockSerialPort()
         port.read = MagicMock(return_value=[chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
-        kl = Kramer602Listener(port, machineNumber=1)
+        k = Kramer602("Test", port)
+
+        kl = Kramer602Listener(k, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
