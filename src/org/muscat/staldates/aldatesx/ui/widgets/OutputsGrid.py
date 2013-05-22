@@ -80,3 +80,6 @@ class OutputsGrid(QFrame):
                 elif outp == 0:
                     for button in self.outputButtons.values():
                         button.setInputText(self.inputNames[inp])
+        if 'Preview' in mapping:
+            if 2 in mapping['Preview']:
+                self.btnPCMix.setInputText(self.inputNames[mapping['Preview'][2]])

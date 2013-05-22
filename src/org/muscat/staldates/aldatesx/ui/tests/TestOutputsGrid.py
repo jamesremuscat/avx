@@ -35,3 +35,11 @@ class TestOutputsGrid(GuiTest):
         self.assertEqual("Camera 1", self.findButton(og, "Gallery").inputDisplay.text())
         self.assertEqual("Camera 1", self.findButton(og, "Special").inputDisplay.text())
         self.assertEqual("Camera 1", self.findButton(og, "Record").inputDisplay.text())
+
+    def testDisplayInputSentToPCMix(self):
+        og = OutputsGrid()
+        og.updateOutputMappings({'Preview': {2: 4}})
+        self.assertEqual("DVD", self.findButton(og, "PC Mix").inputDisplay.text())
+        # And test that changing the preview side of the switcher doesn't update the PC Mix button!
+        og.updateOutputMappings({'Preview': {1: 2}})
+        self.assertEqual("DVD", self.findButton(og, "PC Mix").inputDisplay.text())
