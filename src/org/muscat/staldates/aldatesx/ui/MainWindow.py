@@ -6,6 +6,7 @@ from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPow
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 import logging
 from org.muscat.staldates.aldatesx.ui.widgets.Dialogs import PowerNotificationDialog
+from org.muscat.staldates.aldatesx.ui.widgets.BlindsControl import BlindsControl
 
 
 class MainWindow(QMainWindow):
@@ -35,7 +36,7 @@ class MainWindow(QMainWindow):
         syspower.clicked.connect(self.showSystemPower)
         mainLayout.addWidget(syspower, 1, 0)
 
-        self.bc = QWidget()
+        self.bc = BlindsControl(self.controller)
 
         blinds = ExpandingButton()
         blinds.setText("Blinds")
