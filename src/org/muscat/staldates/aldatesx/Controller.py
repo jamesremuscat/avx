@@ -233,6 +233,14 @@ class Controller(object):
             logging.warn("No device with ID " + scDevice)
         return -1
 
+    def raiseUp(self, device):
+        logging.warn("STUB Blinds/screens control not implemented yet")
+        pass  # Stub
+
+    def lower(self, device):
+        logging.warn("STUB Blinds/screens control not implemented yet")
+        pass  # Stub
+
     def systemPowerOn(self):
         if self.hasDevice("Power"):
             power = self.devices["Power"]

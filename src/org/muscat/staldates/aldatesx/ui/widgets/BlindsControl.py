@@ -24,12 +24,14 @@ class BlindsControl(QWidget):
         btnRaise.setIcon(QIcon("icons/up.svg"))
         btnRaise.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         layout.addWidget(btnRaise)
+        btnRaise.clicked.connect(lambda: controller.raiseUp("Blinds"))
 
         btnLower = ExpandingButton()
         btnLower.setText("Lower")
         btnLower.setIcon(QIcon("icons/down.svg"))
         btnLower.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         layout.addWidget(btnLower)
+        btnLower.clicked.connect(lambda: controller.lower("Blinds"))
 
         self.b = ExpandingButton()
         self.b.setText("Back")
