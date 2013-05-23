@@ -35,6 +35,13 @@ class MainWindow(QMainWindow):
         syspower.clicked.connect(self.showSystemPower)
         mainLayout.addWidget(syspower, 1, 0)
 
+        self.bc = QWidget()
+
+        blinds = ExpandingButton()
+        blinds.setText("Blinds")
+        blinds.clicked.connect(lambda: self.showScreen(self.bc))
+        mainLayout.addWidget(blinds, 1, 2)
+
         self.lv = LogViewer()
         self.lv.b.clicked.connect(self.stepBack)
 
@@ -54,20 +61,19 @@ class MainWindow(QMainWindow):
 
         self.pnd = PowerNotificationDialog(self)
 
-    def showSystemPower(self):
-        if self.stack.currentWidget() == self.spc:
+    def showScreen(self, screenWidget):
+        if self.stack.currentWidget() == screenWidget:
             self.stepBack()
         else:
-            self.stack.insertWidget(0, self.spc)
-            self.stack.setCurrentWidget(self.spc)
+            self.stack.insertWidget(0, screenWidget)
+            self.stack.setCurrentWidget(screenWidget)
+
+    def showSystemPower(self):
+        self.showScreen(self.spc)
 
     def showLog(self):
-        if self.stack.currentWidget() == self.lv:
-            self.stepBack()
-        else:
-            self.stack.insertWidget(0, self.lv)
-            self.stack.setCurrentWidget(self.lv)
-            self.lv.displayLog(self.controller.getLog())
+        self.lv.displayLog(self.controller.getLog())
+        self.showScreen(self.lv)
 
     def stepBack(self):
         self.stack.removeWidget(self.stack.currentWidget())
