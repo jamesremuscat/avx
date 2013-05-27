@@ -43,3 +43,6 @@ class TestOutputsGrid(GuiTest):
         # And test that changing the preview side of the switcher doesn't update the PC Mix button!
         og.updateOutputMappings({'Preview': {1: 2}})
         self.assertEqual("DVD", self.findButton(og, "PC Mix").inputDisplay.text())
+        # Buggy wiring means 6 is actually 5
+        og.updateOutputMappings({'Preview': {2: 6}})
+        self.assertEqual("Extras", self.findButton(og, "PC Mix").inputDisplay.text())

@@ -82,4 +82,7 @@ class OutputsGrid(QFrame):
                         button.setInputText(self.inputNames[inp])
         if 'Preview' in mapping:
             if 2 in mapping['Preview']:
-                self.btnPCMix.setInputText(self.inputNames[mapping['Preview'][2]])
+                inp = mapping['Preview'][2]
+                if inp == 6:  # HACK HACK HACK because of crossed wiring in church
+                    inp = 5
+                self.btnPCMix.setInputText(self.inputNames[inp])
