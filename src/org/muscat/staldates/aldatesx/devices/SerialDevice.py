@@ -44,11 +44,12 @@ class SerialListener(Thread):
 
     dispatchers = []
 
-    def __init__(self, device):
+    def __init__(self, device, messageSize=4):
         ''' device should be an already initialised SerialDevice. '''
         Thread.__init__(self)
         self.port = device.port
         self.deviceID = device.deviceID
+        self.messageSize = messageSize
         self.running = True
 
     def registerDispatcher(self, dispatcher):
@@ -60,7 +61,7 @@ class SerialListener(Thread):
     def run(self):
         logging.info("Listening to serial port " + self.port.portstr)
         while self.running:
-            message = [int(elem.encode("hex"), base=16) for elem in self.port.read(4)]
+            message = [int(elem.encode("hex"), base=16) for elem in self.port.read(self.messageSize)]
             mapp = self.process(message)
             for d in self.dispatchers:
                 d.updateOutputMappings({self.deviceID: mapp})

@@ -31,7 +31,7 @@ class Kramer602Listener(SerialListener):
 
     def __init__(self, port, machineNumber=1):
         ''' Initialise this Kramer602 listener. port should be the same Serial that's already been passed to a Kramer602. '''
-        super(Kramer602Listener, self).__init__(port)
+        super(Kramer602Listener, self).__init__(port, messageSize=2)
         self.machineNumber = machineNumber
 
     def process(self, message):
