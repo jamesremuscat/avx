@@ -35,8 +35,12 @@ class Kramer602Listener(SerialListener):
         self.machineNumber = machineNumber
 
     def process(self, message):
+        logging.debug("Received from Kramer 602: " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
         if ((message[0] & 0x7) == (self.machineNumber - 1)):
-            outp = (((message[1] & 0x1F) - 1) % 2) + 1
-            inp = (((message[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
-            return {outp: inp}
+            if (message[1] & 0x20) == 0:  # Not just a "I switched successfully" message
+                outp = (((message[1] & 0x1F) - 1) % 2) + 1
+                inp = (((message[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
+                return {outp: inp}
+            else:
+                self.port.write("\x00\xA1")  # Request device to send current status so listener can intercept
         return {}
