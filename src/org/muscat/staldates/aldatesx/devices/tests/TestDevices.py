@@ -48,7 +48,8 @@ class TestDevices(unittest.TestCase):
         k602 = Kramer602("Test", port)
 
         k602.initialise()
-        self.assertEqual([0x0, 0xA1], port.bytes)
+        self.assertBytesEqual([0x0, 0xA1], port.bytes)
+        port.clear()
 
         k602.sendInputToOutput(2, 1)
         self.assertBytesEqual([0x0, 0x83], port.bytes)
