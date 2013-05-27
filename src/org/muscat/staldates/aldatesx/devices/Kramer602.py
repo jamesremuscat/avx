@@ -23,6 +23,10 @@ class Kramer602(SerialDevice):
             code = [0, 0x80 + (2 * inChannel) - (2 - outChannel)]
             self.sendCommand(SerialDevice.byteArrayToString(code))
 
+    def initialise(self):
+        SerialDevice.initialise(self)
+        self.port.write("\x00\xA1")  # Report current status to listeners
+
 
 class Kramer602Listener(SerialListener):
     ''' Class to listen to and interpret incoming messages from a VP88. '''
