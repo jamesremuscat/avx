@@ -1,4 +1,5 @@
-from PySide.QtGui import QGridLayout, QMainWindow, QMessageBox, QStackedWidget, QWidget
+from PySide.QtGui import QGridLayout, QIcon, QMainWindow, QMessageBox, QStackedWidget, QWidget
+from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.ui.widgets.Clock import Clock
 from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
@@ -32,8 +33,10 @@ class MainWindow(QMainWindow):
         self.spc.btnOff.clicked.connect(self.controller.systemPowerOff)
 
         syspower = ExpandingButton()
-        syspower.setText("System Power")
+        syspower.setText("Power")
         syspower.clicked.connect(self.showSystemPower)
+        syspower.setIcon(QIcon("icons/system-shutdown.svg"))
+        syspower.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(syspower, 1, 0)
 
         self.bc = BlindsControl(self.controller)
@@ -42,7 +45,15 @@ class MainWindow(QMainWindow):
         blinds = ExpandingButton()
         blinds.setText("Blinds")
         blinds.clicked.connect(lambda: self.showScreen(self.bc))
+        blinds.setIcon(QIcon("icons/blinds.svg"))
+        blinds.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(blinds, 1, 2)
+
+        screens = ExpandingButton()
+        screens.setText("Screens")
+        screens.setIcon(QIcon("icons/screens.svg"))
+        screens.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        mainLayout.addWidget(screens, 1, 3)
 
         self.lv = LogViewer()
         self.lv.b.clicked.connect(self.stepBack)
