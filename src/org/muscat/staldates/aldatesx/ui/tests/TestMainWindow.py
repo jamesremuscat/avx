@@ -23,7 +23,7 @@ class TestMainWindow(GuiTest):
         self.main = MainWindow(self.mockController)
 
     def testSystemPower(self):
-        spcButton = self.findButton(self.main, "System Power")
+        spcButton = self.findButton(self.main, "Power")
         self.assertFalse(spcButton == None)
 
         spcButton.click()
