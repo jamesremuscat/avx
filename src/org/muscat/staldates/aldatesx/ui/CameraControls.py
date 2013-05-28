@@ -21,10 +21,10 @@ class PlusMinusButtons(QWidget):
     def __init__(self, caption, upBinding, downBinding):
         super(PlusMinusButtons, self).__init__()
         self.upButton = CameraButton(upBinding)
-        self.upButton.setIcon(QIcon("icons/gtk-add.svg"))
+        self.upButton.setIcon(QIcon("icons/list-add.svg"))
 
         self.downButton = CameraButton(downBinding)
-        self.downButton.setIcon(QIcon("icons/gtk-remove.svg"))
+        self.downButton.setIcon(QIcon("icons/list-remove.svg"))
 
         self.caption = QLabel("<b>" + caption + "</b>")
         self.caption.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
@@ -98,25 +98,25 @@ class CameraControl(QWidget):
         layout.addWidget(self.btnUp, 0, 1, 2, 1)
         self.btnUp.pressed.connect(self.move)
         self.btnUp.released.connect(self.stop)
-        self.btnUp.setIcon(QIcon("icons/up.svg"))
+        self.btnUp.setIcon(QIcon("icons/go-up.svg"))
 
         self.btnLeft = CameraButton(CameraMove.Left)
         layout.addWidget(self.btnLeft, 1, 0, 2, 1)
         self.btnLeft.pressed.connect(self.move)
         self.btnLeft.released.connect(self.stop)
-        self.btnLeft.setIcon(QIcon("icons/back.svg"))
+        self.btnLeft.setIcon(QIcon("icons/go-previous.svg"))
 
         self.btnDown = CameraButton(CameraMove.Down)
         layout.addWidget(self.btnDown, 2, 1, 2, 1)
         self.btnDown.pressed.connect(self.move)
         self.btnDown.released.connect(self.stop)
-        self.btnDown.setIcon(QIcon("icons/down.svg"))
+        self.btnDown.setIcon(QIcon("icons/go-down.svg"))
 
         self.btnRight = CameraButton(CameraMove.Right)
         layout.addWidget(self.btnRight, 1, 2, 2, 1)
         self.btnRight.pressed.connect(self.move)
         self.btnRight.released.connect(self.stop)
-        self.btnRight.setIcon(QIcon("icons/forward.svg"))
+        self.btnRight.setIcon(QIcon("icons/go-next.svg"))
 
         zoomInOut = PlusMinusButtons("Zoom", CameraZoom.Tele, CameraZoom.Wide)
         zoomInOut.connectPressed(self.zoom)
