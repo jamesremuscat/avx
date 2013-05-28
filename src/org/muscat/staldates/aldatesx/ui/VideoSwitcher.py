@@ -161,6 +161,12 @@ class VideoSwitcher(QWidget):
         self.gridlayout.addWidget(chosenPanel, 1, 0, 1, 5)
         chosenPanel.show()
 
+        # Prevent certain options from being selectable
+        if inputID == 6 or inputID == 0:
+            self.outputsGrid.btnPCMix.setEnabled(False)
+        else:
+            self.outputsGrid.btnPCMix.setEnabled(True)
+
     def handleOutputSelect(self):
         outputChannel = self.sender().ID
         inputChannel = self.inputs.checkedId()

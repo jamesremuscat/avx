@@ -75,6 +75,16 @@ class TestVideoSwitcher(GuiTest):
         outputsGrid.btnPCMix.click()
         self.assertFalse(self.preview.sendInputToOutput.called)
         self.assertFalse(self.main.sendInputToOutput.called)
+        self.assertFalse(outputsGrid.btnPCMix.isEnabled())
+
+    def testCantBlankPCMix(self):
+        outputsGrid = self.vs.findChild(OutputsGrid)
+
+        self.vs.btnBlank.click()
+        outputsGrid.btnPCMix.click()
+        self.assertFalse(self.preview.sendInputToOutput.called)
+        self.assertFalse(self.main.sendInputToOutput.called)
+        self.assertFalse(outputsGrid.btnPCMix.isEnabled())
 
     def testKeyboardControls(self):
         QTest.keyClick(self.vs, Qt.Key_0)
