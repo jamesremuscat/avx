@@ -9,7 +9,7 @@ class Clock(QLabel):
 
     def __init__(self, parent=None):
         super(Clock, self).__init__(parent)
-        self.setAlignment(Qt.AlignRight)
+        self.setAlignment(Qt.AlignCenter)
 
         timer = QTimer(self)
         timer.timeout.connect(self.updateClock)
