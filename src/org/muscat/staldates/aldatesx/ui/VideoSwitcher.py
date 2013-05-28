@@ -204,8 +204,7 @@ class VideoSwitcher(QWidget):
     def showCameraAdvanced(self, camDevice):
         ctls = AdvancedCameraControl(self.controller, camDevice)
         ctls.b.clicked.connect(self.mainWindow.stepBack)
-        self.mainWindow.stack.insertWidget(0, ctls)
-        self.mainWindow.stack.setCurrentIndex(0)
+        self.mainWindow.showScreen(ctls)
 
     def updateOutputMappings(self, mapping):
         self.outputsGrid.updateOutputMappings(mapping)
