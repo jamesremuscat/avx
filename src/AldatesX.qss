@@ -16,7 +16,7 @@ InputButton, OutputButton, OptionButton, ExpandingButton {
 	color: white;
 }
 
-ExpandingButton:pressed, InputButton:checked, OptionButton:checked {
+ExpandingButton:pressed, ExpandingButton:checked {
 	background-color: #E4E4FF;
 	color: black;
 }
