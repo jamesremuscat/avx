@@ -3,7 +3,7 @@ from org.muscat.staldates.aldatesx.Controller import Controller
 from mock import MagicMock
 
 
-class Test(TestCase):
+class TestController(TestCase):
 
     def testTalkToClients(self):
         c = Controller()
