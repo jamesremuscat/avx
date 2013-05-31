@@ -3,6 +3,11 @@ from org.muscat.staldates.aldatesx.devices.Device import Device
 
 
 class SerialRelayCard(SerialDevice):
+    '''
+    A serial relay card is a single serial device which may control multiple relays.
+    For convenience, each relay on a card may have its own device which can be created by calling
+    createDevice on the relay card.
+    '''
 
     def __init__(self, deviceID, serialDevice, **others):
         SerialDevice.__init__(self, deviceID, serialDevice, **others)
@@ -26,11 +31,6 @@ class RelayDevice(Device):
 
 
 class KMtronicSerialRelayCard(SerialRelayCard):
-    '''
-    A serial relay card is a single serial device which may control multiple relays.
-    For convenience, each relay on a card may have its own device which can be created by calling
-    createDevice on the relay card.
-    '''
 
     def __init__(self, deviceID, serialDevice):
         SerialRelayCard.__init__(self, deviceID, serialDevice)
