@@ -1,4 +1,4 @@
-from PySide.QtCore import Qt
+from PySide.QtCore import Qt, QSize
 from PySide.QtGui import QButtonGroup, QIcon, QLabel, QGridLayout, QWidget
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton,\
     IDedButton
@@ -36,19 +36,30 @@ class BlindsControl(QWidget):
         btnAll.setChecked(True)
         self.blinds.addButton(btnAll, 0)
 
+        iconSize = QSize(96, 96)
+
         btnRaise = ExpandingButton()
         btnRaise.setText("Raise")
         btnRaise.setIcon(QIcon("icons/go-up.svg"))
         btnRaise.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        layout.addWidget(btnRaise, 2, 2, 1, 3)
+        layout.addWidget(btnRaise, 2, 1, 1, 3)
         btnRaise.clicked.connect(lambda: controller.raiseUp("Blinds"))
+        btnRaise.setIconSize(iconSize)
 
         btnLower = ExpandingButton()
         btnLower.setText("Lower")
         btnLower.setIcon(QIcon("icons/go-down.svg"))
         btnLower.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        layout.addWidget(btnLower, 3, 2, 1, 3)
+        layout.addWidget(btnLower, 3, 1, 1, 3)
         btnLower.clicked.connect(lambda: controller.lower("Blinds"))
+        btnLower.setIconSize(iconSize)
+
+        btnStop = ExpandingButton()
+        btnStop.setText("Stop")
+        btnStop.setIcon(QIcon("icons/process-stop.svg"))
+        btnStop.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        layout.addWidget(btnStop, 2, 4, 2, 2)
+        btnStop.setIconSize(iconSize)
 
         self.b = ExpandingButton()
         self.b.setText("Back")
