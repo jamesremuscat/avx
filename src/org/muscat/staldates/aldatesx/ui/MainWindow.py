@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         syspower.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(syspower, 1, 0)
 
-        self.bc = BlindsControl(self.controller)
+        self.bc = BlindsControl(self.controller, self)
         self.bc.b.clicked.connect(self.stepBack)
 
         blinds = ExpandingButton()
