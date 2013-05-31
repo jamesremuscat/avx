@@ -8,6 +8,7 @@ from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 import logging
 from org.muscat.staldates.aldatesx.ui.widgets.Dialogs import PowerNotificationDialog
 from org.muscat.staldates.aldatesx.ui.widgets.BlindsControl import BlindsControl
+from org.muscat.staldates.aldatesx.ui.widgets.ProjectorScreensControl import ProjectorScreensControl
 
 
 class MainWindow(QMainWindow):
@@ -49,8 +50,12 @@ class MainWindow(QMainWindow):
         blinds.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(blinds, 1, 2)
 
+        self.sc = ProjectorScreensControl(self.controller, self)
+        self.sc.b.clicked.connect(self.stepBack)
+
         screens = ExpandingButton()
         screens.setText("Screens")
+        screens.clicked.connect(lambda: self.showScreen(self.sc))
         screens.setIcon(QIcon("icons/screens.svg"))
         screens.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(screens, 1, 3)
