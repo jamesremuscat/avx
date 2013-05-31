@@ -1,5 +1,6 @@
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
 from org.muscat.staldates.aldatesx.devices.Device import Device
+import logging
 
 
 class SerialRelayCard(SerialDevice):
@@ -52,3 +53,59 @@ class JBSerialRelayCard(SerialRelayCard):
 
     def off(self, channel):
         return self.sendCommand(SerialDevice.byteArrayToString([0x31 + 2 * channel]))
+
+
+class UpDownStopRelay(Device):
+
+    def __init__(self, deviceID, directionRelay, startStopRelay):
+        super(UpDownStopRelay, self).__init__(deviceID)
+        self.directionRelay = directionRelay
+        self.startStopRelay = startStopRelay
+
+    def raiseUp(self):
+        self.directionRelay.on()
+        self.startStopRelay.on()
+
+    def lower(self):
+        self.directionRelay.off()
+        self.startStopRelay.on()
+
+    def stop(self):
+        self.startStopRelay.off()
+
+
+class UpDownStopArray(Device):
+
+    def __init__(self, deviceID, relays={}):
+        super(UpDownStopArray, self).__init__(deviceID)
+        self.relays = relays
+
+    def add(self, device, number):
+        self.relays[number] = device
+
+    def raiseUp(self, number):
+        if number in self.relays.keys():
+            self.relays[number].raiseUp()
+        elif number == 0:
+            for r in self.relays.values():
+                r.raiseUp()
+        else:
+            logging.error("Tried to raise relay channel " + str(number) + " but no such device attached to " + self.deviceID)
+
+    def lower(self, number):
+        if number in self.relays.keys():
+            self.relays[number].lower()
+        elif number == 0:
+            for r in self.relays.values():
+                r.lower()
+        else:
+            logging.error("Tried to lower relay channel " + str(number) + " but no such device attached to " + self.deviceID)
+
+    def stop(self, number):
+        if number in self.relays.keys():
+            self.relays[number].stop()
+        elif number == 0:
+            for r in self.relays.values():
+                r.stop()
+        else:
+            logging.error("Tried to stop relay channel " + str(number) + " but no such device attached to " + self.deviceID)
