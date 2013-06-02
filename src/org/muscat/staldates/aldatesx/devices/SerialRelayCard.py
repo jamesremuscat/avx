@@ -1,6 +1,7 @@
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
 from org.muscat.staldates.aldatesx.devices.Device import Device
 import logging
+import time
 
 
 class SerialRelayCard(SerialDevice):
@@ -49,10 +50,14 @@ class JBSerialRelayCard(SerialRelayCard):
         SerialRelayCard.__init__(self, deviceID, serialDevice, baud=19200)
 
     def on(self, channel):
-        return self.sendCommand(SerialDevice.byteArrayToString([0x30 + 2 * channel]))
+        result = self.sendCommand(SerialDevice.byteArrayToString([0x30 + 2 * channel]))
+        time.sleep(0.01)
+        return result
 
     def off(self, channel):
-        return self.sendCommand(SerialDevice.byteArrayToString([0x31 + 2 * channel]))
+        result = self.sendCommand(SerialDevice.byteArrayToString([0x31 + 2 * channel]))
+        time.sleep(0.01)
+        return result
 
 
 class UpDownStopRelay(Device):
