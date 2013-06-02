@@ -102,7 +102,7 @@ class ProjectorScreensControl(QWidget):
     def stop(self):
         screenID = self.screens.checkedId()
         try:
-            self.controller.lower("Screens", screenID)
+            self.controller.stop("Screens", screenID)
         except NamingError:
             self.mainWindow.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
