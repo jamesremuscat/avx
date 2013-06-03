@@ -135,7 +135,8 @@ class TestDevices(unittest.TestCase):
         card = JBSerialRelayCard("Test", port)
 
         card.initialise()
-        self.assertEqual([], port.bytes)
+        self.assertEqual(['\x31'], port.bytes)
+        port.clear()
 
         card.on(1)
         self.assertEqual(['\x32'], port.bytes)
