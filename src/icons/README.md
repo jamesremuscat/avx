@@ -1,7 +1,7 @@
 Icons
 =====
 
-These icons are taken from the Tango desktop project http://tango.freedesktop.org/
+These icons are taken (or derived) from the Tango desktop project http://tango.freedesktop.org/
 
 License from that page:
 
