@@ -42,7 +42,11 @@ class TestMainWindow(GuiTest):
         entry = FakeLogEntry("2013-04-17 18:45:38", "ERROR", "This is a test message")
         self.mockController.getLog = MagicMock(return_value=[entry])
 
-        logButton = self.findButton(self.main, "Log")
+        advMenuButton = self.findButton(self.main, "Advanced")
+        advMenuButton.click()
+        top = self.main.stack.currentWidget()
+
+        logButton = self.findButton(top, "Log")
         logButton.click()
         lw = self.main.stack.currentWidget()
         self.assertTrue(isinstance(lw, LogViewer))
