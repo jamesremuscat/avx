@@ -10,6 +10,7 @@ from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPow
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
+from org.muscat.staldates.aldatesx.ui.widgets.ProjectorScreensControl import ProjectorScreensControl
 
 
 class TestMainWindow(GuiTest):
@@ -22,12 +23,15 @@ class TestMainWindow(GuiTest):
 
         self.main = MainWindow(self.mockController)
 
+    def getCurrentScreen(self):
+        return self.main.stack.currentWidget()
+
     def testSystemPower(self):
         spcButton = self.findButton(self.main, "Power")
         self.assertFalse(spcButton == None)
 
         spcButton.click()
-        spc = self.main.stack.currentWidget()
+        spc = self.getCurrentScreen()
         self.assertTrue(isinstance(spc, SystemPowerWidget))
         spc.btnOn.click()
         self.assertEquals(self.mockController.systemPowerOn.call_count, 1)
@@ -44,13 +48,39 @@ class TestMainWindow(GuiTest):
 
         advMenuButton = self.findButton(self.main, "Advanced")
         advMenuButton.click()
-        top = self.main.stack.currentWidget()
+        top = self.getCurrentScreen()
 
         logButton = self.findButton(top, "Log")
         logButton.click()
         lw = self.main.stack.currentWidget()
         self.assertTrue(isinstance(lw, LogViewer))
         self.assertEqual(self.mockController.getLog.call_count, 1)
+
+    def testScreens(self):
+        self.findButton(self.main, "Screens").click()
+        top = self.getCurrentScreen()
+        self.assertTrue(isinstance(top, ProjectorScreensControl))
+
+        self.mockController.raiseUp = MagicMock(return_value=0)
+        self.findButton(top, "Raise").click()
+        self.mockController.raiseUp.assert_called_once_with("Screens", 0)
+
+        self.mockController.lower = MagicMock(return_value=0)
+        self.findButton(top, "Lower").click()
+        self.mockController.lower.assert_called_once_with("Screens", 0)
+
+        self.mockController.stop = MagicMock(return_value=0)
+        self.findButton(top, "Stop").click()
+        self.mockController.stop.assert_called_once_with("Screens", 0)
+
+        self.mockController.raiseUp.reset_mock()
+        self.mockController.lower.reset_mock()
+        self.findButton(top, "Left").click()
+        self.findButton(top, "Raise").click()
+        self.mockController.raiseUp.assert_called_once_with("Screens", 1)
+        self.findButton(top, "Right").click()
+        self.findButton(top, "Lower").click()
+        self.mockController.lower.assert_called_once_with("Screens", 2)
 
 
 class FakeLogEntry(object):

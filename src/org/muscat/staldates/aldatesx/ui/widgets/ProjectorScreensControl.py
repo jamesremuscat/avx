@@ -29,7 +29,7 @@ class ProjectorScreensControl(QWidget):
         btnLeft.setText("Left")
         layout.addWidget(btnLeft, 1, 0, 1, 2)
         btnLeft.setCheckable(True)
-        self.screens.addButton(btnLeft, 0)
+        self.screens.addButton(btnLeft, 1)
 
         btnAll = IDedButton(0)
         btnAll.setText("Both")
@@ -42,7 +42,7 @@ class ProjectorScreensControl(QWidget):
         btnRight.setText("Right")
         layout.addWidget(btnRight, 1, 5, 1, 2)
         btnRight.setCheckable(True)
-        self.screens.addButton(btnRight, 0)
+        self.screens.addButton(btnRight, 2)
 
         iconSize = QSize(96, 96)
 
