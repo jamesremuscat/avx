@@ -29,6 +29,11 @@ class AdvancedMenu(QWidget):
         log.clicked.connect(self.showLog)
         layout.addWidget(log)
 
+        btnQuit = ExpandingButton()
+        btnQuit.setText("Exit AldatesX")
+        btnQuit.clicked.connect(mainWindow.close)
+        layout.addWidget(btnQuit)
+
         b = ExpandingButton()
         b.setText("Back")
         b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
