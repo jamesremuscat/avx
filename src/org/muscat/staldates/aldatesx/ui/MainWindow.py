@@ -9,6 +9,7 @@ import logging
 from org.muscat.staldates.aldatesx.ui.widgets.Dialogs import PowerNotificationDialog
 from org.muscat.staldates.aldatesx.ui.widgets.BlindsControl import BlindsControl
 from org.muscat.staldates.aldatesx.ui.widgets.ProjectorScreensControl import ProjectorScreensControl
+from org.muscat.staldates.aldatesx.ui.widgets.AdvancedMenu import AdvancedMenu
 
 
 class MainWindow(QMainWindow):
@@ -60,13 +61,14 @@ class MainWindow(QMainWindow):
         screens.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(screens, 1, 3)
 
-        self.lv = LogViewer()
-        self.lv.b.clicked.connect(self.stepBack)
+        self.advMenu = AdvancedMenu(self.controller, self)
 
-        log = ExpandingButton()
-        log.setText("Log")
-        log.clicked.connect(self.showLog)
-        mainLayout.addWidget(log, 1, 5)
+        adv = ExpandingButton()
+        adv.setText("Advanced")
+        adv.setIcon(QIcon("icons/applications-system.svg"))
+        adv.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        adv.clicked.connect(lambda: self.showScreen(self.advMenu))
+        mainLayout.addWidget(adv, 1, 5)
 
         mainLayout.addWidget(Clock(), 1, 6)
 
@@ -88,10 +90,6 @@ class MainWindow(QMainWindow):
 
     def showSystemPower(self):
         self.showScreen(self.spc)
-
-    def showLog(self):
-        self.lv.displayLog(self.controller.getLog())
-        self.showScreen(self.lv)
 
     def stepBack(self):
         self.stack.removeWidget(self.stack.currentWidget())
