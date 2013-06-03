@@ -29,6 +29,11 @@ class AdvancedMenu(QWidget):
         log.clicked.connect(self.showLog)
         layout.addWidget(log)
 
+        btnAutoTrack = ExpandingButton()
+        btnAutoTrack.setText("Recalibrate Extras scan converter")
+        btnAutoTrack.clicked.connect(lambda: controller.recalibrate("Extras Scan Converter"))
+        layout.addWidget(btnAutoTrack)
+
         btnQuit = ExpandingButton()
         btnQuit.setText("Exit AldatesX")
         btnQuit.clicked.connect(mainWindow.close)

@@ -24,3 +24,6 @@ class KramerVP703(SerialDevice):
 
     def unfreeze(self):
         return self.sendCommand("Image Freeze = 0\r\n")
+
+    def recalibrate(self):
+        return self.sendCommand("AutoTrack = 1\r\n")

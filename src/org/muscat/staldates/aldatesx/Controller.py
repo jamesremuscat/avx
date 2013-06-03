@@ -233,6 +233,14 @@ class Controller(object):
             logging.warn("No device with ID " + scDevice)
         return -1
 
+    def recalibrate(self, scDevice):
+        if self.hasDevice(scDevice):
+            sc = self.devices[scDevice]
+            sc.recalibrate()
+        else:
+            logging.warn("No device with ID " + scDevice)
+        return -1
+
     def raiseUp(self, device, number):
         if self.hasDevice(device):
             logging.debug("Raising " + device + ":" + str(number))
