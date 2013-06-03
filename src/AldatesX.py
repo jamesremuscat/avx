@@ -17,11 +17,6 @@ import logging
 import sys
 
 
-class AldatesX(MainWindow):
-
-    def __init__(self, controller):
-        super(AldatesX, self).__init__(controller)
-
 if __name__ == "__main__":
 
     pid_file = 'aldatesx.pid'
@@ -52,7 +47,7 @@ if __name__ == "__main__":
 
     controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
 
-    myapp = AldatesX(controller)
+    myapp = MainWindow(controller)
 
     client = Client(myapp)
     client.setDaemon(True)
