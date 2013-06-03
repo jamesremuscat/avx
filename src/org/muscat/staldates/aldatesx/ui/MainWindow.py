@@ -2,7 +2,6 @@ from PySide.QtGui import QGridLayout, QIcon, QMainWindow, QMessageBox, QStackedW
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.ui.widgets.Clock import Clock
-from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
 from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPowerWidget
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 import logging
