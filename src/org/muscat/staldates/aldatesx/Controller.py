@@ -33,9 +33,10 @@ class Controller(object):
         ''' function should take a client and do things to it'''
         for uri, client in self.clients.iteritems():
             try:
+                logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
                 function(client)
             except:
-                logging.exception("Failed to call function on registered client " + uri)
+                logging.exception("Failed to call function on registered client " + str(uri))
 
     def addDevice(self, device):
         self.devices[device.deviceID] = device
@@ -268,7 +269,7 @@ class Controller(object):
     def systemPowerOn(self):
         if self.hasDevice("Power"):
             power = self.devices["Power"]
-
+            logging.info("Turning ON system power")
             self.sequencer.sequence(
                 Event(lambda: self.callAllClients(lambda c: c.showPowerOnDialog())),
                 Event(power.on, 1),
@@ -285,7 +286,7 @@ class Controller(object):
     def systemPowerOff(self):
         if self.hasDevice("Power"):
             power = self.devices["Power"]
-
+            logging.info("Turning OFF system power")
             self.sequencer.sequence(
                 Event(lambda: self.callAllClients(lambda c: c.showPowerOffDialog())),
                 Event(power.off, 4),
