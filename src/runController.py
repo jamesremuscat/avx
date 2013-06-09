@@ -54,7 +54,7 @@ if __name__ == "__main__":
     extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
     controller.addDevice(extrasSwitcher)
 
-    powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.4:1.0")
+    powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.1:1.0")
     controller.addDevice(powerSwitches)
 
     ##### Aldates configuration above

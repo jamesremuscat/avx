@@ -49,10 +49,6 @@ class JBSerialRelayCard(SerialRelayCard):
     def __init__(self, deviceID, serialDevice):
         SerialRelayCard.__init__(self, deviceID, serialDevice, baud=19200)
 
-    def initialise(self):
-        SerialRelayCard.initialise(self)
-        self.sendCommand("\x31")
-
     def on(self, channel):
         result = self.sendCommand(SerialDevice.byteArrayToString([0x30 + 2 * channel]))
         time.sleep(0.01)
