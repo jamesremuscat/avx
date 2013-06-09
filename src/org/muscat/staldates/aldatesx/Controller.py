@@ -276,9 +276,10 @@ class Controller(object):
                 self.sequencer.wait(3),
                 Event(power.on, 2),
                 self.sequencer.wait(3),
+                Event(power.on, 5),
                 Event(power.on, 3),
                 self.sequencer.wait(3),
-                Event(power.on, 4),
+                Event(power.on, 6),
                 Event(self.initialise),  # By this time all things we care about to initialise will have been switched on
                 Event(lambda: self.callAllClients(lambda c: c.hidePowerDialog())),
             )
@@ -289,8 +290,9 @@ class Controller(object):
             logging.info("Turning OFF system power")
             self.sequencer.sequence(
                 Event(lambda: self.callAllClients(lambda c: c.showPowerOffDialog())),
-                Event(power.off, 4),
+                Event(power.off, 6),
                 self.sequencer.wait(3),
+                Event(power.off, 5),
                 Event(power.off, 3),
                 self.sequencer.wait(3),
                 Event(power.off, 2),

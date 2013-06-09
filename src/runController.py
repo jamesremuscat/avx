@@ -10,7 +10,7 @@ from org.muscat.staldates.aldatesx.devices.KramerVP703 import KramerVP703
 import Pyro4
 import atexit
 import logging
-from org.muscat.staldates.aldatesx.devices.SerialRelayCard import KMtronicSerialRelayCard
+from org.muscat.staldates.aldatesx.devices.SerialRelayCard import JBSerialRelayCard
 from org.muscat.staldates.aldatesx import PyroUtils
 
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     extrasSwitcher = Inline3808("Extras", "/dev/usb-ports/1-1.3.4:1.0")
     controller.addDevice(extrasSwitcher)
 
-    powerSwitches = KMtronicSerialRelayCard("Power", "/dev/usb-ports/1-1.2.4:1.0")
+    powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.4:1.0")
     controller.addDevice(powerSwitches)
 
     ##### Aldates configuration above
