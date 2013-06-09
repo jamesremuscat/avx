@@ -58,15 +58,15 @@ if __name__ == "__main__":
     powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.1:1.0")
     controller.addDevice(powerSwitches)
     
-    blindsOneToFour = JBSerialRelayCard("Blinds 1-4", "/dev/usb-ports/1-1.2.2:1.0")
-    blindsFiveToSix = JBSerialRelayCard("Blinds 5-8", "/dev/usb-ports/1-1.2.3:1.0")
+    blindsOneToThree = JBSerialRelayCard("Blinds 1-4", "/dev/usb-ports/1-1.2.2:1.0")
+    blindsFourToSix = JBSerialRelayCard("Blinds 5-8", "/dev/usb-ports/1-1.2.3:1.0")
     
-    blind1 = UpDownStopRelay("Blind 1", blindsOneToFour.createDevice("blind1_updown", 2), blindsOneToFour.createDevice("blind1_gostop", 1))
-    blind2 = UpDownStopRelay("Blind 2", blindsOneToFour.createDevice("blind2_updown", 4), blindsOneToFour.createDevice("blind2_gostop", 3))
-    blind3 = UpDownStopRelay("Blind 3", blindsOneToFour.createDevice("blind3_updown", 6), blindsOneToFour.createDevice("blind3_gostop", 5))
-    blind4 = UpDownStopRelay("Blind 4", blindsOneToFour.createDevice("blind4_updown", 8), blindsOneToFour.createDevice("blind4_gostop", 7))
-    blind5 = UpDownStopRelay("Blind 5", blindsFiveToSix.createDevice("blind5_updown", 2), blindsFiveToSix.createDevice("blind5_gostop", 1))
-    blind6 = UpDownStopRelay("Blind 6", blindsFiveToSix.createDevice("blind6_updown", 4), blindsFiveToSix.createDevice("blind6_gostop", 3))
+    blind1 = UpDownStopRelay("Blind 1", blindsOneToThree.createDevice("blind1_updown", 2), blindsOneToThree.createDevice("blind1_gostop", 1))
+    blind2 = UpDownStopRelay("Blind 2", blindsOneToThree.createDevice("blind2_updown", 8), blindsOneToThree.createDevice("blind2_gostop", 7))
+    blind3 = UpDownStopRelay("Blind 3", blindsOneToThree.createDevice("blind3_updown", 6), blindsOneToThree.createDevice("blind3_gostop", 5))
+    blind4 = UpDownStopRelay("Blind 4", blindsFourToSix.createDevice("blind4_updown", 4), blindsFourToSix.createDevice("blind4_gostop", 3))
+    blind5 = UpDownStopRelay("Blind 5", blindsFourToSix.createDevice("blind5_updown", 2), blindsFourToSix.createDevice("blind5_gostop", 1))
+    blind6 = UpDownStopRelay("Blind 6", blindsFourToSix.createDevice("blind6_updown", 8), blindsFourToSix.createDevice("blind6_gostop", 7))
 
     blinds = UpDownStopArray("Blinds", {1: blind1, 2: blind2, 3: blind3, 4: blind4, 5: blind5, 6: blind6})
     controller.addDevice(blinds)
