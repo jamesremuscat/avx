@@ -70,6 +70,11 @@ if __name__ == "__main__":
 
     blinds = UpDownStopArray("Blinds", {1: blind1, 2: blind2, 3: blind3, 4: blind4, 5: blind5, 6: blind6})
     controller.addDevice(blinds)
+    
+    screen1 = UpDownStopRelay("Screen 1", powerSwitches.createDevice("screen1_updown", 4), powerSwitches.createDevice("screen1_gostop", 3))
+    screen2 = UpDownStopRelay("Screen 2", powerSwitches.createDevice("screen2_updown", 8), powerSwitches.createDevice("screen2_gostop", 7))
+    screens = UpDownStopArray("Screens", {1: screen1, 2: screen2})
+    controller.addDevice(screens)
 
     ##### Aldates configuration above
 
