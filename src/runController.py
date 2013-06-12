@@ -57,10 +57,10 @@ if __name__ == "__main__":
 
     powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.1:1.0")
     controller.addDevice(powerSwitches)
-    
+
     blindsOneToThree = JBSerialRelayCard("Blinds 1-4", "/dev/usb-ports/1-1.2.2:1.0")
     blindsFourToSix = JBSerialRelayCard("Blinds 5-8", "/dev/usb-ports/1-1.2.3:1.0")
-    
+
     blind1 = UpDownStopRelay("Blind 1", blindsOneToThree.createDevice("blind1_updown", 2), blindsOneToThree.createDevice("blind1_gostop", 1))
     blind2 = UpDownStopRelay("Blind 2", blindsOneToThree.createDevice("blind2_updown", 8), blindsOneToThree.createDevice("blind2_gostop", 7))
     blind3 = UpDownStopRelay("Blind 3", blindsOneToThree.createDevice("blind3_updown", 6), blindsOneToThree.createDevice("blind3_gostop", 5))
