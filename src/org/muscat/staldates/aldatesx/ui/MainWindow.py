@@ -79,6 +79,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(outer)
 
         self.pnd = PowerNotificationDialog(self)
+        self.pnd.accepted.connect(self.hidePowerDialog)
 
     def showScreen(self, screenWidget):
         if self.stack.currentWidget() == screenWidget:

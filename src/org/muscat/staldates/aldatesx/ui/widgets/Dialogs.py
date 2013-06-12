@@ -1,5 +1,6 @@
-from PySide.QtGui import QDialog, QHBoxLayout, QLabel, QMovie
+from PySide.QtGui import QDialog, QGridLayout, QLabel, QMovie
 from PySide.QtCore import Qt
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 
 
 class PowerNotificationDialog(QDialog):
@@ -13,17 +14,22 @@ class PowerNotificationDialog(QDialog):
         super(PowerNotificationDialog, self).__init__(parent)
         self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
 
-        layout = QHBoxLayout()
+        layout = QGridLayout()
 
         spinBox = QLabel()
         spinner = QMovie("icons/spinner.gif")
         spinner.start()
         spinBox.setMovie(spinner)
-        layout.addWidget(spinBox)
+        layout.addWidget(spinBox, 0, 0)
 
         self.textBox = QLabel()
 
-        layout.addWidget(self.textBox)
+        layout.addWidget(self.textBox, 0, 1, 1, 3)
+
+        btnOK = ExpandingButton()
+        btnOK.setText("OK")
+        btnOK.clicked.connect(self.accept)
+        layout.addWidget(btnOK, 1, 1, 1, 2)
 
         self.setLayout(layout)
 
