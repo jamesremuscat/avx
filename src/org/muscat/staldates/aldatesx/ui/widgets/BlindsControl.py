@@ -97,7 +97,7 @@ class BlindsControl(QWidget):
     def stop(self):
         blindID = self.blinds.checkedId()
         try:
-            self.controller.lower("Blinds", blindID)
+            self.controller.stop("Blinds", blindID)
         except NamingError:
             self.mainWindow.errorBox(StringConstants.nameErrorText)
         except ProtocolError:
