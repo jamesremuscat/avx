@@ -1,27 +1,21 @@
-from PySide.QtGui import QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QSizePolicy
-from PySide.QtCore import Qt
-from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
+from PySide.QtGui import QVBoxLayout, QTableWidget, QTableWidgetItem
+from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
 
 
-class LogViewer(QWidget):
+class LogViewer(ScreenWithBackButton):
 
-    def __init__(self, parent=None):
-        super(LogViewer, self).__init__(parent)
+    def __init__(self, controller, mainWindow):
+        self.controller = controller
+        ScreenWithBackButton.__init__(self, "System Log", mainWindow)
 
-        layout = QVBoxLayout(self)
+    def makeContent(self):
 
-        title = QLabel("System Log")
-        title.setStyleSheet("font-size: 48px;")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
+        layout = QVBoxLayout()
 
         self.table = QTableWidget()
         layout.addWidget(self.table)
 
-        self.b = ExpandingButton()
-        self.b.setText("Back")
-        self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(self.b)
+        return layout
 
     def displayLog(self, entries):
         self.table.clearContents()

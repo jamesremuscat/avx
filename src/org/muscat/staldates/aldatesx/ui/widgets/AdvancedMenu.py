@@ -17,8 +17,7 @@ class AdvancedMenu(ScreenWithBackButton):
     def makeContent(self):
         layout = QVBoxLayout()
 
-        self.lv = LogViewer()
-        self.lv.b.clicked.connect(self.mainWindow.stepBack)
+        self.lv = LogViewer(self.controller, self.mainWindow)
 
         log = ExpandingButton()
         log.setText("Log")
