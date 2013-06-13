@@ -13,6 +13,7 @@ from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
 from PySide.QtTest import QTest
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.CameraPosition import CameraPosition
+from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow
 
 
 class Test(GuiTest):
@@ -23,6 +24,8 @@ class Test(GuiTest):
         self.mockController.move = MagicMock(return_value=1)
         self.mockController.zoom = MagicMock(return_value=1)
         self.mockController.focus = MagicMock(return_value=1)
+
+        self.mockMainWindow = MainWindow(self.mockController)
 
         cam = Device("Test Camera")
         self.mockController.addDevice(cam)
@@ -89,7 +92,7 @@ class Test(GuiTest):
     def testGetCameraPosition(self):
         fakePosition = CameraPosition(111, 222, 333)
         self.mockController.getPosition = MagicMock(return_value=fakePosition)
-        acc = AdvancedCameraControl(self.mockController, "Test Camera")
+        acc = AdvancedCameraControl(self.mockController, "Test Camera", self.mockMainWindow)
         self.findButton(acc, "Get Position").click()
         self.mockController.getPosition.assert_called_once_with("Test Camera")
         self.assertEqual("111", acc.posDisplay.itemAtPosition(0, 1).widget().text())
@@ -98,7 +101,7 @@ class Test(GuiTest):
 
     def testChangeWhiteBalance(self):
         self.mockController.whiteBalance = MagicMock(return_value=1)
-        acc = AdvancedCameraControl(self.mockController, "Test Camera")
+        acc = AdvancedCameraControl(self.mockController, "Test Camera", self.mockMainWindow)
         self.assertFalse(self.findButton(acc, "Set").isEnabled())
 
         self.findButton(acc, "Auto").click()
