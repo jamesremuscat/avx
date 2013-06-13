@@ -1,28 +1,24 @@
-from PySide.QtGui import QLabel, QSizePolicy, QVBoxLayout, QWidget
-from PySide.QtCore import Qt
+from PySide.QtGui import QVBoxLayout
 from org.muscat.staldates.aldatesx.ui.widgets.LogViewer import LogViewer
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
+from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
 
 
-class AdvancedMenu(QWidget):
+class AdvancedMenu(ScreenWithBackButton):
     '''
     Place to hide magical advanced system features.
     '''
 
     def __init__(self, controller, mainWindow):
-        super(AdvancedMenu, self).__init__()
         self.controller = controller
         self.mainWindow = mainWindow
+        super(AdvancedMenu, self).__init__("Advanced Options", mainWindow)
 
+    def makeContent(self):
         layout = QVBoxLayout()
 
-        title = QLabel("Advanced Options")
-        title.setStyleSheet("font-size: 48px;")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
-
         self.lv = LogViewer()
-        self.lv.b.clicked.connect(mainWindow.stepBack)
+        self.lv.b.clicked.connect(self.mainWindow.stepBack)
 
         log = ExpandingButton()
         log.setText("Log")
@@ -31,21 +27,15 @@ class AdvancedMenu(QWidget):
 
         btnAutoTrack = ExpandingButton()
         btnAutoTrack.setText("Recalibrate Extras scan converter")
-        btnAutoTrack.clicked.connect(lambda: controller.recalibrate("Extras Scan Converter"))
+        btnAutoTrack.clicked.connect(lambda: self.controller.recalibrate("Extras Scan Converter"))
         layout.addWidget(btnAutoTrack)
 
         btnQuit = ExpandingButton()
         btnQuit.setText("Exit AldatesX")
-        btnQuit.clicked.connect(mainWindow.close)
+        btnQuit.clicked.connect(self.mainWindow.close)
         layout.addWidget(btnQuit)
 
-        b = ExpandingButton()
-        b.setText("Back")
-        b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(b)
-        b.clicked.connect(mainWindow.stepBack)
-
-        self.setLayout(layout)
+        return layout
 
     def showLog(self):
         self.lv.displayLog(self.controller.getLog())
