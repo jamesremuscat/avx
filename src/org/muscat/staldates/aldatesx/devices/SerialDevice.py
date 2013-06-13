@@ -21,16 +21,19 @@ class SerialDevice(Device):
             try:
                 self.port = Serial(serialDevice, baud)
             except SerialException:
-                logging.error("Could not open serial device " + serialDevice + " for " + deviceID)
+                logging.exception("Could not open serial device " + serialDevice + " for " + deviceID)
                 self.port = FakeSerialPort()
         else:
             self.port = serialDevice
 
     def sendCommand(self, commandString):
-        logging.debug("Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr)
-        sentBytes = self.port.write(commandString)
-        logging.debug(str(sentBytes) + " bytes sent")
-        return sentBytes
+        try:
+            logging.debug("Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr)
+            sentBytes = self.port.write(commandString)
+            logging.debug(str(sentBytes) + " bytes sent")
+            return sentBytes
+        except SerialException:
+            logging.exception("Failed sending command to " + self.deviceID + " on " + self.port.portstr)
 
     @staticmethod
     def byteArrayToString(byteArray):
