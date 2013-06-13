@@ -13,8 +13,8 @@ class ProjectorScreensControl(ScreenWithBackButton):
     '''
 
     def __init__(self, controller, mainWindow):
-        ScreenWithBackButton.__init__(self, "Projector Screens", mainWindow)
         self.controller = controller
+        ScreenWithBackButton.__init__(self, "Projector Screens", mainWindow)
 
     def makeContent(self):
         layout = QGridLayout()

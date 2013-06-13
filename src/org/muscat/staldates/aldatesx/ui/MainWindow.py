@@ -28,10 +28,7 @@ class MainWindow(QMainWindow):
         mainLayout = QGridLayout()
         mainLayout.addWidget(self.stack, 0, 0, 1, 7)
 
-        self.spc = SystemPowerWidget()
-        self.spc.b.clicked.connect(self.stepBack)
-        self.spc.btnOn.clicked.connect(self.controller.systemPowerOn)
-        self.spc.btnOff.clicked.connect(self.controller.systemPowerOff)
+        self.spc = SystemPowerWidget(controller, self)
 
         syspower = ExpandingButton()
         syspower.setText("Power")

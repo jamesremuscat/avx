@@ -1,19 +1,16 @@
-from PySide.QtGui import QIcon, QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PySide.QtGui import QIcon, QHBoxLayout
 from PySide.QtCore import Qt, QSize
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
+from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
 
 
-class SystemPowerWidget(QWidget):
+class SystemPowerWidget(ScreenWithBackButton):
 
-    def __init__(self):
-        super(SystemPowerWidget, self).__init__()
+    def __init__(self, controller, mainWindow):
+        self.controller = controller
+        ScreenWithBackButton.__init__(self, "System Power", mainWindow)
 
-        layout = QVBoxLayout(self)
-
-        title = QLabel("System Power")
-        title.setStyleSheet("font-size: 48px;")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
+    def makeContent(self):
 
         buttons = QHBoxLayout()
 
@@ -22,6 +19,7 @@ class SystemPowerWidget(QWidget):
         self.btnOff.setIcon(QIcon("icons/lightbulb_off.svg"))
         self.btnOff.setIconSize(QSize(128, 128))
         self.btnOff.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.btnOff.clicked.connect(self.controller.systemPowerOff)
         buttons.addWidget(self.btnOff)
 
         self.btnOn = ExpandingButton()
@@ -29,14 +27,7 @@ class SystemPowerWidget(QWidget):
         self.btnOn.setIcon(QIcon("icons/lightbulb_on.svg"))
         self.btnOn.setIconSize(QSize(128, 128))
         self.btnOn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.btnOn.clicked.connect(self.controller.systemPowerOn)
         buttons.addWidget(self.btnOn)
 
-        layout.addLayout(buttons)
-
-        self.b = ExpandingButton()
-        self.b.setText("Back")
-        layout.addWidget(self.b)
-
-        layout.setStretch(0, 1)
-        layout.setStretch(1, 3)
-        layout.setStretch(2, 2)
+        return buttons
