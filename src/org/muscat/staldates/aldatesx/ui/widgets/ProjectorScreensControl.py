@@ -1,27 +1,23 @@
 from PySide.QtCore import Qt, QSize
-from PySide.QtGui import QButtonGroup, QIcon, QLabel, QGridLayout, QWidget
+from PySide.QtGui import QButtonGroup, QIcon, QGridLayout
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton,\
     IDedButton
 from Pyro4.errors import NamingError, ProtocolError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
+from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
 
 
-class ProjectorScreensControl(QWidget):
+class ProjectorScreensControl(ScreenWithBackButton):
     '''
     Controls for the projector screens.
     '''
 
     def __init__(self, controller, mainWindow):
-        super(ProjectorScreensControl, self).__init__()
+        ScreenWithBackButton.__init__(self, "Projector Screens", mainWindow)
         self.controller = controller
-        self.mainWindow = mainWindow
 
+    def makeContent(self):
         layout = QGridLayout()
-
-        title = QLabel("Projector Screens")
-        title.setStyleSheet("font-size: 48px;")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title, 0, 0, 1, 7)
 
         self.screens = QButtonGroup()
 
@@ -70,16 +66,7 @@ class ProjectorScreensControl(QWidget):
         btnStop.setIconSize(iconSize)
         btnStop.clicked.connect(self.stop)
 
-        self.b = ExpandingButton()
-        self.b.setText("Back")
-        layout.addWidget(self.b, 4, 1, 1, 5)
-        layout.setRowStretch(0, 1)
-        layout.setRowStretch(1, 2)
-        layout.setRowStretch(2, 2)
-        layout.setRowStretch(3, 2)
-        layout.setRowStretch(4, 1)
-
-        self.setLayout(layout)
+        return layout
 
     def raiseUp(self):
         screenID = self.screens.checkedId()

@@ -51,7 +51,6 @@ class MainWindow(QMainWindow):
         mainLayout.addWidget(blinds, 1, 2)
 
         self.sc = ProjectorScreensControl(self.controller, self)
-        self.sc.b.clicked.connect(self.stepBack)
 
         screens = ExpandingButton()
         screens.setText("Screens")
