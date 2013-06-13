@@ -336,3 +336,9 @@ class ControllerLogHandler(Handler):
         self.entries.append(record)
         if len(self.entries) > 100:
             self.entries.pop(0)
+        if record.exc_info is not None:
+            record.exc_info = None
+            fakeRecord = logging.LogRecord("Controller", logging.WARNING, record.pathname, record.lineno, "", {}, None, None)
+            fakeRecord.asctime = record.asctime
+            fakeRecord.message = "An exception was stripped from this log, see controller logs for details"
+            self.entries.append(fakeRecord)
