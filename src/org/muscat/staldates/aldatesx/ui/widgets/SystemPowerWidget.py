@@ -1,5 +1,5 @@
-from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QLabel
-from PySide.QtCore import Qt
+from PySide.QtGui import QIcon, QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PySide.QtCore import Qt, QSize
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 
 
@@ -19,10 +19,16 @@ class SystemPowerWidget(QWidget):
 
         self.btnOff = ExpandingButton()
         self.btnOff.setText("Off")
+        self.btnOff.setIcon(QIcon("icons/lightbulb_off.svg"))
+        self.btnOff.setIconSize(QSize(128, 128))
+        self.btnOff.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         buttons.addWidget(self.btnOff)
 
         self.btnOn = ExpandingButton()
         self.btnOn.setText("On")
+        self.btnOn.setIcon(QIcon("icons/lightbulb_on.svg"))
+        self.btnOn.setIconSize(QSize(128, 128))
+        self.btnOn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         buttons.addWidget(self.btnOn)
 
         layout.addLayout(buttons)
