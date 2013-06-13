@@ -33,13 +33,13 @@ class TestMainWindow(GuiTest):
         spcButton.click()
         spc = self.getCurrentScreen()
         self.assertTrue(isinstance(spc, SystemPowerWidget))
-        spc.btnOn.click()
+        self.findButton(spc, "On").click()
         self.assertEquals(self.mockController.systemPowerOn.call_count, 1)
 
-        spc.btnOff.click()
+        self.findButton(spc, "Off").click()
         self.assertEquals(self.mockController.systemPowerOff.call_count, 1)
 
-        spc.b.click()
+        self.findButton(spc, "Back").click()
         self.assertTrue(isinstance(self.main.stack.currentWidget(), VideoSwitcher))
 
     def testLog(self):
