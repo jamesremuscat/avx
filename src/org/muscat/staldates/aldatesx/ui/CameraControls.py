@@ -6,6 +6,7 @@ from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, Ca
     CameraWhiteBalance
 from Pyro4.errors import NamingError, ProtocolError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
+from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
 
 
 class CameraButton(ExpandingButton):
@@ -276,19 +277,15 @@ class CameraControl(QWidget):
         msgBox.exec_()
 
 
-class AdvancedCameraControl(QWidget):
+class AdvancedCameraControl(ScreenWithBackButton):
 
-    def __init__(self, controller, cameraID, parent=None):
-        super(AdvancedCameraControl, self).__init__(parent)
+    def __init__(self, controller, cameraID, mainScreen):
         self.controller = controller
         self.cameraID = cameraID
+        super(AdvancedCameraControl, self).__init__(cameraID, mainScreen)
 
-        layout = QGridLayout(self)
-
-        title = QLabel(self.cameraID)
-        title.setStyleSheet("font-size: 48px;")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title, 0, 0, 1, 2)
+    def makeContent(self):
+        layout = QGridLayout()
 
         self.posDisplay = QGridLayout()
 
@@ -348,10 +345,7 @@ class AdvancedCameraControl(QWidget):
 
         layout.addLayout(whiteBalanceGrid, 1, 1, 2, 1)
 
-        self.b = ExpandingButton()
-        self.b.setText("Back")
-        self.b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(self.b, 3, 0, 1, 2)
+        return layout
 
     def displayPosition(self):
         pos = self.controller.getPosition(self.cameraID)
