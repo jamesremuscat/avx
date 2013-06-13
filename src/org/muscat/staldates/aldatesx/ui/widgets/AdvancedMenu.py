@@ -37,5 +37,5 @@ class AdvancedMenu(ScreenWithBackButton):
         return layout
 
     def showLog(self):
-        self.lv.displayLog(self.controller.getLog())
+        self.lv.displayLog()
         self.mainWindow.showScreen(self.lv)

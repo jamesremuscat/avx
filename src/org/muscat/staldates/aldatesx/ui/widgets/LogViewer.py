@@ -17,7 +17,8 @@ class LogViewer(ScreenWithBackButton):
 
         return layout
 
-    def displayLog(self, entries):
+    def displayLog(self):
+        entries = self.controller.getLog()
         self.table.clearContents()
         self.table.setRowCount(len(entries))
         self.table.setColumnCount(3)
