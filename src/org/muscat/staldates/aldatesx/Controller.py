@@ -36,7 +36,8 @@ class Controller(object):
                 logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
                 function(client)
             except:
-                logging.exception("Failed to call function on registered client " + str(uri))
+                logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
+                self.clients.pop(uri)
 
     def addDevice(self, device):
         self.devices[device.deviceID] = device
