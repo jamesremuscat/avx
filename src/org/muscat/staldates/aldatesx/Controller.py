@@ -34,7 +34,8 @@ class Controller(object):
         for uri, client in self.clients.iteritems():
             try:
                 logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
-                function(client)
+                result = function(client)
+                logging.debug("Client call returned " + str(result))
             except:
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
                 self.clients.pop(uri)

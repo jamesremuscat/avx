@@ -30,18 +30,23 @@ class Client(Pyro4.threadutil.Thread):
 
     def errorBox(self, text):
         invoke_in_main_thread(self.aldatesx.errorBox, text)
+        return True
 
     def showPowerOnDialog(self):
         invoke_in_main_thread(self.aldatesx.showPowerDialog, StringConstants.poweringOn)
+        return True
 
     def showPowerOffDialog(self):
         invoke_in_main_thread(self.aldatesx.showPowerDialog, StringConstants.poweringOff)
+        return True
 
     def hidePowerDialog(self):
         invoke_in_main_thread(self.aldatesx.hidePowerDialog)
+        return True
 
     def updateOutputMappings(self, mapping):
         invoke_in_main_thread(self.aldatesx.updateOutputMappings, mapping)
+        return True
 
 
 class InvokeEvent(QtCore.QEvent):
