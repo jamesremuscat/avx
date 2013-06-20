@@ -16,24 +16,24 @@ class Controller(object):
         self.sequencer.start()
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
-        self.clients = {}
+        self.clients = []
 
     def registerClient(self, clientURI):
-        client = Pyro4.Proxy(clientURI)
-        self.clients[clientURI] = client
-        logging.info("Registered client at " + client.getHostIP())
+        self.clients.append(clientURI)
+        logging.info("Registered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) now connected")
 
     def unregisterClient(self, clientURI):
-        client = self.clients.pop(clientURI)
-        logging.info("Unregistered client at " + client.getHostIP())
+        self.clients.remove(clientURI)
+        logging.info("Unregistered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) still connected")
 
     def callAllClients(self, function):
         ''' function should take a client and do things to it'''
-        for uri, client in self.clients.iteritems():
+        for uri in self.clients:
             try:
                 logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
+                client = Pyro4.Proxy(uri)
                 result = function(client)
                 logging.debug("Client call returned " + str(result))
             except:
