@@ -29,7 +29,7 @@ class Kramer602(SerialDevice):
 
 
 class Kramer602Listener(SerialListener):
-    ''' Class to listen to and interpret incoming messages from a VP88. '''
+    ''' Class to listen to and interpret incoming messages from a Kramer 602. '''
 
     dispatchers = []
 
@@ -41,6 +41,8 @@ class Kramer602Listener(SerialListener):
     def process(self, message):
         logging.debug("Received from Kramer 602: " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
         if ((message[0] & 0x7) == (self.machineNumber - 1)):
+            if message[1] == 0xff:  # Occasionally on startup we seem to receive a three-byte packet with the middle byte 0xFF. So ignore that middle.
+                message[1] = self.port.read(1)
             if (message[1] & 0x20) == 0:  # Not just a "I switched successfully" message
                 outp = (((message[1] & 0x1F) - 1) % 2) + 1
                 inp = (((message[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
