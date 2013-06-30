@@ -25,6 +25,7 @@ class Kramer602(SerialDevice):
 
     def initialise(self):
         SerialDevice.initialise(self)
+        self.port.flushInput()
         self.port.write("\x00\xA1")  # Report current status to listeners
 
 
