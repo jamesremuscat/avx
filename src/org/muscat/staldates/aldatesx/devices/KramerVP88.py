@@ -4,6 +4,7 @@ Created on 10 Nov 2012
 @author: james
 '''
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice, SerialListener
+import logging
 
 
 class KramerVP88(SerialDevice):
@@ -35,6 +36,7 @@ class KramerVP88Listener(SerialListener):
         self.machineNumber = machineNumber
 
     def process(self, message):
+        logging.debug("Received from Kramer VP-88: " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
         if (message[3] == 0x80 + self.machineNumber):
             if (message[0] == 0x41) or (message[0] == 0x45):  # Notification of video switch or response to query
                 inp = message[1] - 0x80
