@@ -19,6 +19,10 @@ class KramerVP88(SerialDevice):
         toSend = [0x01, 0x80 + inChannel, 0x80 + outChannel, 0x80 + self.machineNumber]
         return self.sendCommand(SerialDevice.byteArrayToString(toSend))
 
+    def initialise(self):
+        SerialDevice.initialise(self)
+        self.port.flushInput()
+
 
 class KramerVP88Listener(SerialListener):
     ''' Class to listen to and interpret incoming messages from a VP88. '''
