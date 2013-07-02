@@ -82,3 +82,7 @@ class FakeSerialPort(object):
 
     def read(self, length):
         threading.Condition().wait()  # Block forever since we're never sending data here...
+
+    def flushInput(self):
+        return 0
+
