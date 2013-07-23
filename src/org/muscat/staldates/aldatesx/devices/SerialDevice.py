@@ -1,7 +1,6 @@
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from serial import Serial, SerialException
 import logging
-import threading
 from threading import Thread
 
 
@@ -19,7 +18,7 @@ class SerialDevice(Device):
         super(SerialDevice, self).__init__(deviceID)
         if isinstance(serialDevice, str):
             try:
-                self.port = Serial(serialDevice, baud)
+                self.port = Serial(serialDevice, baud, timeout=2)
             except SerialException:
                 logging.exception("Could not open serial device " + serialDevice + " for " + deviceID)
                 self.port = FakeSerialPort()
@@ -65,9 +64,12 @@ class SerialListener(Thread):
         logging.info("Listening to serial port " + self.port.portstr)
         while self.running:
             message = [int(elem.encode("hex"), base=16) for elem in self.port.read(self.messageSize)]
-            mapp = self.process(message)
-            for d in self.dispatchers:
-                d.updateOutputMappings({self.deviceID: mapp})
+            if len(message) == self.messageSize:
+                mapp = self.process(message)
+                for d in self.dispatchers:
+                    d.updateOutputMappings({self.deviceID: mapp})
+            elif len(message) != 0:
+                logging.warn("Malformed packet from " + self.deviceID + ": " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
         logging.info("No longer listening to serial port " + self.port.portstr)
 
 
@@ -81,7 +83,7 @@ class FakeSerialPort(object):
         return 0
 
     def read(self, length):
-        threading.Event().wait()  # Block forever since we're never sending data here...
+        return []
 
     def flushInput(self):
         return 0
