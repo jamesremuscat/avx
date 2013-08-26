@@ -42,6 +42,8 @@ class Controller(object):
 
     def addDevice(self, device):
         self.devices[device.deviceID] = device
+        if hasattr(device, "registerDispatcher") and callable(getattr(device, "registerDispatcher")):
+            device.registerDispatcher(self)
 
     def hasDevice(self, deviceID):
         return deviceID in self.devices
