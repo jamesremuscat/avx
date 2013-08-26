@@ -1,0 +1,11 @@
+{
+	"devices" : {
+		"Main" : {
+			"class" : "org.muscat.staldates.aldatesx.devices.KramerVP88.KramerVP88",
+			"port" : "/dev/ttyUSB0",
+			"options" : {
+				"machineNumber" : 44
+			}
+		}
+	}
+}
