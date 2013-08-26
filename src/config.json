@@ -1,50 +1,57 @@
 {
-	"devices" : {
-		"Main" : {
+	"devices" : [
+		{
+		  "deviceID" : "Main",
 			"class" : "org.muscat.staldates.aldatesx.devices.KramerVP88.KramerVP88",
 			"options" : {
   			"serialDevice" : "/dev/usb-ports/1-1.3.3:1.0",
 				"machineNumber" : 1
 			}
 		},
-		"Preview" : {
+		{
+		  "deviceID" : "Preview",
 			"class" : "org.muscat.staldates.aldatesx.devices.Kramer602.Kramer602",
 			"options" : {
   			"serialDevice" : "/dev/usb-ports/1-1.3.7:1.0"
 			}
 		},
-		"Camera 1" : {
+		{
+		  "deviceID" : "Camera 1",
 		  "class" : "org.muscat.staldates.aldatesx.devices.VISCACamera.VISCACamera",
 		  "options" : {
 		    "serialDevice" : "/dev/usb-ports/1-1.3.1.2",
 		    "cameraID" : 1
 		  }
 		},
-		"Camera 2" : {
+    {
+      "deviceID" : "Camera 2",
 		  "class" : "org.muscat.staldates.aldatesx.devices.VISCACamera.VISCACamera",
 		  "options" : {
 		    "serialDevice" : "/dev/usb-ports/1-1.3.1.3",
 		    "cameraID" : 1
 		  }
 		},
-		"Camera 3" : {
+    {
+      "deviceID" : "Camera 3",
 		  "class" : "org.muscat.staldates.aldatesx.devices.VISCACamera.VISCACamera",
 		  "options" : {
 		    "serialDevice" : "/dev/usb-ports/1-1.3.2:1.0",
 		    "cameraID" : 1
 		  }
 		},
-		"Extras" : {
+    {
+      "deviceID" : "Extras",
 		  "class" : "org.muscat.staldates.aldatesx.devices.Inline3808.Inline3808",
 		  "options" : {
 		    "serialDevice" : "/dev/usb-ports/1-1.3.4:1.0"
 		  }
 		},
-		"Extras Scan Converter" : {
+    {
+      "deviceID" : "Extras Scan Converter",
 		  "class" : "org.muscat.staldates.aldatesx.devices.KramerVP703.KramerVP703",
 		  "options" : {
 		    "serialDevice" : "/dev/usb-ports/1-1.3.6:1.0"
 		  }
 		}
-	}
+	]
 }
