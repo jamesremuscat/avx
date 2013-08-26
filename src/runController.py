@@ -37,8 +37,8 @@ if __name__ == "__main__":
 
     for deviceID in config["devices"]:
         dc = config["devices"][deviceID]
-        device = get_class(dc["class"])(deviceID, dc["port"], **dc["options"])
-        print device
+        device = get_class(dc["class"])(deviceID, **dc["options"])
+        controller.addDevice(device)
 
     ##### Aldates configuration below
 #     mainSwitcher = KramerVP88("Main", "/dev/usb-ports/1-1.3.3:1.0", 1)
