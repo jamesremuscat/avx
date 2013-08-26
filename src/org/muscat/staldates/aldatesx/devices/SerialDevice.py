@@ -55,13 +55,15 @@ class SerialListener(Thread):
         self.messageSize = messageSize
         self.running = True
         atexit.register(self.stop)
-        self.start()
 
     def registerDispatcher(self, dispatcher):
         self.dispatchers.append(dispatcher)
 
     def stop(self):
         self.running = False
+
+    def initialise(self):
+        self.start()
 
     def run(self):
         logging.info("Listening to serial port " + self.port.portstr)

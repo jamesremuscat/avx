@@ -9,6 +9,13 @@
 			}
 		},
 		{
+		  "deviceID" : "Main Listener",
+		  "class" : "org.muscat.staldates.aldatesx.devices.KramerVP88.KramerVP88Listener",
+		  "options" : {
+		    "parent" : "Main"
+		  }
+		},
+		{
 		  "deviceID" : "Preview",
 			"class" : "org.muscat.staldates.aldatesx.devices.Kramer602.Kramer602",
 			"options" : {
