@@ -43,10 +43,6 @@ if __name__ == "__main__":
 
     ##### Aldates configuration below
 
-#     mainListener = KramerVP88Listener(mainSwitcher, machineNumber=1)
-#
-#     prevListener = Kramer602Listener(prevSwitcher, machineNumber=1)
-#
 #     powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.1:1.0")
 #     controller.addDevice(powerSwitches)
 #

@@ -23,6 +23,13 @@
 			}
 		},
 		{
+		  "deviceID" : "Preview Listener",
+			"class" : "org.muscat.staldates.aldatesx.devices.Kramer602.Kramer602Listener",
+			"options" : {
+  			"parent" : "Preview"
+			}
+		},
+		{
 		  "deviceID" : "Camera 1",
 		  "class" : "org.muscat.staldates.aldatesx.devices.VISCACamera.VISCACamera",
 		  "options" : {
