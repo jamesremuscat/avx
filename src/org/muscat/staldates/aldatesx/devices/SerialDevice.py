@@ -16,7 +16,7 @@ class SerialDevice(Device):
         If we fail to create a Serial with the given device, log an error and use a fake port.
         '''
         super(SerialDevice, self).__init__(deviceID)
-        if isinstance(serialDevice, str):
+        if isinstance(serialDevice, str) or isinstance(serialDevice, unicode):
             try:
                 self.port = Serial(serialDevice, baud, timeout=2)
             except SerialException:
