@@ -20,7 +20,7 @@ class VISCACamera(SerialDevice):
     # Zoom speed can vary from 0x02-0x07
     zoomSpeed = 0x06
 
-    def __init__(self, deviceID, serialDevice, cameraID):
+    def __init__(self, deviceID, serialDevice, cameraID, **kwargs):
         super(VISCACamera, self).__init__(deviceID, serialDevice)
         self.cameraID = cameraID
 

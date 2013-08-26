@@ -37,7 +37,8 @@ if __name__ == "__main__":
 
     for deviceID in config["devices"]:
         dc = config["devices"][deviceID]
-        device = get_class(dc["class"])(deviceID, **dc["options"])
+        logging.info("Creating device " + deviceID)
+        device = get_class(dc["class"])(deviceID, controller=controller, **dc["options"])
         controller.addDevice(device)
 
     ##### Aldates configuration below
