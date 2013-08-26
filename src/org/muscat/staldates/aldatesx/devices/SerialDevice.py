@@ -2,6 +2,7 @@ from org.muscat.staldates.aldatesx.devices.Device import Device
 from serial import Serial, SerialException
 import logging
 from threading import Thread
+import atexit
 
 
 class SerialDevice(Device):
@@ -53,6 +54,8 @@ class SerialListener(Thread):
         self.deviceID = device.deviceID
         self.messageSize = messageSize
         self.running = True
+        atexit.register(self.stop)
+        self.start()
 
     def registerDispatcher(self, dispatcher):
         self.dispatchers.append(dispatcher)

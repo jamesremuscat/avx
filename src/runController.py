@@ -44,13 +44,9 @@ if __name__ == "__main__":
 
 #     mainListener = KramerVP88Listener(mainSwitcher, machineNumber=1)
 #     mainListener.registerDispatcher(controller)
-#     mainListener.start()
-#     atexit.register(mainListener.stop)
 #
 #     prevListener = Kramer602Listener(prevSwitcher, machineNumber=1)
 #     prevListener.registerDispatcher(controller)
-#     prevListener.start()
-#     atexit.register(prevListener.stop)
 #
 #     powerSwitches = JBSerialRelayCard("Power", "/dev/usb-ports/1-1.2.1:1.0")
 #     controller.addDevice(powerSwitches)
