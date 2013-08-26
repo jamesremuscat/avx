@@ -24,23 +24,27 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
     controller = Controller()
 
-    config = json.load(open("config.json"))
+    try:
+        config = json.load(open("config.json"))
 
-    for device in config["devices"]:
-        deviceID = device["deviceID"]
-        logging.info("Creating device " + deviceID)
-        device = get_class(device["class"])(deviceID, controller=controller, **device["options"])
-        controller.addDevice(device)
+        for device in config["devices"]:
+            deviceID = device["deviceID"]
+            logging.info("Creating device " + deviceID)
+            device = get_class(device["class"])(deviceID, controller=controller, **device["options"])
+            controller.addDevice(device)
 
-    controller.initialise()
+        controller.initialise()
 
-    PyroUtils.setHostname()
+        PyroUtils.setHostname()
 
-    daemon = Pyro4.Daemon()
-    ns = Pyro4.locateNS()
-    uri = daemon.register(controller)
-    ns.register(Controller.pyroName, uri)
+        daemon = Pyro4.Daemon()
+        ns = Pyro4.locateNS()
+        uri = daemon.register(controller)
+        ns.register(Controller.pyroName, uri)
 
-    atexit.register(shutdownDaemon, daemon=daemon)
+        atexit.register(shutdownDaemon, daemon=daemon)
 
-    daemon.requestLoop()
+        daemon.requestLoop()
+
+    except ValueError:
+        logging.exception("Cannot parse config.json:")
