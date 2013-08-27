@@ -20,10 +20,32 @@ So you'll need to install the following packages and any dependencies:
 ... and then `sudo easy_install Pyro4`.
 
 Mapping of physical hardware devices through serial ports to virtual devices is
-done in the `runController.py` script. Be sure to map devices based on their USB
+done in the `config.json` file. A typical definition of a single-device system
+may look like:
+
+`{
+  "devices" : [
+    {
+      "deviceID" : "Main",
+      "class" : "org.muscat.staldates.aldatesx.devices.KramerVP88.KramerVP88",
+      "options" : {
+        "serialDevice" : "/dev/usb-ports/1-1.3.3:1.0",
+        "machineNumber" : 1
+      }
+    }
+  ]
+}
+` 
+
+Elements under "options" are passed directly as named parameters to the
+constructor (`__init`) of the class. Most, but not all, devices require
+a `serialDevice` option.
+
+
+Be sure to map devices based on their USB
 device path - `/dev/ttyUSBx`'es might get swapped round after a reboot, which
-would be sad. Everything GUI-side refers to the name string you assign to each
-device, so balance these between descriptive and concise.
+would be sad. Everything GUI-side refers to the `deviceID` string you assign
+to each device, so balance these between descriptive and concise.
 
 
 ### RUNNING ###
