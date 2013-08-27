@@ -5,19 +5,11 @@ import atexit
 import logging
 import json
 from org.muscat.staldates.aldatesx import PyroUtils
+from org.muscat.staldates.aldatesx.devices.Device import Device
 
 
 def shutdownDaemon(daemon):
     daemon.shutdown()
-
-
-def get_class(kls):
-    parts = kls.split('.')
-    module = ".".join(parts[:-1])
-    m = __import__(module)
-    for comp in parts[1:]:
-        m = getattr(m, comp)
-    return m
 
 
 if __name__ == "__main__":
@@ -28,9 +20,7 @@ if __name__ == "__main__":
         config = json.load(open("config.json"))
 
         for d in config["devices"]:
-            deviceID = d["deviceID"]
-            logging.info("Creating device " + deviceID)
-            device = get_class(d["class"])(deviceID, controller=controller, **d["options"])
+            device = Device.create(d, controller)
             controller.addDevice(device)
 
         controller.initialise()
