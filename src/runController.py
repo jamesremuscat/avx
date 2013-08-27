@@ -27,10 +27,10 @@ if __name__ == "__main__":
     try:
         config = json.load(open("config.json"))
 
-        for device in config["devices"]:
-            deviceID = device["deviceID"]
+        for d in config["devices"]:
+            deviceID = d["deviceID"]
             logging.info("Creating device " + deviceID)
-            device = get_class(device["class"])(deviceID, controller=controller, **device["options"])
+            device = get_class(d["class"])(deviceID, controller=controller, **d["options"])
             controller.addDevice(device)
 
         controller.initialise()
