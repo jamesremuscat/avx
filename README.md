@@ -23,7 +23,8 @@ Mapping of physical hardware devices through serial ports to virtual devices is
 done in the `config.json` file. A typical definition of a single-device system
 may look like:
 
-`{
+```
+{
   "devices" : [
     {
       "deviceID" : "Main",
@@ -35,7 +36,7 @@ may look like:
     }
   ]
 }
-` 
+``` 
 
 Elements under "options" are passed directly as named parameters to the
 constructor (`__init`) of the class. Most, but not all, devices require
