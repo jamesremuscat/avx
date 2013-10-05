@@ -47,11 +47,11 @@ class SerialListener(Thread):
 
     dispatchers = []
 
-    def __init__(self, device, messageSize=4):
+    def __init__(self, deviceID, parentDevice, messageSize=4):
         ''' device should be an already initialised SerialDevice. '''
         Thread.__init__(self)
-        self.port = device.port
-        self.deviceID = device.deviceID
+        self.port = parentDevice.port
+        self.deviceID = deviceID
         self.messageSize = messageSize
         self.running = True
         atexit.register(self.stop)

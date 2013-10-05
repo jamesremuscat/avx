@@ -3,9 +3,7 @@ from org.muscat.staldates.aldatesx.Controller import Controller
 import Pyro4
 import atexit
 import logging
-import json
 from org.muscat.staldates.aldatesx import PyroUtils
-from org.muscat.staldates.aldatesx.devices.Device import Device
 
 
 def shutdownDaemon(daemon):
@@ -15,26 +13,15 @@ def shutdownDaemon(daemon):
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
     controller = Controller()
+    controller.loadConfig("config.json")
 
-    try:
-        config = json.load(open("config.json"))
+    PyroUtils.setHostname()
 
-        for d in config["devices"]:
-            device = Device.create(d, controller)
-            controller.addDevice(device)
+    daemon = Pyro4.Daemon()
+    ns = Pyro4.locateNS()
+    uri = daemon.register(controller)
+    ns.register(Controller.pyroName, uri)
 
-        controller.initialise()
+    atexit.register(shutdownDaemon, daemon=daemon)
 
-        PyroUtils.setHostname()
-
-        daemon = Pyro4.Daemon()
-        ns = Pyro4.locateNS()
-        uri = daemon.register(controller)
-        ns.register(Controller.pyroName, uri)
-
-        atexit.register(shutdownDaemon, daemon=daemon)
-
-        daemon.requestLoop()
-
-    except ValueError:
-        logging.exception("Cannot parse config.json:")
+    daemon.requestLoop()

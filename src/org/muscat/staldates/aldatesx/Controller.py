@@ -1,7 +1,9 @@
+from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
 import logging
 from logging import Handler
 import Pyro4
+import json
 
 
 class Controller(object):
@@ -17,6 +19,15 @@ class Controller(object):
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
         self.clients = []
+
+    def loadConfig(self, configFile):
+        try:
+            config = json.load(open(configFile))
+            for d in config["devices"]:
+                device = Device.create(d, self)
+                self.addDevice(device)
+        except ValueError:
+            logging.exception("Cannot parse config.json:")
 
     def registerClient(self, clientURI):
         self.clients.append(clientURI)
@@ -346,6 +357,8 @@ class ControllerLogHandler(Handler):
         if record.exc_info is not None:
             record.exc_info = None
             fakeRecord = logging.LogRecord("Controller", logging.WARNING, record.pathname, record.lineno, "", {}, None, None)
-            fakeRecord.asctime = record.asctime
+            fakeRecord.created = record.created
+            fakeRecord.asctime = record.asctime if hasattr(record, "asctime") else "--"
+            self.format(fakeRecord)
             fakeRecord.message = "An exception was stripped from this log, see controller logs for details"
             self.entries.append(fakeRecord)

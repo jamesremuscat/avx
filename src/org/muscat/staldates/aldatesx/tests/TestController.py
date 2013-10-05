@@ -2,6 +2,8 @@ from unittest import TestCase
 from org.muscat.staldates.aldatesx.Controller import Controller
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import UpDownStopArray
+import os
+from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 
 
 class TestController(TestCase):
@@ -24,3 +26,13 @@ class TestController(TestCase):
 
         c.stop("Blinds", 1138)
         blinds.stop.assert_called_once_with(1138)
+
+    def testLoadConfig(self):
+        c = Controller()
+        c.loadConfig(os.path.join(os.path.dirname(__file__), 'testConfig.json'))
+
+        self.assertTrue(c.hasDevice("Main"))
+        self.assertTrue(c.hasDevice("Main Listener"))
+
+        self.assertTrue(isinstance(c.getDevice("Main"), KramerVP88))
+        self.assertTrue(isinstance(c.getDevice("Main Listener"), KramerVP88Listener))

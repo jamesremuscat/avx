@@ -32,7 +32,7 @@ class KramerVP88Listener(SerialListener):
 
     def __init__(self, deviceID, parent, controller, machineNumber=1):
         ''' Initialise this KramerVP88 listener. parent should be the name of a KramerVP88 device within the controller. '''
-        super(KramerVP88Listener, self).__init__(controller.getDevice(parent))
+        super(KramerVP88Listener, self).__init__(deviceID, controller.getDevice(parent))
         self.machineNumber = machineNumber
 
     def process(self, message):
