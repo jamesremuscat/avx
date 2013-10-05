@@ -14,6 +14,7 @@ from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclips
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import JBSerialRelayCard, KMtronicSerialRelayCard
 from mock import MagicMock
 import threading
+from org.muscat.staldates.aldatesx.Controller import Controller
 
 
 class TestDevices(unittest.TestCase):
@@ -155,7 +156,9 @@ class TestDevices(unittest.TestCase):
 
         k = KramerVP88("Test", port)
 
-        kl = KramerVP88Listener(k, machineNumber=1)
+        c = Controller()
+        c.addDevice(k)
+        kl = KramerVP88Listener("TestListener", k.deviceID, c, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
@@ -172,7 +175,9 @@ class TestDevices(unittest.TestCase):
 
         k = Kramer602("Test", port)
 
-        kl = Kramer602Listener(k, machineNumber=1)
+        c = Controller()
+        c.addDevice(k)
+        kl = Kramer602Listener("TestListener", k.deviceID, c, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
@@ -185,9 +190,11 @@ class TestDevices(unittest.TestCase):
 
         port = MockSerialPort()
         port.read = MagicMock(return_value=[chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
-        k = Kramer602("Test", port)
 
-        kl = Kramer602Listener(k, machineNumber=1)
+        k = Kramer602("Test", port)
+        c = Controller()
+        c.addDevice(k)
+        kl = Kramer602Listener("TestListener", k.deviceID, c, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()

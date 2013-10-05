@@ -9,7 +9,7 @@ class TestController(TestCase):
     def testSendControlSignalsToBlinds(self):
         c = Controller()
 
-        blinds = UpDownStopArray("Blinds")
+        blinds = UpDownStopArray("Blinds", c)
         blinds.lower = MagicMock(return_value=0)
         blinds.raiseUp = MagicMock(return_value=0)
         blinds.stop = MagicMock(return_value=0)
