@@ -6,7 +6,7 @@ class Inline3808(SerialDevice):
     An Inline 3808 8x4 switcher.
     '''
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, **kwargs):
         super(Inline3808, self).__init__(deviceID, serialDevice, 1200)
 
     def initialise(self):

@@ -6,7 +6,7 @@ class KramerVP703(SerialDevice):
     Kramer VP703-SC scan converter.
     '''
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, **kwargs):
         super(KramerVP703, self).__init__(deviceID, serialDevice)
 
     def initialise(self):

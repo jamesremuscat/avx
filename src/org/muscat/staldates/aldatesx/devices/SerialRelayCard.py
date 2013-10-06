@@ -34,7 +34,7 @@ class RelayDevice(Device):
 
 class KMtronicSerialRelayCard(SerialRelayCard):
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, **kwargs):
         SerialRelayCard.__init__(self, deviceID, serialDevice)
 
     def on(self, channel):
@@ -46,7 +46,7 @@ class KMtronicSerialRelayCard(SerialRelayCard):
 
 class JBSerialRelayCard(SerialRelayCard):
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, **kwargs):
         SerialRelayCard.__init__(self, deviceID, serialDevice, baud=19200)
 
     def on(self, channel):
@@ -62,10 +62,10 @@ class JBSerialRelayCard(SerialRelayCard):
 
 class UpDownStopRelay(Device):
 
-    def __init__(self, deviceID, directionRelay, startStopRelay):
+    def __init__(self, deviceID, controller, directionRelay, startStopRelay):
         super(UpDownStopRelay, self).__init__(deviceID)
-        self.directionRelay = directionRelay
-        self.startStopRelay = startStopRelay
+        self.directionRelay = controller.getDevice(directionRelay[0]).createDevice(self.deviceID + "_direction", directionRelay[1])
+        self.startStopRelay = controller.getDevice(startStopRelay[0]).createDevice(self.deviceID + "_startStop", startStopRelay[1])
 
     def raiseUp(self):
         self.directionRelay.on()
@@ -81,9 +81,11 @@ class UpDownStopRelay(Device):
 
 class UpDownStopArray(Device):
 
-    def __init__(self, deviceID, relays={}):
+    def __init__(self, deviceID, controller, relays={}, **kwargs):
         super(UpDownStopArray, self).__init__(deviceID)
-        self.relays = relays
+        self.relays = {}
+        for idx, devID in relays.iteritems():
+            self.relays[int(idx)] = controller.getDevice(devID)
 
     def add(self, device, number):
         self.relays[number] = device

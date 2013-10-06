@@ -12,7 +12,7 @@ class KramerVP88(SerialDevice):
     A Kramer VP88 switcher, controlled by Protocol 2000 over serial.
     '''
 
-    def __init__(self, deviceID, serialDevice, machineNumber=1):
+    def __init__(self, deviceID, serialDevice, machineNumber=1, **kwargs):
         super(KramerVP88, self).__init__(deviceID, serialDevice)
         self.machineNumber = machineNumber
 
@@ -30,9 +30,9 @@ class KramerVP88Listener(SerialListener):
 
     dispatchers = []
 
-    def __init__(self, port, machineNumber=1):
-        ''' Initialise this KramerVP88 listener. port should be the same Serial that's already been passed to a KramerVP88. '''
-        super(KramerVP88Listener, self).__init__(port)
+    def __init__(self, deviceID, parent, controller, machineNumber=1):
+        ''' Initialise this KramerVP88 listener. parent should be the name of a KramerVP88 device within the controller. '''
+        super(KramerVP88Listener, self).__init__(deviceID, controller.getDevice(parent))
         self.machineNumber = machineNumber
 
     def process(self, message):
