@@ -48,7 +48,7 @@ class SerialListener(Thread):
     dispatchers = []
 
     def __init__(self, deviceID, parentDevice, messageSize=4):
-        ''' device should be an already initialised SerialDevice. '''
+        ''' parentDevice should be an already initialised SerialDevice. '''
         Thread.__init__(self)
         self.port = parentDevice.port
         self.deviceID = deviceID
@@ -72,7 +72,7 @@ class SerialListener(Thread):
             if len(message) == self.messageSize:
                 mapp = self.process(message)
                 for d in self.dispatchers:
-                    d.updateOutputMappings({self.deviceID: mapp})
+                    d.updateOutputMappings({self.parentDevice.deviceID: mapp})
             elif len(message) != 0:
                 logging.warn("Malformed packet from " + self.deviceID + ": " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
         logging.info("No longer listening to serial port " + self.port.portstr)
