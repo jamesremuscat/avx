@@ -26,7 +26,11 @@ class Kramer602(SerialDevice):
     def initialise(self):
         SerialDevice.initialise(self)
         self.port.flushInput()
-        self.port.write("\x00\xA1")  # Report current status to listeners
+        self.requestStatus()
+
+    '''Request the status of this switcher's outputs.'''
+    def requestStatus(self):
+        self.port.write("\x00\xA1")
 
 
 class Kramer602Listener(SerialListener):
@@ -49,5 +53,5 @@ class Kramer602Listener(SerialListener):
                 inp = (((message[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
                 return {outp: inp}
             else:
-                self.parentDevice.port.write("\x00\xA1")  # Request device to send current status so listener can intercept
+                self.parentDevice.requestStatus()  # Request device to send current status so listener can intercept
         return {}
