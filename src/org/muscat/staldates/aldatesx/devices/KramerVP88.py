@@ -23,6 +23,7 @@ class KramerVP88(SerialDevice):
     def initialise(self):
         SerialDevice.initialise(self)
         self.port.flushInput()
+        self.requestStatus()
 
     def requestStatus(self):
         for i in range(1, 8):
