@@ -26,7 +26,7 @@ class KramerVP88(SerialDevice):
         self.requestStatus()
 
     def requestStatus(self):
-        for i in range(1, 8):
+        for i in range(1, 9):
             self.sendCommand(SerialDevice.byteArrayToString([0x05, 0x80, 0x80 + i, 0x80 + self.machineNumber]))
 
 
