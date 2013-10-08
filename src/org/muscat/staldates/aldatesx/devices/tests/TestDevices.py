@@ -39,7 +39,15 @@ class TestDevices(unittest.TestCase):
         vp88 = KramerVP88("Test", port)
 
         vp88.initialise()
-        self.assertEqual([], port.bytes)
+        self.assertBytesEqual([0x05, 0x80, 0x81, 0x81,
+                               0x05, 0x80, 0x82, 0x81,
+                               0x05, 0x80, 0x83, 0x81,
+                               0x05, 0x80, 0x84, 0x81,
+                               0x05, 0x80, 0x85, 0x81,
+                               0x05, 0x80, 0x86, 0x81,
+                               0x05, 0x80, 0x87, 0x81,
+                               0x05, 0x80, 0x88, 0x81], port.bytes)
+        port.clear()
 
         vp88.sendInputToOutput(2, 8)
         self.assertBytesEqual([0x01, 0x82, 0x88, 0x81], port.bytes)
@@ -206,6 +214,7 @@ class TestDevices(unittest.TestCase):
         dispatcher.updateOutputMappings.assert_called_with({'Test': {2: 5}})
 
     def assertBytesEqual(self, expected, actual):
+        self.assertEqual(len(expected), len(actual))
         for i in range(len(expected)):
             self.assertEqual(chr(expected[i]), actual[i], "Byte " + str(i) + ", expected " + str(expected[i]) + " but received " + str(ord(actual[i])))
 
