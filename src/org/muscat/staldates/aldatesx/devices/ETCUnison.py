@@ -1,6 +1,9 @@
 from org.muscat.staldates.aldatesx.devices.SerialDevice import SerialDevice
 
 
+max_command_length = 200
+
+
 class UnisonDevice(SerialDevice):
     '''
     An ETC Unison lighting controller speaking Unison Serial Access Protocol (USAP).
@@ -15,13 +18,21 @@ class UnisonCommand(object):
     Wrapper around a string command to add the binary bits to be sent.
     '''
 
-    max_command_length = 200
-
     def __init__(self, command):
+        self.checkLength(command)
         self.command = command
 
     def getByteString(self):
-        cmdLength = len(self.command)
-        if cmdLength > self.max_command_length:
-            return -1
-        return '\xEE' + chr(cmdLength + 3) + '\x00\x00\x40' + self.command + '\x00\x00'
+        self.checkLength(self.command)
+        return '\xEE' + chr(len(self.command) + 3) + '\x00\x00\x40' + self.command + '\x00\x00'
+
+    def checkLength(self, cmdString):
+        cmdLength = len(cmdString)
+        if cmdLength > max_command_length:
+            raise CommandStringTooLongError(cmdLength)
+
+
+class CommandStringTooLongError(Exception):
+
+    def __init__(self, length):
+        super(CommandStringTooLongError, self).__init__("Length " + str(length) + " too long (limit " + str(max_command_length) + ")")
