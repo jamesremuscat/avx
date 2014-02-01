@@ -1,3 +1,5 @@
+from org.muscat.staldates.aldatesx.controller.ScanConverterController import ScanConverterController
+from org.muscat.staldates.aldatesx.controller.UpDownRelayController import UpDownRelayController
 from org.muscat.staldates.aldatesx.controller.VideoSwitcherController import VideoSwitcherController
 from org.muscat.staldates.aldatesx.controller.VISCAController import VISCAController
 from org.muscat.staldates.aldatesx.devices.Device import Device
@@ -8,7 +10,7 @@ import Pyro4
 import json
 
 
-class Controller(VideoSwitcherController, VISCAController):
+class Controller(ScanConverterController, UpDownRelayController, VideoSwitcherController, VISCAController):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
@@ -71,85 +73,6 @@ class Controller(VideoSwitcherController, VISCAController):
     def initialise(self):
         for device in self.devices.itervalues():
             device.initialise()
-
-    def toggleOverscan(self, scDevice, overscan):
-        if self.hasDevice(scDevice):
-            sc = self.devices[scDevice]
-            if overscan:
-                sc.overscanOn()
-            else:
-                sc.overscanOff()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
-
-    def toggleFreeze(self, scDevice, freeze):
-        if self.hasDevice(scDevice):
-            sc = self.devices[scDevice]
-            if freeze:
-                sc.freeze()
-            else:
-                sc.unfreeze()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
-
-    def toggleOverlay(self, scDevice, overlay):
-        if self.hasDevice(scDevice):
-            sc = self.devices[scDevice]
-            if overlay:
-                sc.overlayOn()
-            else:
-                sc.overlayOff()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
-
-    def toggleFade(self, scDevice, fade):
-        if self.hasDevice(scDevice):
-            sc = self.devices[scDevice]
-            if fade:
-                sc.fadeOut()
-            else:
-                sc.fadeIn()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
-
-    def recalibrate(self, scDevice):
-        if self.hasDevice(scDevice):
-            sc = self.devices[scDevice]
-            sc.recalibrate()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
-
-    def raiseUp(self, device, number):
-        if self.hasDevice(device):
-            logging.debug("Raising " + device + ":" + str(number))
-            d = self.devices[device]
-            d.raiseUp(number)
-        else:
-            logging.warn("No device with ID " + device)
-        return -1
-
-    def lower(self, device, number):
-        if self.hasDevice(device):
-            logging.debug("Lowering " + device + ":" + str(number))
-            d = self.devices[device]
-            d.lower(number)
-        else:
-            logging.warn("No device with ID " + device)
-        return -1
-
-    def stop(self, device, number):
-        if self.hasDevice(device):
-            logging.debug("Stopping " + device + ":" + str(number))
-            d = self.devices[device]
-            d.stop(number)
-        else:
-            logging.warn("No device with ID " + device)
-        return -1
 
     def systemPowerOn(self):
         if self.hasDevice("Power"):
