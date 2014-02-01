@@ -1,5 +1,5 @@
 from unittest import TestCase
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import UpDownStopArray
 import os

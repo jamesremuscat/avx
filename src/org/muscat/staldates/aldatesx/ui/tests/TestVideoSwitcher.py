@@ -4,7 +4,7 @@ Created on 16 Apr 2013
 @author: jrem
 '''
 import unittest
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.VideoSwitcher import VideoSwitcher
 from org.muscat.staldates.aldatesx.ui.widgets.OutputsGrid import OutputsGrid

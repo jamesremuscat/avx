@@ -1,5 +1,5 @@
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.widgets.BlindsControl import BlindsControl
 from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow

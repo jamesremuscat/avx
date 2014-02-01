@@ -4,7 +4,7 @@ Created on 18 Apr 2013
 @author: james
 '''
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.EclipseControls import EclipseControls
 from mock import MagicMock

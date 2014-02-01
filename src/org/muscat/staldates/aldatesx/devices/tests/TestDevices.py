@@ -14,7 +14,7 @@ from org.muscat.staldates.aldatesx.devices.CoriogenEclipse import CoriogenEclips
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import JBSerialRelayCard, KMtronicSerialRelayCard
 from mock import MagicMock
 import threading
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 
 
 class TestDevices(unittest.TestCase):

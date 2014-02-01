@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 import Pyro4
 import atexit
 import logging

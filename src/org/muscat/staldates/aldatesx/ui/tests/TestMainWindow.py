@@ -4,7 +4,7 @@ Created on 17 Apr 2013
 @author: jrem
 '''
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow
 from org.muscat.staldates.aldatesx.ui.widgets.SystemPowerWidget import SystemPowerWidget
 from mock import MagicMock

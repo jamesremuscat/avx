@@ -5,7 +5,7 @@ Created on 15 Apr 2013
 '''
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.ui.CameraControls import CameraControl, AdvancedCameraControl
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller
 from org.muscat.staldates.aldatesx.controller.VISCAController import CameraMove, CameraWhiteBalance
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.ui.tests.GuiTest import GuiTest
