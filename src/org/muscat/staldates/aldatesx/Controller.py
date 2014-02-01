@@ -1,3 +1,4 @@
+from org.muscat.staldates.aldatesx.controller.VideoSwitcherController import VideoSwitcherController
 from org.muscat.staldates.aldatesx.controller.VISCAController import VISCAController
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
@@ -7,7 +8,7 @@ import Pyro4
 import json
 
 
-class Controller(VISCAController):
+class Controller(VideoSwitcherController, VISCAController):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
@@ -70,15 +71,6 @@ class Controller(VISCAController):
     def initialise(self):
         for device in self.devices.itervalues():
             device.initialise()
-
-    def switch(self, deviceID, inChannel, outChannel):
-        '''If a device with the given ID exists, perform a video switch. If not then return -1.'''
-        if self.hasDevice(deviceID):
-            logging.debug("Switching device " + deviceID + ": " + str(inChannel) + "=>" + str(outChannel))
-            return self.devices[deviceID].sendInputToOutput(inChannel, outChannel)
-        else:
-            logging.warn("No device with ID " + deviceID)
-            return -1
 
     def toggleOverscan(self, scDevice, overscan):
         if self.hasDevice(scDevice):
