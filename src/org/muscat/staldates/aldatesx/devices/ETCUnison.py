@@ -16,6 +16,10 @@ class UnisonDevice(SerialDevice):
         cmd = UnisonCommand(unisonObject + ".ACTI")
         self.sendCommand(cmd.getByteString())
 
+    def deactivate(self, unisonObject):
+        cmd = UnisonCommand(unisonObject + ".DACT")
+        self.sendCommand(cmd.getByteString())
+
 
 class UnisonCommand(object):
     '''

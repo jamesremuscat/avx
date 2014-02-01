@@ -29,6 +29,14 @@ class TestETCUnison(unittest.TestCase):
                                ord('P'), ord('r'), ord('e'), ord('s'), ord('e'), ord('t'), ord('1'), ord('.'),
                                ord('A'), ord('C'), ord('T'), ord('I'),
                                0, 0], port.bytes)
+        port.clear()
+        unison.deactivate("Test.Test.Preset2")
+        self.assertBytesEqual([0xEE, 25, 0, 0, 0x40,
+                               ord('T'), ord('e'), ord('s'), ord('t'), ord('.'),
+                               ord('T'), ord('e'), ord('s'), ord('t'), ord('.'),
+                               ord('P'), ord('r'), ord('e'), ord('s'), ord('e'), ord('t'), ord('2'), ord('.'),
+                               ord('D'), ord('A'), ord('C'), ord('T'),
+                               0, 0], port.bytes)
 
     def assertBytesEqual(self, expected, actual):
         self.assertEqual(len(expected), len(actual))
