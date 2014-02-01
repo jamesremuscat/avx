@@ -1,6 +1,7 @@
-from PySide.QtGui import QDialog, QGridLayout, QLabel, QMovie
+from PySide.QtGui import QDialog, QGridLayout, QLabel, QMessageBox, QMovie
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
+import logging
 
 
 class PowerNotificationDialog(QDialog):
@@ -36,3 +37,11 @@ class PowerNotificationDialog(QDialog):
     def exec_(self):
         self.textBox.setText(self.message)
         super(PowerNotificationDialog, self).exec_()
+
+
+def errorBox(text):
+    logging.error(text)
+    msgBox = QMessageBox()
+    msgBox.setText(text)
+    msgBox.setIcon(QMessageBox.Critical)
+    msgBox.exec_()
