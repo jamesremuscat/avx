@@ -1,9 +1,7 @@
 from PySide.QtGui import QButtonGroup, QGridLayout, QLabel, QWidget, QIcon, QMessageBox, QSizePolicy
 from PySide.QtCore import QSize, Qt
-from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton,\
-    OptionButton
-from org.muscat.staldates.aldatesx.Controller import CameraMove, CameraFocus, CameraZoom,\
-    CameraWhiteBalance
+from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton, OptionButton
+from org.muscat.staldates.aldatesx.controller.VISCAController import CameraMove, CameraFocus, CameraZoom, CameraWhiteBalance
 from Pyro4.errors import NamingError, ProtocolError
 from org.muscat.staldates.aldatesx.StringConstants import StringConstants
 from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
