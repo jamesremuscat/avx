@@ -11,6 +11,7 @@ class Controller(object):
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
     pyroName = "aldates.alix.controller"
+    version = 0.9
 
     def __init__(self):
         self.devices = {}
@@ -50,6 +51,9 @@ class Controller(object):
             except:
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
                 self.clients.pop(uri)
+
+    def getVersion(self):
+        return self.version
 
     def addDevice(self, device):
         self.devices[device.deviceID] = device
@@ -362,3 +366,9 @@ class ControllerLogHandler(Handler):
             self.format(fakeRecord)
             fakeRecord.message = "An exception was stripped from this log, see controller logs for details"
             self.entries.append(fakeRecord)
+
+
+class VersionMismatchError(Exception):
+
+    def __init__(self, remoteVersion, localVersion):
+        super(VersionMismatchError, self).__init__("Controller is version " + str(remoteVersion) + " but this client is written for version " + str(localVersion) + ". Check your installation and try again.")

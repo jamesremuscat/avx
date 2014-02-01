@@ -7,7 +7,8 @@ Created on 8 Nov 2012
 from PySide.QtCore import Qt
 from PySide.QtGui import QApplication
 from org.muscat.staldates.aldatesx.Client import Client
-from org.muscat.staldates.aldatesx.Controller import Controller
+from org.muscat.staldates.aldatesx.Controller import Controller,\
+    VersionMismatchError
 from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow
 import Pyro4
 import argparse
@@ -50,6 +51,11 @@ if __name__ == "__main__":
     try:
         controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
 
+        remoteVersion = controller.getVersion()
+
+        if remoteVersion != Controller.version:
+            raise VersionMismatchError(remoteVersion, Controller.version)
+
         myapp = MainWindow(controller)
 
         client = Client(myapp)
@@ -69,3 +75,5 @@ if __name__ == "__main__":
 
     except (NamingError, CommunicationError):
         Dialogs.errorBox("Unable to connect to controller. Please check network connections and try again.")
+    except VersionMismatchError as e:
+        Dialogs.errorBox(str(e))
