@@ -12,6 +12,10 @@ class UnisonDevice(SerialDevice):
     def __init__(self, deviceID, serialDevice):
         super(UnisonDevice, self).__init__(deviceID, serialDevice)
 
+    def activate(self, unisonObject):
+        cmd = UnisonCommand(unisonObject + ".ACTI")
+        self.sendCommand(cmd.getByteString())
+
 
 class UnisonCommand(object):
     '''
