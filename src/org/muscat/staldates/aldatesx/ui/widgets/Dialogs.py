@@ -42,6 +42,6 @@ class PowerNotificationDialog(QDialog):
 def errorBox(text):
     logging.error(text)
     msgBox = QMessageBox()
-    msgBox.setText(text)
+    msgBox.setText('<span style="color: white;">' + text + '</span>')
     msgBox.setIcon(QMessageBox.Critical)
     msgBox.exec_()

@@ -15,6 +15,8 @@ import atexit
 import fcntl  # @UnresolvedImport
 import logging
 import sys
+from Pyro4.errors import NamingError, CommunicationError
+from org.muscat.staldates.aldatesx.ui.widgets import Dialogs
 
 
 if __name__ == "__main__":
@@ -45,21 +47,25 @@ if __name__ == "__main__":
         # never mind
         logging.warn("Cannot find stylesheet, using default system styles.")
 
-    controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
+    try:
+        controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
 
-    myapp = MainWindow(controller)
+        myapp = MainWindow(controller)
 
-    client = Client(myapp)
-    client.setDaemon(True)
-    client.start()
-    client.started.wait()
-    atexit.register(lambda: controller.unregisterClient(client.uri))
+        client = Client(myapp)
+        client.setDaemon(True)
+        client.start()
+        client.started.wait()
+        atexit.register(lambda: controller.unregisterClient(client.uri))
 
-    controller.registerClient(client.uri)
+        controller.registerClient(client.uri)
 
-    if args.fullscreen:
-        QApplication.setOverrideCursor(Qt.BlankCursor)
-        myapp.showFullScreen()
-    else:
-        myapp.show()
-    sys.exit(app.exec_())
+        if args.fullscreen:
+            QApplication.setOverrideCursor(Qt.BlankCursor)
+            myapp.showFullScreen()
+        else:
+            myapp.show()
+        sys.exit(app.exec_())
+
+    except (NamingError, CommunicationError):
+        Dialogs.errorBox("Unable to connect to controller. Please check network connections and try again.")
