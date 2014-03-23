@@ -5,6 +5,8 @@ from org.muscat.staldates.aldatesx.controller.VideoSwitcherController import Vid
 from org.muscat.staldates.aldatesx.controller.VISCAController import VISCAController
 from org.muscat.staldates.aldatesx.devices.Device import Device
 from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
+from org.muscat.staldates.aldatesx import PyroUtils
+import atexit
 import logging
 from logging import Handler
 import Pyro4
@@ -76,6 +78,18 @@ class Controller(ScanConverterController, UnisonController, UpDownRelayControlle
     def initialise(self):
         for device in self.devices.itervalues():
             device.initialise()
+
+    def startServing(self):
+        PyroUtils.setHostname()
+
+        daemon = Pyro4.Daemon()
+        ns = Pyro4.locateNS()
+        uri = daemon.register(self)
+        ns.register(Controller.pyroName, uri)
+
+        atexit.register(lambda: daemon.shutdown(), daemon=daemon)
+
+        daemon.requestLoop()
 
     def systemPowerOn(self):
         if self.hasDevice("Power"):
