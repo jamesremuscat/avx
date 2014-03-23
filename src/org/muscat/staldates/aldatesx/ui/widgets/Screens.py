@@ -1,4 +1,4 @@
-from PySide.QtGui import QIcon, QLabel, QGridLayout, QWidget
+from PySide.QtGui import QIcon, QLabel, QGridLayout, QWidget, QVBoxLayout
 from PySide.QtCore import Qt
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 
@@ -34,4 +34,6 @@ class ScreenWithBackButton(QWidget):
         '''
         Override this method to return the layout with the contents of this screen.
         '''
-        return QLabel("This Screen Intentionally Left Blank")
+        l = QVBoxLayout()
+        l.addWidget(QLabel("This Screen Intentionally Left Blank"))
+        return l
