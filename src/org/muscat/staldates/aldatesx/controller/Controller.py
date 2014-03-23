@@ -34,6 +34,9 @@ class Controller(ScanConverterController, UnisonController, UpDownRelayControlle
             for d in config["devices"]:
                 device = Device.create(d, self)
                 self.addDevice(device)
+            if "options" in config:
+                if "controllerID" in config["options"]:
+                    self.controllerID = config["options"]["controllerID"]
         except ValueError:
             logging.exception("Cannot parse config.json:")
 

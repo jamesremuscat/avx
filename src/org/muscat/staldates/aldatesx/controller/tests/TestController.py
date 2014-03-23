@@ -37,6 +37,8 @@ class TestController(TestCase):
         self.assertTrue(isinstance(c.getDevice("Main"), KramerVP88))
         self.assertTrue(isinstance(c.getDevice("Main Listener"), KramerVP88Listener))
 
+        self.assertEqual("testController", c.controllerID)
+
     def testLoadConfigWithDuplicate(self):
         c = Controller()
         try:

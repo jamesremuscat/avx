@@ -1,4 +1,7 @@
 {
+  "options" : {
+    "controllerID" : "testController"
+  },
   "devices" : [
       {
         "deviceID" : "Main",
