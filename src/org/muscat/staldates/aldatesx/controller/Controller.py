@@ -61,6 +61,8 @@ class Controller(ScanConverterController, UnisonController, UpDownRelayControlle
         return self.version
 
     def addDevice(self, device):
+        if self.hasDevice(device.deviceID):
+            raise DuplicateDeviceIDError(device.deviceID)
         self.devices[device.deviceID] = device
         if hasattr(device, "registerDispatcher") and callable(getattr(device, "registerDispatcher")):
             device.registerDispatcher(self)
@@ -139,3 +141,9 @@ class VersionMismatchError(Exception):
 
     def __init__(self, remoteVersion, localVersion):
         super(VersionMismatchError, self).__init__("Controller is version " + str(remoteVersion) + " but this client is written for version " + str(localVersion) + ". Check your installation and try again.")
+
+
+class DuplicateDeviceIDError(Exception):
+
+    def __init__(self, duplicatedID):
+        super(DuplicateDeviceIDError, self).__init__("Device already exists: " + duplicatedID)

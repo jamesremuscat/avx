@@ -1,5 +1,5 @@
 from unittest import TestCase
-from org.muscat.staldates.aldatesx.controller.Controller import Controller
+from org.muscat.staldates.aldatesx.controller.Controller import Controller, DuplicateDeviceIDError
 from mock import MagicMock
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import UpDownStopArray
 import os
@@ -36,3 +36,11 @@ class TestController(TestCase):
 
         self.assertTrue(isinstance(c.getDevice("Main"), KramerVP88))
         self.assertTrue(isinstance(c.getDevice("Main Listener"), KramerVP88Listener))
+
+    def testLoadConfigWithDuplicate(self):
+        c = Controller()
+        try:
+            c.loadConfig(os.path.join(os.path.dirname(__file__), 'testDuplicateDevice.json'))
+            self.fail("Didn't throw an exception when adding a duplicated device ID")
+        except DuplicateDeviceIDError as e:
+            self.assertEqual("Device already exists: Duplicate", str(e))
