@@ -9,6 +9,7 @@ from org.muscat.staldates.aldatesx.ui.widgets.BlindsControl import BlindsControl
 from org.muscat.staldates.aldatesx.ui.widgets.ProjectorScreensControl import ProjectorScreensControl
 from org.muscat.staldates.aldatesx.ui.widgets.AdvancedMenu import AdvancedMenu
 from org.muscat.staldates.aldatesx.ui.widgets import Dialogs
+from org.muscat.staldates.aldatesx.ui.widgets.LightingControl import LightingControl
 
 
 class MainWindow(QMainWindow):
@@ -54,6 +55,15 @@ class MainWindow(QMainWindow):
         screens.setIcon(QIcon("icons/screens.svg"))
         screens.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         mainLayout.addWidget(screens, 1, 3)
+
+        self.lightsMenu = LightingControl(self.controller, self)
+
+        lights = ExpandingButton()
+        lights.setText("Lights")
+        lights.clicked.connect(lambda: self.showScreen(self.lightsMenu))
+        lights.setIcon(QIcon("icons/lightbulb_on.svg"))
+        lights.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        mainLayout.addWidget(lights, 1, 4)
 
         self.advMenu = AdvancedMenu(self.controller, self)
 
