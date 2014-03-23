@@ -1,4 +1,7 @@
 {
+  "options" : {
+    "controllerID": "Master"
+  },
 	"devices" : [
 		{
 		  "deviceID" : "Main",
