@@ -17,8 +17,8 @@ class Controller(ScanConverterController, UnisonController, UpDownRelayControlle
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
-    pyroName = "aldates.alix.controller"
-    version = 0.9
+    pyroName = "org.muscat.staldates.aldatesx.controller"
+    version = 0.10
 
     def __init__(self):
         self.devices = {}
@@ -88,7 +88,12 @@ class Controller(ScanConverterController, UnisonController, UpDownRelayControlle
         daemon = Pyro4.Daemon()
         ns = Pyro4.locateNS()
         uri = daemon.register(self)
-        ns.register(Controller.pyroName, uri)
+
+        if hasattr(self, "controllerID"):
+            name = self.pyroName + "." + self.controllerID
+        else:
+            name = self.pyroName
+        ns.register(name, uri)
 
         atexit.register(lambda: daemon.shutdown(), daemon=daemon)
 

@@ -38,6 +38,10 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--fullscreen",
                         help="Run in fullscreen mode and hide the mouse cursor",
                         action="store_true")
+    parser.add_argument("-c",
+                        help="Specify the controller ID to connect to",
+                        metavar="CONTROLLERID",
+                        default="")
     args = parser.parse_args()
 
     try:
@@ -48,7 +52,7 @@ if __name__ == "__main__":
         logging.warn("Cannot find stylesheet, using default system styles.")
 
     try:
-        controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName)
+        controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName + "." + args.c)
 
         remoteVersion = controller.getVersion()
 
