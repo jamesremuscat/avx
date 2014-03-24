@@ -20,7 +20,7 @@ class SystemPowerWidget(ScreenWithBackButton):
         self.btnOff.setIcon(QIcon("icons/lightbulb_off.svg"))
         self.btnOff.setIconSize(QSize(128, 128))
         self.btnOff.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        self.btnOff.clicked.connect(self.controller.systemPowerOff)
+        self.btnOff.clicked.connect(self.powerOff)
         buttons.addWidget(self.btnOff)
 
         self.btnOn = ExpandingButton()
@@ -45,4 +45,17 @@ class SystemPowerWidget(ScreenWithBackButton):
             ControllerEvent("turnOn", "Power", 1),
             ControllerEvent("initialise"),  # By this time all things we care about to initialise will have been switched on
             ControllerEvent("hidePowerDialogOnClients")
+        )
+
+    def powerOff(self):
+        self.controller.sequence(
+            ControllerEvent("showPowerOffDialogOnClients"),
+            ControllerEvent("turnOff", "Power", 1),
+            SleepEvent(3),
+            ControllerEvent("turnOff", "Power", 6),
+            SleepEvent(3),
+            ControllerEvent("turnOff", "Power", 5),
+            SleepEvent(3),
+            ControllerEvent("turnOff", "Power", 2),
+            ControllerEvent("hidePowerDialogOnClients"),
         )
