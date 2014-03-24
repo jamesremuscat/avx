@@ -5,7 +5,7 @@ from org.muscat.staldates.aldatesx.controller.UpDownRelayController import UpDow
 from org.muscat.staldates.aldatesx.controller.VideoSwitcherController import VideoSwitcherController
 from org.muscat.staldates.aldatesx.controller.VISCAController import VISCAController
 from org.muscat.staldates.aldatesx.devices.Device import Device
-from org.muscat.staldates.aldatesx.Sequencer import Sequencer, Event
+from org.muscat.staldates.aldatesx.Sequencer import Sequencer
 from org.muscat.staldates.aldatesx import PyroUtils
 import atexit
 import logging
@@ -111,37 +111,6 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
 
     def hidePowerDialogOnClients(self):
         self.callAllClients(lambda c: c.hidePowerDialog())
-
-    def systemPowerOn(self):
-        if self.hasDevice("Power"):
-            logging.info("Turning ON system power")
-            self.sequencer.sequence(
-                Event(self.showPowerOnDialogOnClients),
-                Event(self.turnOn, "Power", 2),
-                self.sequencer.wait(3),
-                Event(self.turnOn, "Power", 5),
-                self.sequencer.wait(3),
-                Event(self.turnOn, "Power", 6),
-                self.sequencer.wait(3),
-                Event(self.turnOn, "Power", 1),
-                Event(self.initialise),  # By this time all things we care about to initialise will have been switched on
-                Event(self.hidePowerDialogOnClients),
-            )
-
-    def systemPowerOff(self):
-        if self.hasDevice("Power"):
-            logging.info("Turning OFF system power")
-            self.sequencer.sequence(
-                Event(self.showPowerOffDialogOnClients),
-                Event(self.turnOff, "Power", 1),
-                self.sequencer.wait(3),
-                Event(self.turnOff, "Power", 6),
-                self.sequencer.wait(3),
-                Event(self.turnOff, "Power", 5),
-                self.sequencer.wait(3),
-                Event(self.turnOff, "Power", 2),
-                Event(self.hidePowerDialogOnClients),
-            )
 
     def getLog(self):
         return self.logHandler.entries
