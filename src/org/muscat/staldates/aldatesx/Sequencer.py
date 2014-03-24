@@ -25,9 +25,10 @@ class Sequencer(Thread):
     about possible side effects.
     '''
 
-    def __init__(self):
+    def __init__(self, controller):
         '''Initialise, but do not start(), the Sequencer.'''
         Thread.__init__(self)
+        self.controller = controller
         self.queue = Queue()
         self.setDaemon(True)
         self.lock = RLock()
@@ -37,7 +38,7 @@ class Sequencer(Thread):
         while 1:
             time.sleep(1)
             event = self.queue.get()
-            event.execute()
+            event.execute(self.controller)
 
     def sequence(self, *events):
         '''Add one or more Events to the sequencer queue. Events added in one call are guaranteed to be executed in order
@@ -67,9 +68,31 @@ class Event(object):
         self.method = method
         self.args = args
 
-    def execute(self):
+    def execute(self, controller):
         '''Execute the Event, by calling the relevant method with the given arguments.'''
         self.method(*self.args)
+
+
+class ControllerEvent(Event):
+    '''A ControllerEvent invokes a method on the Controller. The method is supplied by name.'''
+
+    def __init__(self, method, *args):
+        Event.__init__(self, method, *args)
+
+    def execute(self, controller):
+        getattr(controller, self.method)(*self.args)
+
+
+class SleepEvent(Event):
+    '''Sleep for a certain number of seconds.'''
+
+    def __init__(self, seconds):
+        Event.__init__(self, None)
+        self.seconds = seconds
+
+    def execute(self, controller):
+        logging.debug("Sleeping sequencer for " + str(self.seconds) + " seconds")
+        time.sleep(self.seconds)
 
 
 class CompositeEvent(object):
@@ -81,6 +104,6 @@ class CompositeEvent(object):
     def addEvent(self, event):
         self.events.append(event)
 
-    def execute(self):
+    def execute(self, controller):
         for event in self.events:
-            event.execute()
+            event.execute(controller)

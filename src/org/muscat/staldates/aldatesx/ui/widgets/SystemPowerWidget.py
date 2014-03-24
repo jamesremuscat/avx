@@ -2,6 +2,7 @@ from PySide.QtGui import QIcon, QHBoxLayout
 from PySide.QtCore import Qt, QSize
 from org.muscat.staldates.aldatesx.ui.widgets.Buttons import ExpandingButton
 from org.muscat.staldates.aldatesx.ui.widgets.Screens import ScreenWithBackButton
+from org.muscat.staldates.aldatesx.Sequencer import ControllerEvent, SleepEvent
 
 
 class SystemPowerWidget(ScreenWithBackButton):
@@ -27,7 +28,21 @@ class SystemPowerWidget(ScreenWithBackButton):
         self.btnOn.setIcon(QIcon("icons/lightbulb_on.svg"))
         self.btnOn.setIconSize(QSize(128, 128))
         self.btnOn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        self.btnOn.clicked.connect(self.controller.systemPowerOn)
+        self.btnOn.clicked.connect(self.powerOn)
         buttons.addWidget(self.btnOn)
 
         return buttons
+
+    def powerOn(self):
+        self.controller.sequence(
+            ControllerEvent("showPowerOnDialogOnClients"),
+            ControllerEvent("turnOn", "Power", 2),
+            SleepEvent(3),
+            ControllerEvent("turnOn", "Power", 5),
+            SleepEvent(3),
+            ControllerEvent("turnOn", "Power", 6),
+            SleepEvent(3),
+            ControllerEvent("turnOn", "Power", 1),
+            ControllerEvent("initialise"),  # By this time all things we care about to initialise will have been switched on
+            ControllerEvent("hidePowerDialogOnClients")
+        )

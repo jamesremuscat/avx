@@ -23,7 +23,7 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
 
     def __init__(self):
         self.devices = {}
-        self.sequencer = Sequencer()
+        self.sequencer = Sequencer(self)
         self.sequencer.start()
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
@@ -99,6 +99,9 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
         atexit.register(lambda: daemon.shutdown(), daemon=daemon)
 
         daemon.requestLoop()
+
+    def sequence(self, *events):
+        self.sequencer.sequence(*events)
 
     def showPowerOnDialogOnClients(self):
         self.callAllClients(lambda c: c.showPowerOnDialog())
