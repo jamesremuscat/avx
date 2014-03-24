@@ -100,12 +100,21 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
 
         daemon.requestLoop()
 
+    def showPowerOnDialogOnClients(self):
+        self.callAllClients(lambda c: c.showPowerOnDialog())
+
+    def showPowerOffDialogOnClients(self):
+        self.callAllClients(lambda c: c.showPowerOffDialog())
+
+    def hidePowerDialogOnClients(self):
+        self.callAllClients(lambda c: c.hidePowerDialog())
+
     def systemPowerOn(self):
         if self.hasDevice("Power"):
             power = self.devices["Power"]
             logging.info("Turning ON system power")
             self.sequencer.sequence(
-                Event(lambda: self.callAllClients(lambda c: c.showPowerOnDialog())),
+                Event(self.showPowerOnDialogOnClients),
                 Event(power.on, 2),
                 self.sequencer.wait(3),
                 Event(power.on, 5),
@@ -114,7 +123,7 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
                 self.sequencer.wait(3),
                 Event(power.on, 1),
                 Event(self.initialise),  # By this time all things we care about to initialise will have been switched on
-                Event(lambda: self.callAllClients(lambda c: c.hidePowerDialog())),
+                Event(self.hidePowerDialogOnClients),
             )
 
     def systemPowerOff(self):
@@ -122,7 +131,7 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
             power = self.devices["Power"]
             logging.info("Turning OFF system power")
             self.sequencer.sequence(
-                Event(lambda: self.callAllClients(lambda c: c.showPowerOffDialog())),
+                Event(self.showPowerOffDialogOnClients),
                 Event(power.off, 1),
                 self.sequencer.wait(3),
                 Event(power.off, 6),
@@ -130,7 +139,7 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
                 Event(power.off, 5),
                 self.sequencer.wait(3),
                 Event(power.off, 2),
-                Event(lambda: self.callAllClients(lambda c: c.hidePowerDialog())),
+                Event(self.hidePowerDialogOnClients),
             )
 
     def getLog(self):
