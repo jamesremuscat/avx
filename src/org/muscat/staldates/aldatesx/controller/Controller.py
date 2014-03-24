@@ -1,3 +1,4 @@
+from org.muscat.staldates.aldatesx.controller.RelayController import RelayController
 from org.muscat.staldates.aldatesx.controller.ScanConverterController import ScanConverterController
 from org.muscat.staldates.aldatesx.controller.UnisonController import UnisonController
 from org.muscat.staldates.aldatesx.controller.UpDownRelayController import UpDownRelayController
@@ -13,7 +14,7 @@ import Pyro4
 import json
 
 
-class Controller(ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
+class Controller(RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
