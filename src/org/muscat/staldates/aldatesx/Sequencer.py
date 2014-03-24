@@ -12,13 +12,17 @@ class Sequencer(Thread):
     A threaded sequencer that queues Events and executes them periodically. You should call start() once you've
     created your Sequencer: this isn't done for you. The queue is checked, and events executed, at an interval
     of around one second. This means that there will be a delay of around one second between two consecutive
-    scheduled Events - there is no need to add a wait(1) between them.
+    scheduled Events - there is no need to add a SleepEvent(1) between them.
 
     Once started, the Sequencer runs in a daemonized thread and will keep running until your program otherwise
     terminates.
 
-    Events can be any Python function, but in this context are probably calls to methods on a Controller, or the
-    special 'wait' event returned by a call to Sequencer.wait(secs), which does as it says on the tin.
+    Events can call any Python function, but in this context are probably calls to methods on a Controller, or the
+    special 'wait' SleepEvent, which does as it says on the tin.
+
+    Note that Pyro doesn't pickle functions, so if you're sequencing something client-side you'll need to use the
+    ControllerEvent class, and you'll only have access to the functions on the Controller you'd call normally with
+    Pyro.
 
     There should probably only be one Sequencer in a system, and it should probably reside on the controller side
     and not the user interface side. Breaching either of these conditions should be preceded by some Deep Thought
