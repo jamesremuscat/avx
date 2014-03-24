@@ -18,8 +18,7 @@ class TestMainWindow(GuiTest):
     def setUp(self):
         GuiTest.setUp(self)
         self.mockController = Controller()
-        self.mockController.systemPowerOn = MagicMock(return_value=1)
-        self.mockController.systemPowerOff = MagicMock(return_value=1)
+        self.mockController.sequence = MagicMock(return_value=1)
 
         self.main = MainWindow(self.mockController)
 
@@ -34,10 +33,11 @@ class TestMainWindow(GuiTest):
         spc = self.getCurrentScreen()
         self.assertTrue(isinstance(spc, SystemPowerWidget))
         self.findButton(spc, "On").click()
-        self.assertEquals(self.mockController.systemPowerOn.call_count, 1)
+        self.assertEquals(self.mockController.sequence.call_count, 1)
 
         self.findButton(spc, "Off").click()
-        self.assertEquals(self.mockController.systemPowerOff.call_count, 1)
+        self.assertEquals(self.mockController.sequence.call_count, 2)
+        # Probably ought to verify exactly what has been sequenced...
 
         self.findButton(spc, "Back").click()
         self.assertTrue(isinstance(self.main.stack.currentWidget(), VideoSwitcher))
