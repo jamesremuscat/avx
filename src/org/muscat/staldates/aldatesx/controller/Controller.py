@@ -111,34 +111,32 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
 
     def systemPowerOn(self):
         if self.hasDevice("Power"):
-            power = self.devices["Power"]
             logging.info("Turning ON system power")
             self.sequencer.sequence(
                 Event(self.showPowerOnDialogOnClients),
-                Event(power.on, 2),
+                Event(self.turnOn, "Power", 2),
                 self.sequencer.wait(3),
-                Event(power.on, 5),
+                Event(self.turnOn, "Power", 5),
                 self.sequencer.wait(3),
-                Event(power.on, 6),
+                Event(self.turnOn, "Power", 6),
                 self.sequencer.wait(3),
-                Event(power.on, 1),
+                Event(self.turnOn, "Power", 1),
                 Event(self.initialise),  # By this time all things we care about to initialise will have been switched on
                 Event(self.hidePowerDialogOnClients),
             )
 
     def systemPowerOff(self):
         if self.hasDevice("Power"):
-            power = self.devices["Power"]
             logging.info("Turning OFF system power")
             self.sequencer.sequence(
                 Event(self.showPowerOffDialogOnClients),
-                Event(power.off, 1),
+                Event(self.turnOff, "Power", 1),
                 self.sequencer.wait(3),
-                Event(power.off, 6),
+                Event(self.turnOff, "Power", 6),
                 self.sequencer.wait(3),
-                Event(power.off, 5),
+                Event(self.turnOff, "Power", 5),
                 self.sequencer.wait(3),
-                Event(power.off, 2),
+                Event(self.turnOff, "Power", 2),
                 Event(self.hidePowerDialogOnClients),
             )
 
