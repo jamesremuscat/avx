@@ -4,6 +4,7 @@ from mock import MagicMock
 from org.muscat.staldates.aldatesx.devices.SerialRelayCard import UpDownStopArray
 import os
 from org.muscat.staldates.aldatesx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
+from org.muscat.staldates.aldatesx.devices.SerialDevice import FakeSerialPort
 
 
 class TestController(TestCase):
@@ -46,3 +47,20 @@ class TestController(TestCase):
             self.fail("Didn't throw an exception when adding a duplicated device ID")
         except DuplicateDeviceIDError as e:
             self.assertEqual("Device already exists: Duplicate", str(e))
+
+    def testCallRemoteController(self):
+        master = Controller()
+        slave = Controller()
+
+        switcher = KramerVP88("Test", FakeSerialPort())
+        switcher.sendInputToOutput = MagicMock(return_value=1)
+
+        slave.addDevice(switcher)
+
+        self.assertFalse(master.hasDevice("Test"))
+        self.assertTrue(slave.hasDevice("Test"))
+
+        master.slaves.append(slave)
+
+        master.switch("Test", 1, 2)
+        switcher.sendInputToOutput.assert_called_once_with(1, 2)

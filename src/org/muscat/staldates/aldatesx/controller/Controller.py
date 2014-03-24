@@ -12,6 +12,8 @@ import logging
 from logging import Handler
 import Pyro4
 import json
+import inspect
+from __builtin__ import getattr
 
 
 class Controller(RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
@@ -20,6 +22,8 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
     '''
     pyroName = "org.muscat.staldates.aldatesx.controller"
     version = 0.10
+
+    slaves = []
 
     def __init__(self):
         self.devices = {}
@@ -117,6 +121,31 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
 
     def updateOutputMappings(self, mapping):
         self.callAllClients(lambda c: c.updateOutputMappings(mapping))
+
+    def withDevice(self, deviceID, func):
+        '''Checks to see if this Controller has the reqiured device before frobbing the function you give it. If not,
+           but one of our slaves has the device, perform some hideous stack examination to replicate the original call
+           on that slave.'''
+        if self.hasDevice(deviceID):
+            return func()
+        else:
+            for slave in self.slaves:
+                if slave.hasDevice(deviceID):
+                    # Reassemble the original method call in order to prod remote Controllers appropriately
+                    parentFrame = inspect.stack()[1]
+                    argvalues = inspect.getargvalues(parentFrame[0])
+
+                    newargs = {}
+
+                    for arg in argvalues.args:
+                        if arg != "self":
+                            newargs[arg] = argvalues.locals[arg]
+                    methodName = parentFrame[3]
+                    # Make the same call to our slave as was made to us
+                    getattr(slave, methodName)(**newargs)
+
+            logging.warn("No device with ID " + deviceID)
+            return -1
 
 
 class ControllerLogHandler(Handler):
