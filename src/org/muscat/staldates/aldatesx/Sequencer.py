@@ -47,20 +47,10 @@ class Sequencer(Thread):
             for event in events:
                 self.queue.put(event)
 
-    @staticmethod
-    def wait(secs):
-        '''
-        Convenience method for scheduling a wait of a given number of seconds. Returns an Event you can then sequence.
-        '''
-
-        def annotatedSleep(secs):
-            logging.debug("Sleeping sequencer for " + str(secs) + " seconds")
-            time.sleep(secs)
-        return Event(annotatedSleep, secs)
-
 
 class Event(object):
-    '''An Event is essentially a preserved method call, to be executed at an unspecified point in the future.'''
+    '''An Event is essentially a preserved method call, to be executed at an unspecified point in the future. This will NOT work over
+    Pyro RPC: use a ControllerEvent with a named method argument instead.'''
 
     def __init__(self, method, *args):
         '''Create an Event that, when executed, will call the given method and provide the given arguments.
