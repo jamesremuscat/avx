@@ -1,55 +1,44 @@
-import logging
 
 
 class ScanConverterController:
     def toggleOverscan(self, scDevice, overscan):
-        if self.hasDevice(scDevice):
+        def reallyOverscan():
             sc = self.devices[scDevice]
             if overscan:
-                sc.overscanOn()
+                return sc.overscanOn()
             else:
-                sc.overscanOff()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
+                return sc.overscanOff()
+        return self.withDevice(scDevice, reallyOverscan)
 
     def toggleFreeze(self, scDevice, freeze):
-        if self.hasDevice(scDevice):
+        def reallyFreeze():
             sc = self.devices[scDevice]
             if freeze:
-                sc.freeze()
+                return sc.freeze()
             else:
-                sc.unfreeze()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
+                return sc.unfreeze()
+        return self.withDevice(scDevice, reallyFreeze)
 
     def toggleOverlay(self, scDevice, overlay):
-        if self.hasDevice(scDevice):
+        def reallyOverlay():
             sc = self.devices[scDevice]
             if overlay:
-                sc.overlayOn()
+                return sc.overlayOn()
             else:
-                sc.overlayOff()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
+                return sc.overlayOff()
+        return self.withDevice(scDevice, reallyOverlay)
 
     def toggleFade(self, scDevice, fade):
-        if self.hasDevice(scDevice):
+        def reallyFade():
             sc = self.devices[scDevice]
             if fade:
-                sc.fadeOut()
+                return sc.fadeOut()
             else:
-                sc.fadeIn()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
+                return sc.fadeIn()
+        return self.withDevice(scDevice, reallyFade)
 
     def recalibrate(self, scDevice):
-        if self.hasDevice(scDevice):
+        def reallyRecalibrate():
             sc = self.devices[scDevice]
-            sc.recalibrate()
-        else:
-            logging.warn("No device with ID " + scDevice)
-        return -1
+            return sc.recalibrate()
+        return self.withDevice(scDevice, reallyRecalibrate)
