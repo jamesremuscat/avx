@@ -13,7 +13,6 @@ from logging import Handler
 import Pyro4
 import json
 import inspect
-from __builtin__ import getattr
 
 
 class Controller(RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
