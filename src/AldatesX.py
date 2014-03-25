@@ -52,7 +52,14 @@ if __name__ == "__main__":
         logging.warn("Cannot find stylesheet, using default system styles.")
 
     try:
-        controller = Pyro4.Proxy("PYRONAME:" + Controller.pyroName + "." + args.c)
+        if args.c != "":
+            controllerAddress = "PYRONAME:" + Controller.pyroName + "." + args.c
+        else:
+            controllerAddress = "PYRONAME:" + Controller.pyroName
+
+        logging.info("Connecting to controller at " + controllerAddress)
+
+        controller = Pyro4.Proxy(controllerAddress)
 
         remoteVersion = controller.getVersion()
 
