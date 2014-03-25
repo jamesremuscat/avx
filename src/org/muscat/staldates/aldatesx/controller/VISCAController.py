@@ -3,7 +3,7 @@ import logging
 
 class VISCAController:
     def move(self, camDeviceID, direction):
-        if self.hasDevice(camDeviceID):
+        def reallyMove():
             camera = self.devices[camDeviceID]
             if direction == CameraMove.Left:
                 return camera.moveLeft()
@@ -15,12 +15,10 @@ class VISCAController:
                 return camera.moveDown()
             elif direction == CameraMove.Stop:
                 return camera.stop()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyMove)
 
     def zoom(self, camDeviceID, zoomType):
-        if self.hasDevice(camDeviceID):
+        def reallyZoom():
             camera = self.devices[camDeviceID]
             if zoomType == CameraZoom.Tele:
                 return camera.zoomIn()
@@ -28,12 +26,10 @@ class VISCAController:
                 return camera.zoomOut()
             elif zoomType == CameraZoom.Stop:
                 return camera.zoomStop()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyZoom)
 
     def focus(self, camDeviceID, focusType):
-        if self.hasDevice(camDeviceID):
+        def reallyFocus():
             camera = self.devices[camDeviceID]
             if focusType == CameraFocus.Auto:
                 return camera.focusAuto()
@@ -43,12 +39,10 @@ class VISCAController:
                 return camera.focusFar()
             elif focusType == CameraFocus.Stop:
                 return camera.focusStop()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyFocus)
 
     def exposure(self, camDeviceID, exposureType):
-        if self.hasDevice(camDeviceID):
+        def reallyExpose():
             camera = self.devices[camDeviceID]
             if exposureType == CameraExposure.Brighter:
                 return camera.brighter()
@@ -56,41 +50,33 @@ class VISCAController:
                 return camera.darker()
             elif exposureType == CameraExposure.Auto:
                 return camera.autoExposure()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyExpose)
 
     def backlightComp(self, camDeviceID, compensation):
-        if self.hasDevice(camDeviceID):
+        def reallyBacklight():
             camera = self.devices[camDeviceID]
             if compensation:
                 return camera.backlightCompOn()
             else:
                 return camera.backlightCompOff()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyBacklight)
 
     def savePreset(self, camDeviceID, preset):
-        if self.hasDevice(camDeviceID):
+        def reallySave():
             camera = self.devices[camDeviceID]
             logging.debug("Saving preset " + str(preset) + " on device " + camDeviceID)
             camera.storePreset(preset)
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallySave)
 
     def recallPreset(self, camDeviceID, preset):
-        if self.hasDevice(camDeviceID):
+        def reallyRecall():
             camera = self.devices[camDeviceID]
             logging.debug("Recalling preset " + str(preset) + " on device " + camDeviceID)
             camera.recallPreset(preset)
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyRecall)
 
     def whiteBalance(self, camDeviceID, wbSetting):
-        if self.hasDevice(camDeviceID):
+        def reallyBalance():
             camera = self.devices[camDeviceID]
             if wbSetting == CameraWhiteBalance.Auto:
                 return camera.whiteBalanceAuto()
@@ -102,35 +88,27 @@ class VISCAController:
                 return camera.whiteBalanceOnePush()
             elif wbSetting == CameraWhiteBalance.Trigger:
                 return camera.whiteBalanceOnePushTrigger()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyBalance)
 
     def getPosition(self, camDeviceID):
-        if self.hasDevice(camDeviceID):
+        def reallyGetPos():
             camera = self.devices[camDeviceID]
             logging.debug("Querying position of device " + camDeviceID)
             return camera.getPosition()
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return None
+        return self.withDevice(camDeviceID, reallyGetPos)
 
     def goto(self, camDeviceID, pos, panSpeed, tiltSpeed):
-        if self.hasDevice(camDeviceID):
+        def reallyGoto():
             camera = self.devices[camDeviceID]
             logging.debug("Setting position of device " + camDeviceID)
             return camera.goto(pos, panSpeed, tiltSpeed)
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return None
+        return self.withDevice(camDeviceID, reallyGoto)
 
     def cameraCommand(self, camDeviceID, command):
-        if self.hasDevice(camDeviceID):
+        def reallyCommand():
             camera = self.devices[camDeviceID]
             return camera.execute(command)
-        else:
-            logging.warn("No device with ID " + camDeviceID)
-        return -1
+        return self.withDevice(camDeviceID, reallyCommand)
 
 
 class CameraMove():
