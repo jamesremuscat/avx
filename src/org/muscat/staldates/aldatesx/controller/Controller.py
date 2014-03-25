@@ -122,7 +122,7 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
         self.callAllClients(lambda c: c.updateOutputMappings(mapping))
 
     def withDevice(self, deviceID, func):
-        '''Checks to see if this Controller has the reqiured device before frobbing the function you give it. If not,
+        '''Checks to see if this Controller has the required device before frobbing the function you give it. If not,
            but one of our slaves has the device, perform some hideous stack examination to replicate the original call
            on that slave.'''
         if self.hasDevice(deviceID):
