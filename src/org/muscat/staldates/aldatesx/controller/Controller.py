@@ -141,7 +141,7 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
                             newargs[arg] = argvalues.locals[arg]
                     methodName = parentFrame[3]
                     # Make the same call to our slave as was made to us
-                    getattr(slave, methodName)(**newargs)
+                    return getattr(slave, methodName)(**newargs)
 
             logging.warn("No device with ID " + deviceID)
             return -1
