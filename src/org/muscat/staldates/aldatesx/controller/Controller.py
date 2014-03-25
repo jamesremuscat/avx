@@ -32,6 +32,15 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
         logging.getLogger().addHandler(self.logHandler)
         self.clients = []
 
+    @staticmethod
+    def fromPyro(controllerID=""):
+        controllerAddress = "PYRONAME:" + Controller.pyroName
+        if controllerID != "":
+            controllerAddress += "." + controllerID
+        logging.info("Creating proxy to controller at " + controllerAddress)
+
+        return Pyro4.Proxy(controllerAddress)
+
     def loadConfig(self, configFile):
         try:
             config = json.load(open(configFile))

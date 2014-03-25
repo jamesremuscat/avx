@@ -1,4 +1,3 @@
-import Pyro4
 from org.muscat.staldates.aldatesx.controller.Controller import *
 from argparse import ArgumentParser
 
@@ -10,14 +9,8 @@ if __name__ == '__main__':
                         default="")
     args = parser.parse_args()
 
-    if args.c != "":
-        controllerAddress = "PYRONAME:" + Controller.pyroName + "." + args.c
-    else:
-        controllerAddress = "PYRONAME:" + Controller.pyroName
+    c = Controller.fromPyro(args.c)
 
-    logging.info("Connecting to controller at " + controllerAddress)
-
-    c = Pyro4.Proxy(controllerAddress)
     remoteVersion = c.getVersion()
 
     if remoteVersion != Controller.version:

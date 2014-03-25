@@ -9,7 +9,6 @@ from PySide.QtGui import QApplication
 from org.muscat.staldates.aldatesx.Client import Client
 from org.muscat.staldates.aldatesx.controller.Controller import Controller, VersionMismatchError
 from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow
-import Pyro4
 import argparse
 import atexit
 import fcntl  # @UnresolvedImport
@@ -52,14 +51,7 @@ if __name__ == "__main__":
         logging.warn("Cannot find stylesheet, using default system styles.")
 
     try:
-        if args.c != "":
-            controllerAddress = "PYRONAME:" + Controller.pyroName + "." + args.c
-        else:
-            controllerAddress = "PYRONAME:" + Controller.pyroName
-
-        logging.info("Connecting to controller at " + controllerAddress)
-
-        controller = Pyro4.Proxy(controllerAddress)
+        controller = Controller.fromPyro(args.c)
 
         remoteVersion = controller.getVersion()
 
