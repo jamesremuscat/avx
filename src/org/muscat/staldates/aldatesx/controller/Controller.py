@@ -13,6 +13,7 @@ from logging import Handler
 import Pyro4
 import json
 import inspect
+from Pyro4.errors import NamingError
 
 
 class Controller(RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
@@ -47,9 +48,24 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
             for d in config["devices"]:
                 device = Device.create(d, self)
                 self.addDevice(device)
+
             if "options" in config:
+
                 if "controllerID" in config["options"]:
                     self.controllerID = config["options"]["controllerID"]
+
+                if "slaves" in config["options"]:
+                    for slave in config["options"]["slaves"]:
+                        try:
+                            sc = Controller.fromPyro(slave)
+
+                            if sc.getVersion() == self.getVersion():
+                                self.slaves.append(sc)
+                            else:
+                                logging.error("This Controller is version " + str(self.getVersion()) + " but tried to add slave " + slave + " of version " + str(sc.getVersion()))
+                        except NamingError:
+                            logging.error("Could not connect to slave with controller ID " + slave)
+
         except ValueError:
             logging.exception("Cannot parse config.json:")
 
