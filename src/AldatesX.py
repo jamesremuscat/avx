@@ -6,16 +6,16 @@ Created on 8 Nov 2012
 '''
 from PySide.QtCore import Qt
 from PySide.QtGui import QApplication
-from org.muscat.staldates.aldatesx.Client import Client
-from org.muscat.staldates.aldatesx.controller.Controller import Controller, VersionMismatchError
-from org.muscat.staldates.aldatesx.ui.MainWindow import MainWindow
+from org.muscat.avx.Client import Client
+from org.muscat.avx.controller.Controller import Controller, VersionMismatchError
+from org.staldates.ui.MainWindow import MainWindow
 import argparse
 import atexit
 import fcntl  # @UnresolvedImport
 import logging
 import sys
 from Pyro4.errors import NamingError, CommunicationError
-from org.muscat.staldates.aldatesx.ui.widgets import Dialogs
+from org.staldates.ui.widgets import Dialogs
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from argparse import ArgumentParser, FileType
-from org.muscat.staldates.aldatesx.controller.Controller import Controller
+from org.muscat.avx.controller.Controller import Controller
 import logging
 
 if __name__ == "__main__":
