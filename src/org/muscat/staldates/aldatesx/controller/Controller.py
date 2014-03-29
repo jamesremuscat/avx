@@ -44,7 +44,10 @@ class Controller(RelayController, ScanConverterController, UnisonController, UpD
 
     def loadConfig(self, configFile):
         try:
-            config = json.load(open(configFile))
+            if isinstance(configFile, file):
+                config = json.load(configFile)
+            else:
+                config = json.load(open(configFile))
             for d in config["devices"]:
                 device = Device.create(d, self)
                 self.addDevice(device)
