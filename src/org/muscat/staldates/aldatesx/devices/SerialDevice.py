@@ -3,6 +3,7 @@ from serial import Serial, SerialException
 import logging
 from threading import Thread
 import atexit
+import time
 
 
 class SerialDevice(Device):
@@ -93,6 +94,7 @@ class FakeSerialPort(object):
         return 0
 
     def read(self, length):
+        time.sleep(1)
         return []
 
     def flushInput(self):
