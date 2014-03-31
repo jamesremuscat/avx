@@ -12,5 +12,5 @@ setup(
       long_description="""\
       AVX is a library for controlling A/V devices such as video switchers. ...
       """,
-
+    install_requires=["Pyro4", "pyserial", "PySide"]
       )
