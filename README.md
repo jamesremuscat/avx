@@ -51,7 +51,7 @@ may look like:
 ``` 
 
 Elements under "options" are passed directly as named parameters to the
-constructor (`__init`) of the class. Most, but not all, current devices require
+constructor of the class. Most, but not all, current devices require
 a `serialDevice` option.
 
 
@@ -81,7 +81,7 @@ to run the controller as a daemon.
 Currently the devices best supported include:
 
 * Kramer video switchers supporting Protocol 2000 over serial
-** e.g. VP-88
+  * e.g. VP-88
 * Kramer 602 (non-Protocol 2000)
 * Inline 3080 video switcher
 * Kramer VP70x scan converters
