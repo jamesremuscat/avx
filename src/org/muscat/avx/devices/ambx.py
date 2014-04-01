@@ -55,7 +55,7 @@ class AMBX(Device):
     def __init__(self, deviceID, **kwargs):
         super(AMBX, self).__init__(deviceID)
         # find our device
-        devs = self.devices_by_vendor_product(VENDOR, PRODUCT)
+        devs = devices_by_vendor_product(VENDOR, PRODUCT)
 
         devptr = devs[0]
 
@@ -72,18 +72,18 @@ class AMBX(Device):
     def setColour(self, light, red, green, blue):
         return self.dev.interruptWrite(EP_OUT, B([PKT_HEADER, light, SET_LIGHT_COLOR, red, green, blue]), 100)
 
-    @staticmethod
-    def devices_by_vendor_product(vendor, product):
-        '''
-        Enumerate all USB devices with the right vendor
-        and product ID
-        '''
-        devs = []
-        for bus in usb.busses():
-            for device in bus.devices:
-                if device.idVendor == vendor and device.idProduct == product:
-                    devs.append(device)
-        return devs
+
+def devices_by_vendor_product(vendor, product):
+    '''
+    Enumerate all USB devices with the right vendor
+    and product ID
+    '''
+    devs = []
+    for bus in usb.busses():
+        for device in bus.devices:
+            if device.idVendor == vendor and device.idProduct == product:
+                devs.append(device)
+    return devs
 
 
 def B(x):
