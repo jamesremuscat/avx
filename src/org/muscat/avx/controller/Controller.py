@@ -1,3 +1,4 @@
+from org.muscat.avx.controller.amBxController import amBxController
 from org.muscat.avx.controller.RelayController import RelayController
 from org.muscat.avx.controller.ScanConverterController import ScanConverterController
 from org.muscat.avx.controller.UnisonController import UnisonController
@@ -16,7 +17,7 @@ import inspect
 from Pyro4.errors import NamingError
 
 
-class Controller(RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
+class Controller(amBxController, RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
