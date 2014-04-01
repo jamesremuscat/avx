@@ -1,3 +1,7 @@
+'''
+Heavily borrowing from https://bitbucket.org/wump/ambx-python/ and https://code.google.com/p/combustd before it
+'''
+
 from org.muscat.avx.devices.Device import Device
 import usb
 from array import array
@@ -63,14 +67,17 @@ class AMBX(Device):
         self.dev.claimInterface(0)
 
     def initialise(self):
+        self.allOff()
+
+    def setColour(self, light, red, green, blue):
+        return self.dev.interruptWrite(EP_OUT, B([PKT_HEADER, light, SET_LIGHT_COLOR, red, green, blue]), 100)
+
+    def allOff(self):
         self.setColour(Lights.LEFT, 0, 0, 0)
         self.setColour(Lights.WWLEFT, 0, 0, 0)
         self.setColour(Lights.WWCENTER, 0, 0, 0)
         self.setColour(Lights.WWRIGHT, 0, 0, 0)
         self.setColour(Lights.RIGHT, 0, 0, 0)
-
-    def setColour(self, light, red, green, blue):
-        return self.dev.interruptWrite(EP_OUT, B([PKT_HEADER, light, SET_LIGHT_COLOR, red, green, blue]), 100)
 
 
 def devices_by_vendor_product(vendor, product):
