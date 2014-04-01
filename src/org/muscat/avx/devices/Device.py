@@ -19,7 +19,10 @@ class Device(object):
     def create(d, controller):
         deviceID = d["deviceID"]
         logging.info("Creating device " + deviceID)
-        return get_class(d["class"])(deviceID, controller=controller, **d["options"])
+        if "options" in d:
+            return get_class(d["class"])(deviceID, controller=controller, **d["options"])
+        else:
+            return get_class(d["class"])(deviceID, controller=controller)
 
 
 def get_class(kls):
