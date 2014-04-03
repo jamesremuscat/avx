@@ -38,12 +38,12 @@ class AMBX(Device):
     A Philips amBx USB device.
     '''
 
-    def __init__(self, deviceID, **kwargs):
+    def __init__(self, deviceID, deviceNum=0, **kwargs):
         super(AMBX, self).__init__(deviceID)
         # find our device
         devs = devices_by_vendor_product(VENDOR, PRODUCT)
 
-        devptr = devs[0]
+        devptr = devs[deviceNum]
 
         self.dev = devptr.open()
         self.dev.claimInterface(0)
