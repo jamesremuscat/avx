@@ -7,7 +7,7 @@ import usb
 from array import array
 
 
-# Usb identification
+# USB identification
 VENDOR = 0x0471
 PRODUCT = 0x083f
 
@@ -20,32 +20,14 @@ EP_PNP = 0x83
 PKT_HEADER = 0xA1
 
 # -- Commands --
-
-# Set a single color, for a specific light
-# Params 0xRR 0xGG 0xBB
-# 0xRR = Red color
-# 0xGG = Green color
-# 0xBB = Blue color
 SET_LIGHT_COLOR = 0x03
-
-# Set a color sequence using delays
-# Params 0xMM 0xMM then a repeated sequence of 0xRR 0xGG 0xBB
-# 0xMM = milliseconds
-# 0xMM = milliseconds
-# 0xRR = Red color
-# 0xGG = Green color
-# 0xBB = Blue color
-SET_TIMED_COLOR_SEQUENCE = 0x72
+SET_TIMED_COLOR_SEQUENCE = 0x72  # Not used
 
 
 # -- Lights --
-# Definitions so we do not need to remember the hex values for the lights
 class Lights:
-    # LEFT/RIGHT lights. Normally placed adjecent to your screen.
     LEFT = 0x0B
     RIGHT = 0x1B
-
-    # Wallwasher lights. Normally placed behind your screen.
     WWLEFT = 0x2B
     WWCENTER = 0x3B
     WWRIGHT = 0x4B
