@@ -15,6 +15,7 @@ import Pyro4
 import json
 import inspect
 from Pyro4.errors import NamingError
+from org.muscat.avx.controller.ControllerHttp import ControllerHttp
 
 
 class Controller(amBxController, RelayController, ScanConverterController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
@@ -69,6 +70,11 @@ class Controller(amBxController, RelayController, ScanConverterController, Uniso
                                 logging.error("This Controller is version " + str(self.getVersion()) + " but tried to add slave " + slave + " of version " + str(sc.getVersion()))
                         except NamingError:
                             logging.error("Could not connect to slave with controller ID " + slave)
+
+                if "http" in config["options"]:
+                    if config["options"]["http"] == True:
+                        ch = ControllerHttp(self)
+                        ch.start()
 
         except ValueError:
             logging.exception("Cannot parse config.json:")
