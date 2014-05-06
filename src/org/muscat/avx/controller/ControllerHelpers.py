@@ -8,6 +8,8 @@ def deviceMethod(originalFunc):
     remote slaves if the device exists there.
 
     The first (non-self) argument to the function MUST be the device ID.
+
+    This decorator preserves the func_dict of the original function.
     '''
     def dmFunc(selff, deviceID, *args, **kwargs):
         if selff.hasDevice(deviceID):
@@ -21,4 +23,7 @@ def deviceMethod(originalFunc):
 
             logging.warn("No device with ID " + deviceID)
             return -1
+
+    dmFunc.func_dict = originalFunc.func_dict
+
     return dmFunc
