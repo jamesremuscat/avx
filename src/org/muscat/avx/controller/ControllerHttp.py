@@ -27,25 +27,19 @@ class ControllerHttp(Thread):
                     args = parts[2].split(',')
                     if (self.controller.hasDevice(args[0])):
                         result = function(*args)
-                        self.send_response(200)
-                        self.send_header('Content-type', 'text/plain')
-                        self.end_headers()
-                        self.wfile.write("OK " + str(result))
+                        self.respond(200, "OK " + str(result))
                     else:
-                        self.send_response(404)
-                        self.send_header('Content-type', 'text/plain')
-                        self.end_headers()
-                        self.wfile.write("No such device: " + args[0])
+                        self.respond(404, "No such device: " + args[0])
                 else:
-                    self.send_response(403)
-                    self.send_header('Content-type', 'text/plain')
-                    self.end_headers()
-                    self.wfile.write("Not permitted to call " + parts[1] + " over HTTP (missing @httpAccessible decorator?")
+                    self.respond(403, "Not permitted to call " + parts[1] + " over HTTP (missing @httpAccessible decorator?)")
             else:
-                self.send_response(400)
-                self.send_header('Content-type', 'text/plain')
-                self.end_headers()
-                self.wfile.write("No such function: " + parts[1])
+                self.respond(400, "No such function: " + parts[1])
+
+        def respond(self, responseCode, text):
+            self.send_response(responseCode)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(text)
 
     def run(self):
         self.server = HTTPServer(("", self.port), self.ControllerHttpRequestHandler)
