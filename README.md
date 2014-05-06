@@ -76,6 +76,35 @@ The controller machine can also use the `contrib/AldatesXController` init script
 to run the controller as a daemon.
 
 
+## Using the HTTP interface
+
+There's a basic HTTP interface built in. To enable it, ensure you have the
+following in your config file ('options' should be a sibling of 'devices'):
+
+```
+  "options" : {
+    "http" : true
+  }
+```
+
+By default the HTTP server will listen on port 8080 (currently hardcoded).
+
+The URL scheme to call methods is:
+
+```http://server:8080/METHODNAME/device,option,option...```
+
+For example,
+
+```http://server:8080/switch/Main,2,1```
+
+will tell the video switcher with ID "Main" to send input 2 to output 1.
+
+The controller will respond with an appropriate HTTP response code:
+ * 200 - OK (followed by whatever data is returned by that method)
+ * 400 - no such method
+ * 403 - not permitted to call that method over HTTP
+ * 404 - no such device
+
 ## Supported Devices
 
 Currently the devices best supported include:
@@ -89,6 +118,7 @@ Currently the devices best supported include:
 * Sony VISCA PTZ cameras
 * ETC Unison lighting controller
 * Several models of USB relay cards
+* Philips amBx ambient lighting system
 
 In many cases support is partial but straightforward to improve - patches
 welcome!
