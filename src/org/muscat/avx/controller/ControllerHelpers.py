@@ -2,6 +2,13 @@ import logging
 
 
 def deviceMethod(originalFunc):
+    '''
+    Decorator function that augments a method operating on a device with
+    a check that the device exists, and calls the corresponding method on
+    remote slaves if the device exists there.
+
+    The first (non-self) argument to the function MUST be the device ID.
+    '''
     def dmFunc(selff, deviceID, *args, **kwargs):
         if selff.hasDevice(deviceID):
             return originalFunc(selff, deviceID, *args, **kwargs)
