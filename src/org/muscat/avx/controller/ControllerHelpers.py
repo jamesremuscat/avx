@@ -1,5 +1,6 @@
 import logging
 
+
 def deviceMethod(originalFunc):
     def dmFunc(selff, deviceID, *args, **kwargs):
         if selff.hasDevice(deviceID):
