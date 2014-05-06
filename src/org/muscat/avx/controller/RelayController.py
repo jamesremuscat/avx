@@ -1,18 +1,17 @@
+from org.muscat.avx.controller.ControllerHelpers import deviceMethod
 import logging
 
 
 class RelayController:
 
+    @deviceMethod
     def turnOn(self, device, number):
-        def reallyTurnOn():  # ahem
-            logging.debug("Turning on " + device + ":" + str(number))
-            d = self.devices[device]
-            return d.on(number)
-        return self.withDevice(device, reallyTurnOn)
+        logging.debug("Turning on " + device + ":" + str(number))
+        d = self.devices[device]
+        return d.on(number)
 
+    @deviceMethod
     def turnOff(self, device, number):
-        def reallyTurnOff():
-            logging.debug("Turning off " + device + ":" + str(number))
-            d = self.devices[device]
-            return d.off(number)
-        return self.withDevice(device, reallyTurnOff)
+        logging.debug("Turning off " + device + ":" + str(number))
+        d = self.devices[device]
+        return d.off(number)
