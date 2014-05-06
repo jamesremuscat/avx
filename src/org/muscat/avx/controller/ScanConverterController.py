@@ -1,9 +1,11 @@
 from org.muscat.avx.controller.ControllerHelpers import deviceMethod
+from org.muscat.avx.controller.ControllerHttp import httpAccessible
 
 
 class ScanConverterController:
 
     @deviceMethod
+    @httpAccessible
     def toggleOverscan(self, scDevice, overscan):
         sc = self.devices[scDevice]
         if overscan:
@@ -12,6 +14,7 @@ class ScanConverterController:
             return sc.overscanOff()
 
     @deviceMethod
+    @httpAccessible
     def toggleFreeze(self, scDevice, freeze):
         sc = self.devices[scDevice]
         if freeze:
@@ -20,6 +23,7 @@ class ScanConverterController:
             return sc.unfreeze()
 
     @deviceMethod
+    @httpAccessible
     def toggleOverlay(self, scDevice, overlay):
         sc = self.devices[scDevice]
         if overlay:
@@ -28,6 +32,7 @@ class ScanConverterController:
             return sc.overlayOff()
 
     @deviceMethod
+    @httpAccessible
     def toggleFade(self, scDevice, fade):
         sc = self.devices[scDevice]
         if fade:
@@ -36,6 +41,7 @@ class ScanConverterController:
             return sc.fadeIn()
 
     @deviceMethod
+    @httpAccessible
     def recalibrate(self, scDevice):
         sc = self.devices[scDevice]
         return sc.recalibrate()

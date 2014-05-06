@@ -1,10 +1,12 @@
 from org.muscat.avx.controller.ControllerHelpers import deviceMethod
 import logging
+from org.muscat.avx.controller.ControllerHttp import httpAccessible
 
 
 class VISCAController:
 
     @deviceMethod
+    @httpAccessible
     def move(self, camDeviceID, direction):
         camera = self.devices[camDeviceID]
         if direction == CameraMove.Left:
@@ -19,6 +21,7 @@ class VISCAController:
             return camera.stop()
 
     @deviceMethod
+    @httpAccessible
     def zoom(self, camDeviceID, zoomType):
         camera = self.devices[camDeviceID]
         if zoomType == CameraZoom.Tele:
@@ -29,6 +32,7 @@ class VISCAController:
             return camera.zoomStop()
 
     @deviceMethod
+    @httpAccessible
     def focus(self, camDeviceID, focusType):
         camera = self.devices[camDeviceID]
         if focusType == CameraFocus.Auto:
@@ -41,6 +45,7 @@ class VISCAController:
             return camera.focusStop()
 
     @deviceMethod
+    @httpAccessible
     def exposure(self, camDeviceID, exposureType):
         camera = self.devices[camDeviceID]
         if exposureType == CameraExposure.Brighter:
@@ -51,6 +56,7 @@ class VISCAController:
             return camera.autoExposure()
 
     @deviceMethod
+    @httpAccessible
     def backlightComp(self, camDeviceID, compensation):
             camera = self.devices[camDeviceID]
             if compensation:
@@ -59,18 +65,21 @@ class VISCAController:
                 return camera.backlightCompOff()
 
     @deviceMethod
+    @httpAccessible
     def savePreset(self, camDeviceID, preset):
         camera = self.devices[camDeviceID]
         logging.debug("Saving preset " + str(preset) + " on device " + camDeviceID)
         camera.storePreset(preset)
 
     @deviceMethod
+    @httpAccessible
     def recallPreset(self, camDeviceID, preset):
         camera = self.devices[camDeviceID]
         logging.debug("Recalling preset " + str(preset) + " on device " + camDeviceID)
         return camera.recallPreset(preset)
 
     @deviceMethod
+    @httpAccessible
     def whiteBalance(self, camDeviceID, wbSetting):
         camera = self.devices[camDeviceID]
         if wbSetting == CameraWhiteBalance.Auto:
@@ -85,18 +94,21 @@ class VISCAController:
             return camera.whiteBalanceOnePushTrigger()
 
     @deviceMethod
+    @httpAccessible
     def getPosition(self, camDeviceID):
         camera = self.devices[camDeviceID]
         logging.debug("Querying position of device " + camDeviceID)
         return camera.getPosition()
 
     @deviceMethod
+    @httpAccessible
     def goto(self, camDeviceID, pos, panSpeed, tiltSpeed):
         camera = self.devices[camDeviceID]
         logging.debug("Setting position of device " + camDeviceID)
         return camera.goto(pos, panSpeed, tiltSpeed)
 
     @deviceMethod
+    @httpAccessible
     def cameraCommand(self, camDeviceID, command):
         camera = self.devices[camDeviceID]
         return camera.execute(command)
