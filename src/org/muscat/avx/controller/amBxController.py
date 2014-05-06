@@ -1,11 +1,12 @@
+from org.muscat.avx.controller.ControllerHelpers import deviceMethod
+
+
 class amBxController(object):
 
+    @deviceMethod
     def setColour(self, device, light, red, green, blue):
-        def reallySetColour():
-            return self.devices[device].setColour(int(light), int(red), int(green), int(blue))
-        return self.withDevice(device, reallySetColour)
+        return self.devices[device].setColour(int(light), int(red), int(green), int(blue))
 
+    @deviceMethod
     def allOff(self, device):
-        def reallyAllOff():
-            return self.devices[device].allOff()
-        return self.withDevice(device, reallyAllOff)
+        return self.devices[device].allOff()
