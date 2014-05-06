@@ -1,5 +1,5 @@
 from org.muscat.avx.controller.amBxController import amBxController
-from org.muscat.avx.controller.ControllerHttp import ControllerHttp, httpAccessible
+from org.muscat.avx.controller.ControllerHttp import ControllerHttp
 from org.muscat.avx.controller.RelayController import RelayController
 from org.muscat.avx.controller.ScanConverterController import ScanConverterController
 from org.muscat.avx.controller.UnisonController import UnisonController
@@ -101,7 +101,6 @@ class Controller(amBxController, RelayController, ScanConverterController, Uniso
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
                 self.clients.pop(uri)
 
-    @httpAccessible
     def getVersion(self):
         return self.version
 
