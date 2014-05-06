@@ -91,11 +91,15 @@ By default the HTTP server will listen on port 8080 (currently hardcoded).
 
 The URL scheme to call methods is:
 
-```http://server:8080/METHODNAME/device,option,option...```
+```
+http://server:8080/METHODNAME/device,option,option...
+```
 
 For example,
 
-```http://server:8080/switch/Main,2,1```
+```
+http://server:8080/switch/Main,2,1
+```
 
 will tell the video switcher with ID "Main" to send input 2 to output 1.
 
