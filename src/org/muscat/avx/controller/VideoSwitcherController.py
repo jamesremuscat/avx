@@ -1,10 +1,10 @@
 import logging
+from org.muscat.avx.controller.ControllerHelpers import deviceMethod
 
 
 class VideoSwitcherController:
 
+    @deviceMethod
     def switch(self, deviceID, inChannel, outChannel):
-        def reallySwitch():
-            logging.info("Switching device " + deviceID + ": " + str(inChannel) + "=>" + str(outChannel))
-            return self.devices[deviceID].sendInputToOutput(inChannel, outChannel)
-        return self.withDevice(deviceID, reallySwitch)
+        logging.info("Switching device " + deviceID + ": " + str(inChannel) + "=>" + str(outChannel))
+        return self.devices[deviceID].sendInputToOutput(inChannel, outChannel)
