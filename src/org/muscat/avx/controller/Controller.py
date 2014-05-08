@@ -133,7 +133,7 @@ class Controller(amBxController, RelayController, ScanConverterController, Uniso
             name = self.pyroName
         ns.register(name, uri)
 
-        atexit.register(lambda: daemon.shutdown(), daemon=daemon)
+        atexit.register(lambda: daemon.shutdown())
 
         daemon.requestLoop()
 
