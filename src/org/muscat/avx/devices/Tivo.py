@@ -27,10 +27,25 @@ class Tivo(Device):
     def sendIRCode(self, ircode):
         self.send('IRCODE %s\r' % ircode)
 
-    # On to the actual functions
+    # Playback functions
 
     def pause(self):
         self.sendIRCode("PAUSE")
 
     def play(self):
         self.sendIRCode("PLAY")
+
+    def rewind(self):
+        self.sendIRCode("REVERSE")
+
+    def fastForward(self):
+        self.sendIRCode("FORWARD")
+
+    def replay(self):
+        self.sendIRCode("REPLAY")
+
+    def skip(self):
+        self.sendIRCode("ADVANCE")
+
+    def slow(self):
+        self.sendIRCode("SLOW")
