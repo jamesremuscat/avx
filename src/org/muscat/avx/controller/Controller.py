@@ -132,6 +132,9 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
             name = self.pyroName + "." + self.controllerID
         else:
             name = self.pyroName
+
+        logging.info("Registering controller as " + name)
+
         ns.register(name, uri)
 
         atexit.register(lambda: daemon.shutdown())
