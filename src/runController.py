@@ -3,7 +3,8 @@ from argparse import ArgumentParser, FileType
 from org.muscat.avx.controller.Controller import Controller
 import logging
 
-if __name__ == "__main__":
+
+def main():
     parser = ArgumentParser()
     parser.add_argument("-d", "--debug",
                         help="Show debugging output.",
@@ -18,3 +19,6 @@ if __name__ == "__main__":
     controller.loadConfig(args.config)
     controller.initialise()
     controller.startServing()
+
+if __name__ == "__main__":
+    main()
