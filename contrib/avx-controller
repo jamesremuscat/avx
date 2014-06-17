@@ -1,30 +1,30 @@
 #!/bin/sh
 
 # -------------------------------------------------------------------------
-# AldatesX Controller daemon script
+# avx-controller daemon script
 # Based on:
 #    <Pyro4 NameServer Script>
 #    Copyright (C) <2011>  <Pierre PACORY> - ppacory-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-
+#
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
-
+#
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
-
+#
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -------------------------------------------------------------------------
 
 
-MESSAGEDIR=/var/log/aldatesx
-MESSAGELOG=/var/log/aldatesx/aldatesx.log
-PID=/var/run/AlixController.pid
-AldatesXDIR=/opt/AldatesX/src
+MESSAGEDIR=/var/log/avx
+MESSAGELOG=/var/log/avx/avx.log
+PID=/var/run/avx-controller.pid
+CMDLINE="-c /etc/avx/config.json"
 
 # Add Pyro Config
 # here you can add others ...
@@ -38,6 +38,8 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+command -v avx-controller >/dev/null 2>&1 || { echo >&2 "avx-controller executable is not in PATH.  Aborting."; exit 1; }
+
 # Create the PID File
 touch $PID
 
@@ -46,24 +48,23 @@ case "$1" in
     # create the log directory if not exist
     [ ! -d "$MESSAGEDIR" ] && mkdir -p "$MESSAGEDIR"
 
-    echo "Starting AldatesX Controller"
+    echo "Starting avx controller"
     # test if not already running
     if [ ! -f "/proc/$(cat $PID)/exe" ]; then
-      cd "$AldatesXDIR" 
-      ./runController.py > "$MESSAGELOG" 2>&1 &
+      avx-controller "$CMDLINE" > "$MESSAGELOG" 2>&1 &
       echo $!>"$PID"
     else
-      echo "AldatesX Controller already running"
+      echo "avx controller already running"
     fi
   ;;
   stop)
-    echo "Stopping AldatesX Controller"
+    echo "Stopping avx controller"
     # test if running
     if [ -f "/proc/$(cat $PID)/exe" ]; then
       kill -9 "$(cat $PID)"
       rm -rf "$PID"
     else
-      echo "AldatesX Controller already stopped"
+      echo "avx controller already stopped"
     fi
     ;;
   restart)
