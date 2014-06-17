@@ -12,10 +12,10 @@ setup(
       long_description="""\
       AVX is a library for controlling A/V devices such as video switchers. ...
       """,
-    install_requires=["Pyro4", "pyserial", "pyside"],
+    install_requires=["Pyro4", "pyserial"],
     entry_points={
         'console_scripts': [
-            'avx-controller = runController:main',
+            'avx-controller = org.muscat.avx.controller.Controller:main',
             ],
         }
       )

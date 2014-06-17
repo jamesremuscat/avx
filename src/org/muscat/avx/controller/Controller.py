@@ -10,6 +10,7 @@ from org.muscat.avx.controller.VISCAController import VISCAController
 from org.muscat.avx.devices.Device import Device
 from org.muscat.avx.Sequencer import Sequencer
 from org.muscat.avx import PyroUtils
+from argparse import ArgumentParser, FileType
 import atexit
 import logging
 from logging import Handler
@@ -190,3 +191,23 @@ class DuplicateDeviceIDError(Exception):
 
     def __init__(self, duplicatedID):
         super(DuplicateDeviceIDError, self).__init__("Device already exists: " + duplicatedID)
+
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument("-d", "--debug",
+                        help="Show debugging output.",
+                        action="store_true")
+    parser.add_argument("-c", "--config",
+                        help="Configuration file to use",
+                        default="config.json",
+                        type=FileType("r"))
+    args = parser.parse_args()
+    logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=(logging.DEBUG if args.debug else logging.INFO))
+    controller = Controller()
+    controller.loadConfig(args.config)
+    controller.initialise()
+    controller.startServing()
+
+if __name__ == "__main__":
+    main()
