@@ -18,13 +18,16 @@ import Pyro4
 import json
 from Pyro4.errors import NamingError
 
+Pyro4.config.SERIALIZER = 'pickle'
+Pyro4.config.SERIALIZERS_ACCEPTED.add('pickle')
+
 
 class Controller(amBxController, RelayController, ScanConverterController, TivoController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
     pyroName = "org.muscat.avx.controller"
-    version = 0.10
+    version = 0.11
 
     slaves = []
 
