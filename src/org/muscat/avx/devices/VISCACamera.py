@@ -114,17 +114,17 @@ class VISCACamera(SerialDevice):
     def whiteBalanceOnePushTrigger(self):
         self.sendVISCA([0x01, 0x04, 0x10, 0x05])
 
-    def getPosition(self):
+    def get(self, query, responseSize):
         self.port.flushInput()
-        self.sendVISCA([0x09, 0x06, 0x12, 0xFF])
-        cameraInfo = [int(elem.encode("hex"), base=16) for elem in self.port.read(11)]  # returns Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF where WWWW = pan, ZZZZ = tilt
+        self.sendVISCA(query)
+        return [int(elem.encode("hex"), base=16) for elem in self.port.read(responseSize)]
 
+    def getPosition(self):
+        cameraInfo = self.get([0x09, 0x06, 0x12, 0xFF], 11)  # returns Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF where WWWW = pan, ZZZZ = tilt
         pan = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
         tilt = (cameraInfo[6] << 12) + (cameraInfo[7] << 8) + (cameraInfo[8] << 4) + cameraInfo[9]
 
-        self.port.flushInput()
-        self.sendVISCA([0x09, 0x04, 0x47, 0xFF])
-        cameraInfo = [int(elem.encode("hex"), base=16) for elem in self.port.read(7)]  # returns Y0 50 0Z 0Z 0Z 0Z FF where ZZZZ = zoom
+        cameraInfo = self.get([0x09, 0x04, 0x47, 0xFF], 7)  # returns Y0 50 0Z 0Z 0Z 0Z FF where ZZZZ = zoom
         zoom = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
 
         return CameraPosition(pan, tilt, zoom)
