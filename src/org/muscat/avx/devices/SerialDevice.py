@@ -34,7 +34,16 @@ class SerialDevice(Device):
             logging.debug(str(sentBytes) + " bytes sent")
             return sentBytes
         except SerialException:
-            logging.exception("Failed sending command to " + self.deviceID + " on " + self.port.portstr)
+            #  Retry just the once - experience suggests that this might help
+            logging.warn("Failed sending command to " + self.deviceID + " on " + self.port.portstr + ", retrying...")
+            try:
+                self.port.close()
+                self.port.open()
+                sentBytes = self.port.write(commandString)
+                logging.debug(str(sentBytes) + " bytes sent")
+                return sentBytes
+            except SerialException:
+                logging.exception("Really failed sending command to " + self.deviceID + " on " + self.port.portstr)
 
     @staticmethod
     def byteArrayToString(byteArray):

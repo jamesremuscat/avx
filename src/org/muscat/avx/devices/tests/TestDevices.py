@@ -3,18 +3,19 @@ Created on 3 Jan 2013
 
 @author: james
 '''
-import unittest
-from org.muscat.avx.devices.Inline3808 import Inline3808
-from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
-from org.muscat.avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
-from org.muscat.avx.devices.Kramer602 import Kramer602,\
-    Kramer602Listener
-from org.muscat.avx.devices.KramerVP703 import KramerVP703
+from org.muscat.avx.controller.Controller import Controller
 from org.muscat.avx.devices.CoriogenEclipse import CoriogenEclipse
+from org.muscat.avx.devices.Inline3808 import Inline3808
+from org.muscat.avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
+from org.muscat.avx.devices.Kramer602 import Kramer602, Kramer602Listener
+from org.muscat.avx.devices.KramerVP703 import KramerVP703
+from org.muscat.avx.devices.SerialDevice import SerialDevice
 from org.muscat.avx.devices.SerialRelayCard import JBSerialRelayCard, KMtronicSerialRelayCard
+from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock
 import threading
-from org.muscat.avx.controller.Controller import Controller
+import unittest
+from serial.serialutil import SerialException
 
 
 class TestDevices(unittest.TestCase):
@@ -212,6 +213,17 @@ class TestDevices(unittest.TestCase):
         kl.stop()
 
         dispatcher.updateOutputMappings.assert_called_with({'Test': {2: 5}})
+
+    def testSerialDevice(self):
+        port = MockSerialPort()
+        port.portstr = "TESTPORT"
+        device = SerialDevice("Test", port)
+
+        port.write = MagicMock(side_effect=SerialException("Test serial exception"))
+
+        device.sendCommand("\x01")
+
+        self.assertEqual(port.write.call_count, 2)
 
     def assertBytesEqual(self, expected, actual):
         self.assertEqual(len(expected), len(actual))

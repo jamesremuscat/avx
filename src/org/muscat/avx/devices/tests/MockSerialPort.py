@@ -25,6 +25,12 @@ class MockSerialPort(object):
     def clear(self):
         self.bytes = []
 
+    def close(self):
+        pass
+
+    def open(self):
+        pass
+
     def read(self, length):
         return self.data
 
