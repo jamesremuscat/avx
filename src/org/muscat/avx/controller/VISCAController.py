@@ -5,26 +5,28 @@ from org.muscat.avx.controller.ControllerHttp import httpAccessible
 
 class VISCAController:
 
+    defaultSpeed = 6
+
     @deviceMethod
     @httpAccessible
-    def move(self, camDeviceID, direction):
+    def move(self, camDeviceID, direction, pan=defaultSpeed, tilt=defaultSpeed):
         camera = self.devices[camDeviceID]
         if direction == CameraMove.Left:
-            return camera.moveLeft()
+            return camera.moveLeft(pan, tilt)
         elif direction == CameraMove.UpLeft:
-            return camera.moveUpLeft()
+            return camera.moveUpLeft(pan, tilt)
         elif direction == CameraMove.Up:
-            return camera.moveUp()
+            return camera.moveUp(pan, tilt)
         elif direction == CameraMove.UpRight:
-            return camera.moveUpRight()
+            return camera.moveUpRight(pan, tilt)
         elif direction == CameraMove.Right:
-            return camera.moveRight()
+            return camera.moveRight(pan, tilt)
         elif direction == CameraMove.DownRight:
-            return camera.moveDownRight()
+            return camera.moveDownRight(pan, tilt)
         elif direction == CameraMove.Down:
-            return camera.moveDown()
+            return camera.moveDown(pan, tilt)
         elif direction == CameraMove.DownLeft:
-            return camera.moveDownLeft()
+            return camera.moveDownLeft(pan, tilt)
         elif direction == CameraMove.Stop:
             return camera.stop()
 
