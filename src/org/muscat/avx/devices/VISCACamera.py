@@ -36,36 +36,56 @@ class VISCACamera(SerialDevice):
             return self.sendCommand(SerialDevice.byteArrayToString(command.getBytes(self.cameraID)))
 
     def moveUp(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x01])
 
     def moveUpLeft(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x01])
 
     def moveLeft(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x03])
 
     def moveDownLeft(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x02])
 
     def moveDown(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x02])
 
     def moveDownRight(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x02])
 
     def moveRight(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x03])
 
     def moveUpRight(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x01])
 
     def stop(self, pan=panSpeed, tilt=tiltSpeed):
+        checkPan(pan)
+        checkTilt(tilt)
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x03])
 
     def zoomIn(self, speed=zoomSpeed):
+        checkZoom(speed)
         return self.sendVISCA([0x01, 0x04, 0x07, 0x20 + speed])
 
     def zoomOut(self, speed=zoomSpeed):
+        checkZoom(speed)
         return self.sendVISCA([0x01, 0x04, 0x07, 0x30 + speed])
 
     def zoomStop(self):
@@ -194,3 +214,22 @@ class VISCACamera(SerialDevice):
         ret += self.sendVISCA(setZ)
 
         return ret
+
+
+class InvalidArgumentException(Exception):
+    pass
+
+
+def checkPan(pan):
+    if pan < 1 or pan > 18:
+        raise InvalidArgumentException()
+
+
+def checkTilt(tilt):
+    if tilt < 1 or tilt > 16:
+        raise InvalidArgumentException()
+
+
+def checkZoom(zoom):
+    if zoom < 2 or zoom > 7:
+        raise InvalidArgumentException()
