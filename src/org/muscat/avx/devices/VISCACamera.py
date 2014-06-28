@@ -11,12 +11,16 @@ from org.muscat.avx.devices.VISCACommands import VISCACommand
 class VISCACamera(SerialDevice):
     '''
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
+
+    Limitation: 'proper' VISCA requires waiting for an ACK/NACK from camera
+    before sending next command. We completely ignore ACKs and NACKs and just
+    spew commands as often as we're asked to.
     '''
 
-    # Pan/tilt speeds can vary from 0x01 - 0x18; AMX uses 0x06
+    # Pan speeds can vary from 0x01 - 0x18
     panSpeed = 0x06
+    # Tilt speeds can vary from 0x01 - 0x14
     tiltSpeed = 0x06
-
     # Zoom speed can vary from 0x02-0x07
     zoomSpeed = 0x06
 
@@ -31,38 +35,38 @@ class VISCACamera(SerialDevice):
         if isinstance(command, VISCACommand):
             return self.sendCommand(SerialDevice.byteArrayToString(command.getBytes(self.cameraID)))
 
-    def moveUp(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x01])
+    def moveUp(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x01])
 
-    def moveUpLeft(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x01, 0x01])
+    def moveUpLeft(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x01])
 
-    def moveLeft(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x01, 0x03])
+    def moveLeft(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x03])
 
-    def moveDownLeft(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x01, 0x02])
+    def moveDownLeft(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x02])
 
-    def moveDown(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x02])
+    def moveDown(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x02])
 
-    def moveDownRight(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x02, 0x02])
+    def moveDownRight(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x02])
 
-    def moveRight(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x02, 0x03])
+    def moveRight(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x03])
 
-    def moveUpRight(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x02, 0x01])
+    def moveUpRight(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x01])
 
-    def stop(self):
-        return self.sendVISCA([0x01, 0x06, 0x01, self.panSpeed, self.tiltSpeed, 0x03, 0x03])
+    def stop(self, pan=panSpeed, tilt=tiltSpeed):
+        return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x03])
 
-    def zoomIn(self):
-        return self.sendVISCA([0x01, 0x04, 0x07, 0x20 + self.zoomSpeed])
+    def zoomIn(self, speed=zoomSpeed):
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x20 + speed])
 
-    def zoomOut(self):
-        return self.sendVISCA([0x01, 0x04, 0x07, 0x30 + self.zoomSpeed])
+    def zoomOut(self, speed=zoomSpeed):
+        return self.sendVISCA([0x01, 0x04, 0x07, 0x30 + speed])
 
     def zoomStop(self):
         return self.sendVISCA([0x01, 0x04, 0x07, 0x00])
