@@ -11,12 +11,20 @@ class VISCAController:
         camera = self.devices[camDeviceID]
         if direction == CameraMove.Left:
             return camera.moveLeft()
-        elif direction == CameraMove.Right:
-            return camera.moveRight()
+        elif direction == CameraMove.UpLeft:
+            return camera.moveUpLeft()
         elif direction == CameraMove.Up:
             return camera.moveUp()
+        elif direction == CameraMove.UpRight:
+            return camera.moveUpRight()
+        elif direction == CameraMove.Right:
+            return camera.moveRight()
+        elif direction == CameraMove.DownRight:
+            return camera.moveDownRight()
         elif direction == CameraMove.Down:
             return camera.moveDown()
+        elif direction == CameraMove.DownLeft:
+            return camera.moveDownLeft()
         elif direction == CameraMove.Stop:
             return camera.stop()
 
@@ -115,7 +123,7 @@ class VISCAController:
 
 
 class CameraMove():
-    Left, Right, Up, Down, Stop = range(5)
+    Left, UpLeft, Up, UpRight, Right, DownRight, Down, DownLeft, Stop = range(9)
 
 
 class CameraZoom():
