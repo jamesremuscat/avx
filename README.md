@@ -21,7 +21,7 @@ You will need a Python (2.7 is what I've used) with python-serial, PySide, and
 Pyro4.
 
 The easiest method of installing is to either grab a pre-built egg or build one
-from source yourself (`python setup.py bdist_egg`) and install using pip. AVX requires:
+from source yourself (`python setup.py bdist_egg`) and install using easy_install. AVX requires:
 
 * Python 2.7
 * python-serial
@@ -29,7 +29,7 @@ from source yourself (`python setup.py bdist_egg`) and install using pip. AVX re
 * Pyro4
 * setuptools
 
-In theory, `pip install` should take care of the dependencies for you. 
+In theory, `easy_install` should take care of the dependencies for you. 
 
 Mapping of physical hardware devices through serial ports to virtual devices is
 done in the `config.json` file. A typical definition of a single-device system
@@ -70,9 +70,10 @@ You will need a Pyro4 nameserver running somewhere on your network. The
 The `runController.py` script will start a Controller instance and register it
 with the Pyro4 nameserver, making it available to all machines on your network.
 By default it will load a `config.json` configuration file, or whatever you
-specify with -c on the commandline.
+specify with -c on the commandline. Installing via pip/easy_install will
+generate an `avx-controller` script which is run in the same way. 
 
-The controller machine can also use the `contrib/AldatesXController` init script
+The controller machine can also use the `contrib/avx-controller` init script
 to run the controller as a daemon.
 
 
