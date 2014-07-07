@@ -1,9 +1,17 @@
 #!/bin/sh
 
+### BEGIN INIT INFO
+# Provides: pyro-nsd
+# Required-Start: $network
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+### END INIT INFO
+
 # -------------------------------------------------------------------------
 #    <Pyro4 NameServer Script>
 #    Copyright (C) <2011>  <Pierre PACORY> - ppacory-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-
+#    Modified by James Muscat
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -24,6 +32,7 @@ LISTEN_PORT=9999
 MESSAGEDIR=/var/log/Pyro4
 MESSAGELOG=/var/log/Pyro4/NameServer.log
 PID=/var/run/Pyro4-NameServer.pid
+PYTHON=/path/to/python
 
 # Add Pyro Config
 # here you can add others ...
@@ -49,7 +58,7 @@ case "$1" in
     echo "Starting Pyro4 Name Server"
     # test if not already running
     if [ ! -f "/proc/$(cat $PID)/exe" ]; then
-      python -m Pyro4.naming -n "$LISTEN_ADDRESS" -p "$LISTEN_PORT" >/dev/null 2>&1 &
+      $PYTHON -m Pyro4.naming -n "$LISTEN_ADDRESS" -p "$LISTEN_PORT" >/dev/null 2>&1 &
       echo $!>"$PID"
     else
       echo "Pyro4 Name Server already running"

@@ -1,5 +1,13 @@
 #!/bin/sh
 
+### BEGIN INIT INFO
+# Provides: avx-controller
+# Required-Start: pyro-nsd
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+### END INIT INFO
+
 # -------------------------------------------------------------------------
 # avx-controller daemon script
 # Based on:
@@ -20,11 +28,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -------------------------------------------------------------------------
 
-
 MESSAGEDIR=/var/log/avx
 MESSAGELOG=/var/log/avx/avx.log
 PID=/var/run/avx-controller.pid
-CMDLINE="-c /etc/avx/config.json"
+EXECUTABLE=/path/to/avx-controller
+CMDLINE="-c /path/to/config.json"
 
 # Add Pyro Config
 # here you can add others ...
@@ -38,7 +46,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-command -v avx-controller >/dev/null 2>&1 || { echo >&2 "avx-controller executable is not in PATH.  Aborting."; exit 1; }
+command -v $EXECUTABLE >/dev/null 2>&1 || { echo >&2 "avx-controller executable not found at $EXECUTABLE.  Aborting."; exit 1; }
 
 # Create the PID File
 touch $PID
@@ -51,7 +59,7 @@ case "$1" in
     echo "Starting avx controller"
     # test if not already running
     if [ ! -f "/proc/$(cat $PID)/exe" ]; then
-      avx-controller "$CMDLINE" > "$MESSAGELOG" 2>&1 &
+      $EXECUTABLE "$CMDLINE" > "$MESSAGELOG" 2>&1 &
       echo $!>"$PID"
     else
       echo "avx controller already running"
