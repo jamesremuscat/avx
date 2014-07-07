@@ -203,12 +203,19 @@ def main():
                         action="store_true")
     parser.add_argument("-c", "--config",
                         help="Configuration file to use",
-                        default="config.json",
                         type=FileType("r"))
     args = parser.parse_args()
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=(logging.DEBUG if args.debug else logging.INFO))
     controller = Controller()
-    controller.loadConfig(args.config)
+    if args.config:
+        controller.loadConfig(args.config)
+    else:
+        try:
+            configFile = open('config.json', 'r')
+            controller.loadConfig(configFile)
+        except IOError:
+            logging.error("No config file specified and config.json not found! Exiting...")
+            exit(1)
     controller.initialise()
     controller.startServing()
 
