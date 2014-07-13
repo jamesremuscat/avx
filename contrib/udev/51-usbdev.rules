@@ -1,0 +1,1 @@
+ACTION=="add", KERNEL=="ttyUSB[0-9]*", PROGRAM="/etc/udev/rules.d/usb-parse-devpath.pm %p", SYMLINK+="usb-ports/%c"
