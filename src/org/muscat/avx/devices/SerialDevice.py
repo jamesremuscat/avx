@@ -21,7 +21,7 @@ class SerialDevice(Device):
         if isinstance(serialDevice, str) or isinstance(serialDevice, unicode):
             try:
                 self.port = Serial(serialDevice, baud, timeout=2)
-            except SerialException:
+            except (SerialException, OSError):
                 logging.exception("Could not open serial device " + serialDevice + " for " + deviceID)
                 self.port = FakeSerialPort()
         else:
