@@ -9,7 +9,7 @@ from org.muscat.avx.controller.VideoSwitcherController import VideoSwitcherContr
 from org.muscat.avx.controller.VISCAController import VISCAController
 from org.muscat.avx.devices.Device import Device
 from org.muscat.avx.Sequencer import Sequencer
-from org.muscat.avx import PyroUtils
+from org.muscat.avx import PyroUtils, _version
 from argparse import ArgumentParser, FileType
 import atexit
 import logging
@@ -27,7 +27,7 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
     pyroName = "org.muscat.avx.controller"
-    version = 0.11
+    version = _version.__version__
 
     slaves = []
 

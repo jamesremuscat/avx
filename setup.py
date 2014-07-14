@@ -1,8 +1,21 @@
 from setuptools import setup, find_packages
+import re
+
+VERSIONFILE = "src/org/muscat/avx/_version.py"
+verstr = "unknown"
+try:
+    verstrline = open(VERSIONFILE, "rt").read()
+    VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
+    mo = re.search(VSRE, verstrline, re.M)
+    if mo:
+        verstr = mo.group(1)
+except EnvironmentError:
+    print "unable to find version in %s" % (VERSIONFILE,)
+    raise RuntimeError("if %s exists, it is required to be well-formed" % (VERSIONFILE,))
 
 setup(
     name='avx',
-    version='0.93',
+    version=verstr,
     description='Library for controlling A/V devices',
     author='James Muscat',
     author_email='jamesremuscat@gmail.com',
