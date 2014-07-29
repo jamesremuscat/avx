@@ -221,12 +221,12 @@ class InvalidArgumentException(Exception):
 
 
 def checkPan(pan):
-    if pan < 1 or pan > 18:
+    if pan < 1 or pan > 0x18:
         raise InvalidArgumentException()
 
 
 def checkTilt(tilt):
-    if tilt < 1 or tilt > 16:
+    if tilt < 1 or tilt > 0x16:
         raise InvalidArgumentException()
 
 
