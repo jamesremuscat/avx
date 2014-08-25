@@ -105,6 +105,24 @@ class VISCAController:
 
     @deviceMethod
     @httpAccessible
+    def setAutoExposure(self, camDeviceID):
+        camera = self.devices[camDeviceID]
+        camera.setAutoExposure()
+
+    @deviceMethod
+    @httpAccessible
+    def setAperturePriority(self, camDeviceID):
+        camera = self.devices[camDeviceID]
+        camera.setAperturePriority()
+
+    @deviceMethod
+    @httpAccessible
+    def setAperture(self, camDeviceID, aperture):
+        camera = self.devices[camDeviceID]
+        camera.setAperture(aperture)
+
+    @deviceMethod
+    @httpAccessible
     def getPosition(self, camDeviceID):
         camera = self.devices[camDeviceID]
         logging.debug("Querying position of device " + camDeviceID)
