@@ -6,6 +6,7 @@ Created on 13 Nov 2012
 from org.muscat.avx.devices.SerialDevice import SerialDevice
 from org.muscat.avx.CameraPosition import CameraPosition
 from org.muscat.avx.devices.VISCACommands import VISCACommand
+from enum import Enum
 
 
 class VISCACamera(SerialDevice):
@@ -150,6 +151,20 @@ class VISCACamera(SerialDevice):
     def whiteBalanceOnePushTrigger(self):
         self.sendVISCA([0x01, 0x04, 0x10, 0x05])
 
+    def setAutoExposure(self):
+        self.sendVISCA([0x01, 0x04, 0x39, 0x00])
+
+    def setAperturePriority(self):
+        self.sendVISCA([0x01, 0x04, 0x39, 0x0B])
+
+    def setAperture(self, aperture):
+        av = aperture.value
+        self.sendVISCA([0x01, 0x04, 0x4B,
+                        (av & 0xF000) >> 12,
+                        (av & 0x0F00) >> 8,
+                        (av & 0x00F0) >> 4,
+                        (av & 0x000F)])
+
     def get(self, query, responseSize):
         self.port.flushInput()
         self.sendVISCA(query)
@@ -218,6 +233,27 @@ class VISCACamera(SerialDevice):
 
 class InvalidArgumentException(Exception):
     pass
+
+
+class Aperture(Enum):
+    CLOSE = 0x00
+    F22 = 0x01
+    F19 = 0x02
+    F16 = 0x03
+    F14 = 0x04
+    F11 = 0x05
+    F9_6 = 0x06
+    F8 = 0x07
+    F6_8 = 0x08
+    F5_6 = 0x09
+    F4_8 = 0x0A
+    F4 = 0x0B
+    F3_4 = 0x0C
+    F2_8 = 0x0D
+    F2_4 = 0x0E
+    F2 = 0x0F
+    F1_6 = 0x10
+    F1_4 = 0x11
 
 
 def checkPan(pan):

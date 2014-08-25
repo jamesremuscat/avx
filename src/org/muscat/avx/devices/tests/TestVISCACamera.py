@@ -5,7 +5,7 @@ Created on 18 Mar 2013
 '''
 import unittest
 from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
-from org.muscat.avx.devices.VISCACamera import VISCACamera
+from org.muscat.avx.devices.VISCACamera import VISCACamera, Aperture
 
 
 class TestVISCACamera(unittest.TestCase):
@@ -22,6 +22,23 @@ class TestVISCACamera(unittest.TestCase):
         self.assertEqual(pos.pan, 0x1234)
         self.assertEqual(pos.tilt, 0xABCD)
         self.assertEqual(pos.zoom, 0x1234)  # This is a bit of a hack since getPosition() results in two calls to port.read()
+
+    def testSetAperture(self):
+        port = MockSerialPort()
+
+        cam = VISCACamera("Test Camera", port, 1)
+
+        cam.setAperture(Aperture.F22)
+        self.assertBytesEqual([0x81, 0x01, 0x04, 0x4B, 0x00, 0x00, 0x00, 0x01, 0xFF], port.bytes)
+
+        port.clear()
+        cam.setAperture(Aperture.F1_4)
+        self.assertBytesEqual([0x81, 0x01, 0x04, 0x4B, 0x00, 0x00, 0x01, 0x01, 0xFF], port.bytes)
+
+    def assertBytesEqual(self, expected, actual):
+        self.assertEqual(len(expected), len(actual))
+        for i in range(len(expected)):
+            self.assertEqual(chr(expected[i]), actual[i], "Byte " + str(i) + ", expected " + str(expected[i]) + " but received " + str(ord(actual[i])))
 
 
 if __name__ == "__main__":
