@@ -158,7 +158,10 @@ class VISCACamera(SerialDevice):
         self.sendVISCA([0x01, 0x04, 0x39, 0x0B])
 
     def setAperture(self, aperture):
-        av = aperture.value
+        if isinstance(aperture, Aperture):
+            av = aperture.value
+        else:
+            av = aperture
         self.sendVISCA([0x01, 0x04, 0x4B,
                         (av & 0xF000) >> 12,
                         (av & 0x0F00) >> 8,
