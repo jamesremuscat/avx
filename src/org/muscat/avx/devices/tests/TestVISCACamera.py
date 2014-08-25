@@ -28,11 +28,11 @@ class TestVISCACamera(unittest.TestCase):
 
         cam = VISCACamera("Test Camera", port, 1)
 
-        cam.setAperture(Aperture.F22)
+        cam.setAperture(Aperture.F28)
         self.assertBytesEqual([0x81, 0x01, 0x04, 0x4B, 0x00, 0x00, 0x00, 0x01, 0xFF], port.bytes)
 
         port.clear()
-        cam.setAperture(Aperture.F1_4)
+        cam.setAperture(Aperture.F1_8)
         self.assertBytesEqual([0x81, 0x01, 0x04, 0x4B, 0x00, 0x00, 0x01, 0x01, 0xFF], port.bytes)
 
     def assertBytesEqual(self, expected, actual):
