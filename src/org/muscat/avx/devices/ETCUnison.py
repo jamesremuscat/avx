@@ -9,7 +9,7 @@ class UnisonDevice(SerialDevice):
     An ETC Unison lighting controller speaking Unison Serial Access Protocol (USAP).
     '''
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, **kwargs):
         super(UnisonDevice, self).__init__(deviceID, serialDevice)
 
     def activate(self, unisonObject):

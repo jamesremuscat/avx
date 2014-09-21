@@ -11,7 +11,7 @@ class CoriogenEclipse(SerialDevice):
     Coriogen Eclipse scan converter/genlock/overlay
     '''
 
-    def __init__(self, deviceID, serialDevice):
+    def __init__(self, deviceID, serialDevice, **kwargs):
         super(CoriogenEclipse, self).__init__(deviceID, serialDevice)
 
     def overlayOn(self):
