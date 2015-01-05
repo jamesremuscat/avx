@@ -125,6 +125,10 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
         for device in self.devices.itervalues():
             device.initialise()
 
+    def deinitialise(self):
+        for device in self.devices.itervalues():
+            device.deinitialise()
+
     def startServing(self):
         PyroUtils.setHostname()
 

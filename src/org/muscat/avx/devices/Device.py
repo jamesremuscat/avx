@@ -15,6 +15,12 @@ class Device(object):
         '''
         pass
 
+    def deinitialise(self):
+        '''
+        Extension point for device-specific deinitialisation code (e.g. closing open file handles)
+        '''
+        pass
+
     @staticmethod
     def create(d, controller):
         deviceID = d["deviceID"]

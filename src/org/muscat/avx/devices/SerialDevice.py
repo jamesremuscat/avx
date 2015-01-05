@@ -45,6 +45,9 @@ class SerialDevice(Device):
             except SerialException:
                 logging.exception("Really failed sending command to " + self.deviceID + " on " + self.port.portstr)
 
+    def deinitialise(self):
+        self.port.close()
+
     @staticmethod
     def byteArrayToString(byteArray):
         return ''.join(chr(b) for b in byteArray)
@@ -79,6 +82,9 @@ class SerialListener(Thread):
 
     def initialise(self):
         self.start()
+
+    def deinitialise(self):
+        self.stop()
 
     def run(self):
         logging.info("Listening to serial port " + self.parentDevice.port.portstr)
