@@ -124,6 +124,7 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
     def initialise(self):
         for device in self.devices.itervalues():
             device.initialise()
+        atexit.register(self.deinitialise)
 
     def deinitialise(self):
         for device in self.devices.itervalues():
