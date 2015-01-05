@@ -114,3 +114,6 @@ class FakeSerialPort(object):
 
     def flushInput(self):
         return 0
+
+    def close(self):
+        pass
