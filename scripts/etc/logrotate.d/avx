@@ -1,0 +1,10 @@
+/var/log/avx/avx.log {
+  missingok
+  daily
+  copytruncate
+  dateext
+  rotate 8
+  compress
+  delaycompress
+}
+
