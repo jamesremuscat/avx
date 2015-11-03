@@ -76,7 +76,7 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
                             logging.error("Could not connect to slave with controller ID " + slave)
 
                 if "http" in config["options"]:
-                    if config["options"]["http"] == True:
+                    if config["options"]["http"] is True:
                         ch = ControllerHttp(self)
                         ch.start()
 
