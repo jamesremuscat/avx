@@ -46,7 +46,7 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
             controllerAddress += "." + controllerID
         logging.info("Creating proxy to controller at " + controllerAddress)
 
-        return Pyro4.Proxy(controllerAddress)
+        return ControllerProxy(Pyro4.Proxy(controllerAddress))
 
     def loadConfig(self, configFile):
         try:
@@ -118,6 +118,13 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
     def getDevice(self, deviceID):
         return self.devices[deviceID]
 
+    @Pyro4.expose
+    @Pyro4.callback
+    def __getitem__(self, deviceID):
+        if self.hasDevice(deviceID):
+            return DeviceProxy(self.getDevice(deviceID))
+        raise KeyError(deviceID)
+
     def hasDevice(self, deviceID):
         return deviceID in self.devices
 
@@ -167,6 +174,23 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
 
     def updateOutputMappings(self, mapping):
         self.callAllClients(lambda c: c.updateOutputMappings(mapping))
+
+
+class DeviceProxy(object):
+    def __init__(self, device):
+        pass
+
+
+class ControllerProxy(object):
+    def __init__(self, controller):
+        self.controller = controller
+
+    def __getattr__(self, name):
+        return getattr(self.controller, name)
+
+    def __getitem__(self, item):
+        print "getting item " + item
+        return self.controller.__getitem__(item)
 
 
 class ControllerLogHandler(Handler):
