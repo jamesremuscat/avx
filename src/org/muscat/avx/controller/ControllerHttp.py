@@ -20,20 +20,23 @@ class ControllerHttp(Thread):
 
     class ControllerHttpRequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
-            parts = self.path.split('/')
-            if hasattr(self.controller, parts[1]):
-                function = getattr(self.controller, parts[1])
-                if (function.func_dict.get(httpAccessibleKey)):
-                    args = parts[2].split(',')
-                    if (self.controller.hasDevice(args[0])):
-                        result = function(*args)
-                        self.respond(200, "OK " + str(result))
+            if self.path.count('/') is 3:
+                _, deviceID, method, args = self.path.split('/')
+                if self.controller.hasDevice(deviceID):
+                    device = self.controller.getDevice(deviceID)
+                    if device.httpAccessible:
+                        function = getattr(device, method)
+                        if function:
+                            result = function(*args.split(','))
+                            self.respond(200, "OK " + str(result))
+                        else:
+                            self.respond(400, "No such function: " + method)
                     else:
-                        self.respond(404, "No such device: " + args[0])
+                        self.respond(403, "Not permitted to access device " + deviceID + " over HTTP.")
                 else:
-                    self.respond(403, "Not permitted to call " + parts[1] + " over HTTP (missing @httpAccessible decorator?)")
+                    self.respond(404, "No such device: " + deviceID)
             else:
-                self.respond(400, "No such function: " + parts[1])
+                self.respond(400, "Incorrectly formatted URL: " + self.path)
 
         def respond(self, responseCode, text):
             self.send_response(responseCode)

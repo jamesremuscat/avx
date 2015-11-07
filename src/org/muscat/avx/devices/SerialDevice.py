@@ -11,13 +11,13 @@ class SerialDevice(Device):
     A device we connect to over a serial port.
     '''
 
-    def __init__(self, deviceID, serialDevice, baud=9600):
+    def __init__(self, deviceID, serialDevice, baud=9600, **kwargs):
         '''
         Create a SerialDevice with a given device ID, using a new Serial with the given device address
         (e.g. "/dev/ttyUSB0") if given as a string, else assume serialDevice is a Serial and use that.
         If we fail to create a Serial with the given device, log an error and use a fake port.
         '''
-        super(SerialDevice, self).__init__(deviceID)
+        super(SerialDevice, self).__init__(deviceID, **kwargs)
         if isinstance(serialDevice, str) or isinstance(serialDevice, unicode):
             try:
                 self.port = Serial(serialDevice, baud, timeout=2)

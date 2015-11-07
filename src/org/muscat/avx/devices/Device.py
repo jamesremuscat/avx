@@ -6,8 +6,9 @@ class Device(object):
     This is a thing. It does stuff.
     '''
 
-    def __init__(self, deviceID):
+    def __init__(self, deviceID, httpAccessible=False, **kwargs):
         self.deviceID = deviceID
+        self.httpAccessible = httpAccessible
 
     def initialise(self):
         '''
