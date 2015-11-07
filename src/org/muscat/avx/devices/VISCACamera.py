@@ -3,6 +3,7 @@ Created on 13 Nov 2012
 
 @author: james
 '''
+from org.muscat.avx.devices.Device import InvalidArgumentException
 from org.muscat.avx.devices.SerialDevice import SerialDevice
 from org.muscat.avx.CameraPosition import CameraPosition
 from org.muscat.avx.devices.VISCACommands import VISCACommand
@@ -232,10 +233,6 @@ class VISCACamera(SerialDevice):
         ret += self.sendVISCA(setZ)
 
         return ret
-
-
-class InvalidArgumentException(Exception):
-    pass
 
 
 class Aperture(Enum):
