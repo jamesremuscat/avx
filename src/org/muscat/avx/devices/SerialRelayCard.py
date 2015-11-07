@@ -1,5 +1,5 @@
 from org.muscat.avx.devices.SerialDevice import SerialDevice
-from org.muscat.avx.devices.Device import Device
+from org.muscat.avx.devices.Device import Device, InvalidArgumentException
 import logging
 import time
 
@@ -60,6 +60,41 @@ class JBSerialRelayCard(SerialRelayCard):
         result = self.sendCommand(SerialDevice.byteArrayToString([0x31 + 2 * channel]))
         time.sleep(self.sendDelay)
         return result
+
+
+class ICStationSerialRelayCard(SerialRelayCard):
+
+    def __init__(self, deviceID, serialDevice, channels=8, **kwargs):
+        SerialRelayCard.__init__(self, deviceID, serialDevice)
+        self.state = [False for _ in range(channels)]
+
+    def initialise(self):
+        SerialRelayCard.initialise(self)
+        self.sendCommand("\x50")
+
+    def __sendStateCommand(self):
+        return self.sendCommand(SerialDevice.byteArrayToString([0x51, self.__createStateByte()]))
+
+    def __createStateByte(self):
+        stateByte = 0x0
+        for i in range(0, len(self.state)):
+            if self.state[i]:
+                stateByte += 1 << i
+        return stateByte
+
+    def on(self, channel):
+        self.__checkChannel(channel)
+        self.state[channel - 1] = True
+        self.__sendStateCommand()
+
+    def off(self, channel):
+        self.__checkChannel(channel)
+        self.state[channel - 1] = False
+        self.__sendStateCommand()
+
+    def __checkChannel(self, channel):
+        if channel > len(self.state):
+            raise InvalidArgumentException()
 
 
 class UpDownStopRelay(Device):

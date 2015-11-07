@@ -10,12 +10,13 @@ from org.muscat.avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 from org.muscat.avx.devices.Kramer602 import Kramer602, Kramer602Listener
 from org.muscat.avx.devices.KramerVP703 import KramerVP703
 from org.muscat.avx.devices.SerialDevice import SerialDevice
-from org.muscat.avx.devices.SerialRelayCard import JBSerialRelayCard, KMtronicSerialRelayCard
+from org.muscat.avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard
 from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock
 import threading
 import unittest
 from serial.serialutil import SerialException
+from org.muscat.avx.devices.Device import InvalidArgumentException
 
 
 class TestDevices(unittest.TestCase):
@@ -158,6 +159,36 @@ class TestDevices(unittest.TestCase):
         port.clear()
         channel.off()
         self.assertEqual(['\x35'], port.bytes)
+
+    def testICStationSerialRelayCard(self):
+        port = MockSerialPort()
+        card = ICStationSerialRelayCard("Test", port)
+
+        card.initialise()
+        self.assertEqual(['\x50'], port.bytes)
+        port.clear()
+
+        card.on(1)
+        self.assertEqual(['\x51', '\x01'], port.bytes)
+        port.clear()
+
+        card.on(5)
+        self.assertEqual(['\x51', '\x11'], port.bytes)
+        port.clear()
+
+        card.on(8)
+        self.assertEqual(['\x51', '\x91'], port.bytes)
+        port.clear()
+
+        card.off(5)
+        self.assertEqual(['\x51', '\x81'], port.bytes)
+        port.clear()
+
+        try:
+            card.on(9)
+            self.fail("Didn't throw an exception when channel was out of range")
+        except InvalidArgumentException:
+            pass
 
     def testKramerVP88Listener(self):
         port = MockSerialPort()
