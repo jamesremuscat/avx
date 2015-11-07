@@ -62,7 +62,7 @@ class ZoomDirect(VISCACommand):
             (self.zoom & 0x0F00) >> 8,
             (self.zoom & 0x00F0) >> 4,
             (self.zoom & 0x000F),
-            ]
+        ]
 
 
 # CAM_Focus

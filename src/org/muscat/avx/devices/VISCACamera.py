@@ -199,36 +199,36 @@ class VISCACamera(SerialDevice):
         z = pos.zoom
 
         setPT = [
-                 0x01,
-                 0x06,
-                 0x02,
-                 panSpeed & 0xFF,
-                 tiltSpeed & 0xFF,
-                 # Pan x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D)
-                 (p & 0xF000) >> 12,
-                 (p & 0x0F00) >> 8,
-                 (p & 0x00F0) >> 4,
-                 (p & 0x000F),
-                 # Tilt x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D)
-                 (t & 0xF000) >> 12,
-                 (t & 0x0F00) >> 8,
-                 (t & 0x00F0) >> 4,
-                 (t & 0x000F),
-                 0xFF,
-                 ]
+            0x01,
+            0x06,
+            0x02,
+            panSpeed & 0xFF,
+            tiltSpeed & 0xFF,
+            # Pan x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D)
+            (p & 0xF000) >> 12,
+            (p & 0x0F00) >> 8,
+            (p & 0x00F0) >> 4,
+            (p & 0x000F),
+            # Tilt x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D)
+            (t & 0xF000) >> 12,
+            (t & 0x0F00) >> 8,
+            (t & 0x00F0) >> 4,
+            (t & 0x000F),
+            0xFF,
+        ]
 
         ret = self.sendVISCA(setPT)
 
         setZ = [
-                0x01,
-                0x04,
-                0x47,
-                 (z & 0xF000) >> 12,
-                 (z & 0x0F00) >> 8,
-                 (z & 0x00F0) >> 4,
-                 (z & 0x000F),
-                0xFF,
-                ]
+            0x01,
+            0x04,
+            0x47,
+            (z & 0xF000) >> 12,
+            (z & 0x0F00) >> 8,
+            (z & 0x00F0) >> 4,
+            (z & 0x000F),
+            0xFF,
+        ]
 
         ret += self.sendVISCA(setZ)
 

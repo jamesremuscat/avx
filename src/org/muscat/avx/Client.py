@@ -71,4 +71,4 @@ _invoker = Invoker()
 
 def invoke_in_main_thread(fn, *args, **kwargs):
     QtCore.QCoreApplication.postEvent(_invoker,
-        InvokeEvent(fn, *args, **kwargs))
+                                      InvokeEvent(fn, *args, **kwargs))
