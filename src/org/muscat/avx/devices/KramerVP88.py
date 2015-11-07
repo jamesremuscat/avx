@@ -5,6 +5,7 @@ Created on 10 Nov 2012
 '''
 from org.muscat.avx.devices.SerialDevice import SerialDevice, SerialListener
 import logging
+import Pyro4
 
 
 class KramerVP88(SerialDevice):
@@ -16,6 +17,7 @@ class KramerVP88(SerialDevice):
         super(KramerVP88, self).__init__(deviceID, serialDevice)
         self.machineNumber = machineNumber
 
+    @Pyro4.callback
     def sendInputToOutput(self, inChannel, outChannel):
         toSend = [0x01, 0x80 + inChannel, 0x80 + outChannel, 0x80 + self.machineNumber]
         return self.sendCommand(SerialDevice.byteArrayToString(toSend))

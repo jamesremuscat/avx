@@ -33,6 +33,7 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
 
     def __init__(self):
         self.devices = {}
+        self.proxies = {}
         self.sequencer = Sequencer(self)
         self.sequencer.start()
         self.logHandler = ControllerLogHandler()
@@ -118,12 +119,11 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
     def getDevice(self, deviceID):
         return self.devices[deviceID]
 
-    @Pyro4.expose
-    @Pyro4.callback
-    def __getitem__(self, deviceID):
-        if self.hasDevice(deviceID):
-            return DeviceProxy(self.getDevice(deviceID))
-        raise KeyError(deviceID)
+    def proxyDevice(self, deviceID):
+        if deviceID not in self.proxies.keys():
+            uri = self.daemon.register(self.getDevice(deviceID))
+            self.proxies[deviceID] = uri
+        return self.proxies[deviceID]
 
     def hasDevice(self, deviceID):
         return deviceID in self.devices
@@ -140,9 +140,9 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
     def startServing(self):
         PyroUtils.setHostname()
 
-        daemon = Pyro4.Daemon()
+        self.daemon = Pyro4.Daemon()
         ns = Pyro4.locateNS()
-        uri = daemon.register(self)
+        uri = self.daemon.register(self)
 
         if hasattr(self, "controllerID"):
             name = self.pyroName + "." + self.controllerID
@@ -153,9 +153,9 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
 
         ns.register(name, uri)
 
-        atexit.register(lambda: daemon.shutdown())
+        atexit.register(lambda: self.daemon.shutdown())
 
-        daemon.requestLoop()
+        self.daemon.requestLoop()
 
     def sequence(self, *events):
         self.sequencer.sequence(*events)
@@ -176,11 +176,6 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
         self.callAllClients(lambda c: c.updateOutputMappings(mapping))
 
 
-class DeviceProxy(object):
-    def __init__(self, device):
-        pass
-
-
 class ControllerProxy(object):
     def __init__(self, controller):
         self.controller = controller
@@ -189,8 +184,7 @@ class ControllerProxy(object):
         return getattr(self.controller, name)
 
     def __getitem__(self, item):
-        print "getting item " + item
-        return self.controller.__getitem__(item)
+        return Pyro4.Proxy(self.controller.proxyDevice(item))
 
 
 class ControllerLogHandler(Handler):
