@@ -13,7 +13,7 @@ class MiLight(Device):
     socket = None
 
     def __init__(self, deviceID, ipAddress, port=8899, **kwargs):
-        super(MiLight, self).__init__(deviceID)
+        super(MiLight, self).__init__(deviceID, **kwargs)
         self.ipAddress = ipAddress
         self.port = port
 

@@ -10,7 +10,7 @@ class UnisonDevice(SerialDevice):
     '''
 
     def __init__(self, deviceID, serialDevice, **kwargs):
-        super(UnisonDevice, self).__init__(deviceID, serialDevice)
+        super(UnisonDevice, self).__init__(deviceID, serialDevice, **kwargs)
 
     def activate(self, unisonObject):
         cmd = UnisonCommand(unisonObject + ".ACTI")

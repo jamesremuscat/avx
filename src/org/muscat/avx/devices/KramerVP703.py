@@ -7,7 +7,7 @@ class KramerVP703(SerialDevice):
     '''
 
     def __init__(self, deviceID, serialDevice, **kwargs):
-        super(KramerVP703, self).__init__(deviceID, serialDevice)
+        super(KramerVP703, self).__init__(deviceID, serialDevice, **kwargs)
 
     def initialise(self):
         super(KramerVP703, self).initialise()

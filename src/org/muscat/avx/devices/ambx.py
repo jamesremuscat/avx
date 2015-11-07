@@ -39,7 +39,7 @@ class AMBX(Device):
     '''
 
     def __init__(self, deviceID, deviceNum=0, **kwargs):
-        super(AMBX, self).__init__(deviceID)
+        super(AMBX, self).__init__(deviceID, **kwargs)
         # find our device
         devs = devices_by_vendor_product(VENDOR, PRODUCT)
 

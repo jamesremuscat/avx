@@ -10,7 +10,7 @@ class Tivo(Device):
     socket = None
 
     def __init__(self, deviceID, ipAddress, port=31339, **kwargs):
-        super(Tivo, self).__init__(deviceID)
+        super(Tivo, self).__init__(deviceID, **kwargs)
         self.ipAddress = ipAddress
         self.port = port
 

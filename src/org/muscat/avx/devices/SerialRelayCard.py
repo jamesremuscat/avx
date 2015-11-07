@@ -20,8 +20,8 @@ class SerialRelayCard(SerialDevice):
 
 class RelayDevice(Device):
 
-    def __init__(self, deviceID, relayCard, channel):
-        super(RelayDevice, self).__init__(deviceID)
+    def __init__(self, deviceID, relayCard, channel, **kwargs):
+        super(RelayDevice, self).__init__(deviceID, **kwargs)
         self.relayCard = relayCard
         self.channel = channel
 
@@ -35,7 +35,7 @@ class RelayDevice(Device):
 class KMtronicSerialRelayCard(SerialRelayCard):
 
     def __init__(self, deviceID, serialDevice, **kwargs):
-        SerialRelayCard.__init__(self, deviceID, serialDevice)
+        SerialRelayCard.__init__(self, deviceID, serialDevice, **kwargs)
 
     def on(self, channel):
         return self.sendCommand(SerialDevice.byteArrayToString([0xFF, channel, 0x01]))
@@ -49,7 +49,7 @@ class JBSerialRelayCard(SerialRelayCard):
     sendDelay = 0.05
 
     def __init__(self, deviceID, serialDevice, **kwargs):
-        SerialRelayCard.__init__(self, deviceID, serialDevice, baud=19200)
+        SerialRelayCard.__init__(self, deviceID, serialDevice, baud=19200, **kwargs)
 
     def on(self, channel):
         result = self.sendCommand(SerialDevice.byteArrayToString([0x30 + 2 * channel]))
@@ -65,7 +65,7 @@ class JBSerialRelayCard(SerialRelayCard):
 class ICStationSerialRelayCard(SerialRelayCard):
 
     def __init__(self, deviceID, serialDevice, channels=8, **kwargs):
-        SerialRelayCard.__init__(self, deviceID, serialDevice)
+        SerialRelayCard.__init__(self, deviceID, serialDevice, **kwargs)
         self.state = [False for _ in range(channels)]
 
     def initialise(self):
@@ -99,8 +99,8 @@ class ICStationSerialRelayCard(SerialRelayCard):
 
 class UpDownStopRelay(Device):
 
-    def __init__(self, deviceID, controller, directionRelay, startStopRelay):
-        super(UpDownStopRelay, self).__init__(deviceID)
+    def __init__(self, deviceID, controller, directionRelay, startStopRelay, **kwargs):
+        super(UpDownStopRelay, self).__init__(deviceID, **kwargs)
         self.directionRelay = controller.getDevice(directionRelay[0]).createDevice(self.deviceID + "_direction", directionRelay[1])
         self.startStopRelay = controller.getDevice(startStopRelay[0]).createDevice(self.deviceID + "_startStop", startStopRelay[1])
 
@@ -119,7 +119,7 @@ class UpDownStopRelay(Device):
 class UpDownStopArray(Device):
 
     def __init__(self, deviceID, controller, relays={}, **kwargs):
-        super(UpDownStopArray, self).__init__(deviceID)
+        super(UpDownStopArray, self).__init__(deviceID, **kwargs)
         self.relays = {}
         for idx, devID in relays.iteritems():
             self.relays[int(idx)] = controller.getDevice(devID)

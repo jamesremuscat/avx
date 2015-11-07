@@ -12,7 +12,7 @@ class CoriogenEclipse(SerialDevice):
     '''
 
     def __init__(self, deviceID, serialDevice, **kwargs):
-        super(CoriogenEclipse, self).__init__(deviceID, serialDevice)
+        super(CoriogenEclipse, self).__init__(deviceID, serialDevice, **kwargs)
 
     def overlayOn(self):
         self.sendCommand("Mode = 3\r\n")

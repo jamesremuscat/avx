@@ -27,7 +27,7 @@ class VISCACamera(SerialDevice):
     zoomSpeed = 0x06
 
     def __init__(self, deviceID, serialDevice, cameraID, **kwargs):
-        super(VISCACamera, self).__init__(deviceID, serialDevice)
+        super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
         self.cameraID = cameraID
 
     def sendVISCA(self, commandBytes):
