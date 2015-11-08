@@ -59,7 +59,7 @@ case "$1" in
     echo "Starting avx controller"
     # test if not already running
     if [ ! -f "/proc/$(cat $PID)/exe" ]; then
-      $EXECUTABLE "$CMDLINE" > "$MESSAGELOG" 2>&1 &
+      $EXECUTABLE "$CMDLINE" >> "$MESSAGELOG" 2>&1 &
       echo $!>"$PID"
     else
       echo "avx controller already running"
