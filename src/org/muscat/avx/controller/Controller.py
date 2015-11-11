@@ -1,28 +1,20 @@
-from org.muscat.avx.controller.amBxController import amBxController
+from argparse import ArgumentParser, FileType
+from logging import Handler
+from org.muscat.avx import PyroUtils, _version
 from org.muscat.avx.controller.ControllerHttp import ControllerHttp
-from org.muscat.avx.controller.RelayController import RelayController
-from org.muscat.avx.controller.ScanConverterController import ScanConverterController
-from org.muscat.avx.controller.TivoController import TivoController
-from org.muscat.avx.controller.UnisonController import UnisonController
-from org.muscat.avx.controller.UpDownRelayController import UpDownRelayController
-from org.muscat.avx.controller.VideoSwitcherController import VideoSwitcherController
-from org.muscat.avx.controller.VISCAController import VISCAController
 from org.muscat.avx.devices.Device import Device
 from org.muscat.avx.Sequencer import Sequencer
-from org.muscat.avx import PyroUtils, _version
-from argparse import ArgumentParser, FileType
+from Pyro4.errors import NamingError
 import atexit
 import logging
-from logging import Handler
 import Pyro4
 import json
-from Pyro4.errors import NamingError
 
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED.add('pickle')
 
 
-class Controller(amBxController, RelayController, ScanConverterController, TivoController, UnisonController, UpDownRelayController, VideoSwitcherController, VISCAController):
+class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
@@ -39,6 +31,7 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
         self.clients = []
+        self.daemon = Pyro4.Daemon()
 
     @staticmethod
     def fromPyro(controllerID=""):
@@ -144,7 +137,6 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
     def startServing(self):
         PyroUtils.setHostname()
 
-        self.daemon = Pyro4.Daemon()
         ns = Pyro4.locateNS()
         uri = self.daemon.register(self)
 

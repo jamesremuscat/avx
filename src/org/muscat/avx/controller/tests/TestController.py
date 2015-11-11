@@ -1,16 +1,30 @@
 from unittest import TestCase
-from org.muscat.avx.controller.Controller import Controller, DuplicateDeviceIDError
+from org.muscat.avx.controller.Controller import Controller, DuplicateDeviceIDError,\
+    ControllerProxy
 from mock import MagicMock
 from org.muscat.avx.devices.SerialRelayCard import UpDownStopArray
 import os
 from org.muscat.avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 from org.muscat.avx.devices.SerialDevice import FakeSerialPort
+from threading import Thread
 
 
 class TestController(TestCase):
 
+    class PyroThread(Thread):
+
+        def __init__(self, daemon):
+            Thread.__init__(self)
+            self.daemon = daemon
+
+        def run(self):
+            self.daemon.requestLoop()
+
     def testSendControlSignalsToBlinds(self):
         c = Controller()
+        cp = ControllerProxy(c)
+
+        self.PyroThread(c.daemon).start()
 
         blinds = UpDownStopArray("Blinds", c)
         blinds.lower = MagicMock(return_value=0)
@@ -19,14 +33,15 @@ class TestController(TestCase):
 
         c.addDevice(blinds)
 
-        c.lower("Blinds", 1)
+        cp["Blinds"].lower(1)
         blinds.lower.assert_called_once_with(1)
 
-        c.raiseUp("Blinds", 256)
+        cp["Blinds"].raiseUp(256)
         blinds.raiseUp.assert_called_once_with(256)
 
-        c.stop("Blinds", 1138)
+        cp["Blinds"].stop(1138)
         blinds.stop.assert_called_once_with(1138)
+        c.daemon.shutdown()
 
     def testLoadConfig(self):
         c = Controller()
@@ -52,6 +67,11 @@ class TestController(TestCase):
         master = Controller()
         slave = Controller()
 
+        cp = ControllerProxy(master)
+
+        self.PyroThread(master.daemon).start()
+        self.PyroThread(slave.daemon).start()
+
         switcher = KramerVP88("Test", FakeSerialPort())
         switcher.sendInputToOutput = MagicMock(return_value=1)
 
@@ -62,5 +82,8 @@ class TestController(TestCase):
 
         master.slaves.append(slave)
 
-        master.switch("Test", 1, 2)
+        cp["Test"].sendInputToOutput(1, 2)
         switcher.sendInputToOutput.assert_called_once_with(1, 2)
+
+        master.daemon.shutdown()
+        slave.daemon.shutdown()
