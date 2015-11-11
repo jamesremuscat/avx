@@ -88,18 +88,21 @@ following in your config file ('options' should be a sibling of 'devices'):
   }
 ```
 
+In addition, each device must have an `httpAccessible` option set to true for
+it to be accessible via the HTTP interface.
+
 By default the HTTP server will listen on port 8080 (currently hardcoded).
 
 The URL scheme to call methods is:
 
 ```
-http://server:8080/METHODNAME/device,option,option...
+http://server:8080/deviceID/method/option,option...
 ```
 
 For example,
 
 ```
-http://server:8080/switch/Main,2,1
+http://server:8080/Main/sendInputToOutput/2,1
 ```
 
 will tell the video switcher with ID "Main" to send input 2 to output 1.
@@ -107,7 +110,7 @@ will tell the video switcher with ID "Main" to send input 2 to output 1.
 The controller will respond with an appropriate HTTP response code:
  * 200 - OK (followed by whatever data is returned by that method)
  * 400 - no such method
- * 403 - not permitted to call that method over HTTP
+ * 403 - not permitted to call methods on that device over HTTP
  * 404 - no such device
 
 ## Supported Devices
