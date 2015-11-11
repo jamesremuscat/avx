@@ -121,8 +121,12 @@ class Controller(amBxController, RelayController, ScanConverterController, TivoC
 
     def proxyDevice(self, deviceID):
         if deviceID not in self.proxies.keys():
-            uri = self.daemon.register(self.getDevice(deviceID))
-            self.proxies[deviceID] = uri
+            if self.hasDevice(deviceID):
+                self.proxies[deviceID] = self.daemon.register(self.getDevice(deviceID))
+            else:
+                for slave in self.slaves:
+                    if slave.hasDevice(deviceID):
+                        self.proxies[deviceID] = slave.proxyDevice(deviceID)
         return self.proxies[deviceID]
 
     def hasDevice(self, deviceID):
