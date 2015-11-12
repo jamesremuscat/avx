@@ -1,12 +1,11 @@
-from unittest import TestCase
-from org.muscat.avx.controller.Controller import Controller, DuplicateDeviceIDError,\
-    ControllerProxy
+from avx.controller.Controller import Controller, DuplicateDeviceIDError, ControllerProxy
+from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
+from avx.devices.SerialDevice import FakeSerialPort
+from avx.devices.SerialRelayCard import UpDownStopArray
 from mock import MagicMock
-from org.muscat.avx.devices.SerialRelayCard import UpDownStopArray
-import os
-from org.muscat.avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
-from org.muscat.avx.devices.SerialDevice import FakeSerialPort
 from threading import Thread
+from unittest import TestCase
+import os
 
 
 class TestController(TestCase):

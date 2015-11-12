@@ -3,7 +3,7 @@ Created on 13 Nov 2012
 
 @author: jrem
 '''
-from org.muscat.avx.devices.SerialDevice import SerialDevice
+from avx.devices.SerialDevice import SerialDevice
 
 
 class CoriogenEclipse(SerialDevice):

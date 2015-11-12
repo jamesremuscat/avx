@@ -4,8 +4,8 @@ Created on 18 Mar 2013
 @author: jrem
 '''
 import unittest
-from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
-from org.muscat.avx.devices.VISCACamera import VISCACamera, Aperture
+from avx.devices.tests.MockSerialPort import MockSerialPort
+from avx.devices.VISCACamera import VISCACamera, Aperture
 
 
 class TestVISCACamera(unittest.TestCase):

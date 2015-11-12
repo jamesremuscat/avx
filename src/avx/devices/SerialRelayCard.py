@@ -1,5 +1,5 @@
-from org.muscat.avx.devices.SerialDevice import SerialDevice
-from org.muscat.avx.devices.Device import Device, InvalidArgumentException
+from avx.devices.SerialDevice import SerialDevice
+from avx.devices.Device import Device, InvalidArgumentException
 import logging
 import time
 

@@ -1,7 +1,7 @@
 import unittest
-from org.muscat.avx.devices.ETCUnison import UnisonCommand,\
+from avx.devices.ETCUnison import UnisonCommand,\
     CommandStringTooLongError, UnisonDevice
-from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
+from avx.devices.tests.MockSerialPort import MockSerialPort
 
 
 class TestETCUnison(unittest.TestCase):

@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, FileType
 from logging import Handler
-from org.muscat.avx import PyroUtils, _version
-from org.muscat.avx.controller.ControllerHttp import ControllerHttp
-from org.muscat.avx.devices.Device import Device
-from org.muscat.avx.Sequencer import Sequencer
+from avx import PyroUtils, _version
+from avx.controller.ControllerHttp import ControllerHttp
+from avx.devices.Device import Device
+from avx.Sequencer import Sequencer
 from Pyro4.errors import NamingError
 import atexit
 import logging
@@ -18,7 +18,7 @@ class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
     '''
-    pyroName = "org.muscat.avx.controller"
+    pyroName = "avx.controller"
     version = _version.__version__
 
     slaves = []

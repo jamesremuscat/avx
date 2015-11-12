@@ -3,7 +3,7 @@ Created on 10 Nov 2012
 
 @author: james
 '''
-from org.muscat.avx.devices.SerialDevice import SerialDevice, SerialListener
+from avx.devices.SerialDevice import SerialDevice, SerialListener
 import logging
 import Pyro4
 

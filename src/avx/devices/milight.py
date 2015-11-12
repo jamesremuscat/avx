@@ -1,4 +1,4 @@
-from org.muscat.avx.devices.Device import Device
+from avx.devices.Device import Device
 import colorsys
 import logging
 import socket

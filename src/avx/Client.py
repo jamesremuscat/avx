@@ -6,8 +6,8 @@ Created on 8 Apr 2013
 import Pyro4
 import atexit
 from PySide import QtCore
-from org.muscat.avx import PyroUtils
-from org.muscat.avx.StringConstants import StringConstants
+from avx import PyroUtils
+from avx.StringConstants import StringConstants
 
 
 class Client(Pyro4.threadutil.Thread):

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import re
 
-VERSIONFILE = "src/org/muscat/avx/_version.py"
+VERSIONFILE = "src/avx/_version.py"
 verstr = "unknown"
 try:
     verstrline = open(VERSIONFILE, "rt").read()
@@ -28,7 +28,7 @@ setup(
     install_requires=["Pyro4 >= 4.20", "pyserial", "enum34"],
     entry_points={
         'console_scripts': [
-            'avx-controller = org.muscat.avx.controller.Controller:main',
+            'avx-controller = avx.controller.Controller:main',
             ],
         }
       )

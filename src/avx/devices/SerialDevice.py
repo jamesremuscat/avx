@@ -1,4 +1,4 @@
-from org.muscat.avx.devices.Device import Device
+from avx.devices.Device import Device
 from serial import Serial, SerialException
 import logging
 from threading import Thread

@@ -3,10 +3,10 @@ Created on 13 Nov 2012
 
 @author: james
 '''
-from org.muscat.avx.devices.Device import InvalidArgumentException
-from org.muscat.avx.devices.SerialDevice import SerialDevice
-from org.muscat.avx.CameraPosition import CameraPosition
-from org.muscat.avx.devices.VISCACommands import VISCACommand
+from avx.devices.Device import InvalidArgumentException
+from avx.devices.SerialDevice import SerialDevice
+from avx.CameraPosition import CameraPosition
+from avx.devices.VISCACommands import VISCACommand
 from enum import Enum
 
 

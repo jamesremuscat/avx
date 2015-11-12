@@ -1,4 +1,4 @@
-from org.muscat.avx.devices.SerialDevice import SerialDevice
+from avx.devices.SerialDevice import SerialDevice
 
 
 class KramerVP703(SerialDevice):

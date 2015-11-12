@@ -1,4 +1,4 @@
-from org.muscat.avx.devices.SerialDevice import SerialDevice
+from avx.devices.SerialDevice import SerialDevice
 
 
 class Inline3808(SerialDevice):

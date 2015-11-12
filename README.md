@@ -40,7 +40,7 @@ may look like:
   "devices" : [
     {
       "deviceID" : "Main",
-      "class" : "org.muscat.avx.devices.KramerVP88.KramerVP88",
+      "class" : "avx.devices.KramerVP88.KramerVP88",
       "options" : {
         "serialDevice" : "/dev/usb-ports/1-1.3.3:1.0",
         "machineNumber" : 1

@@ -3,20 +3,20 @@ Created on 3 Jan 2013
 
 @author: james
 '''
-from org.muscat.avx.controller.Controller import Controller
-from org.muscat.avx.devices.CoriogenEclipse import CoriogenEclipse
-from org.muscat.avx.devices.Inline3808 import Inline3808
-from org.muscat.avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
-from org.muscat.avx.devices.Kramer602 import Kramer602, Kramer602Listener
-from org.muscat.avx.devices.KramerVP703 import KramerVP703
-from org.muscat.avx.devices.SerialDevice import SerialDevice
-from org.muscat.avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard
-from org.muscat.avx.devices.tests.MockSerialPort import MockSerialPort
+from avx.controller.Controller import Controller
+from avx.devices.CoriogenEclipse import CoriogenEclipse
+from avx.devices.Inline3808 import Inline3808
+from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
+from avx.devices.Kramer602 import Kramer602, Kramer602Listener
+from avx.devices.KramerVP703 import KramerVP703
+from avx.devices.SerialDevice import SerialDevice
+from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard
+from avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock
 import threading
 import unittest
 from serial.serialutil import SerialException
-from org.muscat.avx.devices.Device import InvalidArgumentException
+from avx.devices.Device import InvalidArgumentException
 
 
 class TestDevices(unittest.TestCase):
