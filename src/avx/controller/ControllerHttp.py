@@ -3,9 +3,6 @@ from threading import Thread
 import logging
 
 
-httpAccessibleKey = "isHTTPAccessible"
-
-
 class ControllerHttp(Thread):
     '''
     An HTTP interface to a Controller's methods.
@@ -48,14 +45,3 @@ class ControllerHttp(Thread):
         self.server = HTTPServer(("", self.port), self.ControllerHttpRequestHandler)
         logging.info("Started HTTP server on port " + str(self.port))
         self.server.serve_forever()
-
-
-def httpAccessible(originalFunction):
-    '''
-    Decorator function that marks the given function as accessible over HTTP.
-
-    The ControllerHTTPRequestHandler will refuse to call any function on the
-    controller that does NOT have this decorator.
-    '''
-    originalFunction.func_dict[httpAccessibleKey] = True
-    return originalFunction
