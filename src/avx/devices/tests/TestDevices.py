@@ -165,23 +165,23 @@ class TestDevices(unittest.TestCase):
         card = ICStationSerialRelayCard("Test", port)
 
         card.initialise()
-        self.assertEqual(['\x50'], port.bytes)
+        self.assertEqual(['\x50', '\x51'], port.bytes)
         port.clear()
 
         card.on(1)
-        self.assertEqual(['\x51', '\x01'], port.bytes)
+        self.assertEqual(['\xfe'], port.bytes)
         port.clear()
 
         card.on(5)
-        self.assertEqual(['\x51', '\x11'], port.bytes)
+        self.assertEqual(['\xee'], port.bytes)
         port.clear()
 
         card.on(8)
-        self.assertEqual(['\x51', '\x91'], port.bytes)
+        self.assertEqual(['\x6e'], port.bytes)
         port.clear()
 
         card.off(5)
-        self.assertEqual(['\x51', '\x81'], port.bytes)
+        self.assertEqual(['\x7e'], port.bytes)
         port.clear()
 
         try:
