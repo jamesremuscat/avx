@@ -85,7 +85,7 @@ class DeviceEvent(Event):
         self.deviceID = deviceID
 
     def execute(self, controller):
-        getattr(controller[self.deviceID], self.method)(*self.args)
+        getattr(controller.getDevice(self.deviceID), self.method)(*self.args)
 
 
 class SleepEvent(Event):
