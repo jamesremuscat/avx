@@ -31,3 +31,9 @@ class CoriogenEclipse(SerialDevice):
 
     def unfreeze(self):
         self.sendCommand("Freeze = Off\r\n")
+
+    def overscanOn(self):
+        self.sendCommand("Overscan = On\r\n")
+
+    def overscanOff(self):
+        self.sendCommand("Overscan = Off\r\n")
