@@ -21,8 +21,8 @@ class Sequencer(Thread):
     special 'wait' SleepEvent, which does as it says on the tin.
 
     Note that Pyro doesn't pickle functions, so if you're sequencing something client-side you'll need to use the
-    ControllerEvent class, and you'll only have access to the functions on the Controller you'd call normally with
-    Pyro.
+    ControllerEvent or DeviceEvent classes, and you'll only have access to the functions on the Controller and devices
+    you'd call normally with Pyro.
 
     There should probably only be one Sequencer in a system, and it should probably reside on the controller side
     and not the user interface side. Breaching either of these conditions should be preceded by some Deep Thought
@@ -75,6 +75,17 @@ class ControllerEvent(Event):
 
     def execute(self, controller):
         getattr(controller, self.method)(*self.args)
+
+
+class DeviceEvent(Event):
+    '''A DeviceEvent invokes a method on a device on the Controller. The device ID and method are supplied by name.'''
+
+    def __init__(self, deviceID, method, *args):
+        Event.__init__(self, method, *args)
+        self.deviceID = deviceID
+
+    def execute(self, controller):
+        getattr(controller[self.deviceID], self.method)(*self.args)
 
 
 class SleepEvent(Event):
