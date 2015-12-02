@@ -31,7 +31,7 @@ class Controller(object):
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
         self.clients = []
-        self.daemon = Pyro4.Daemon()
+        self.daemon = Pyro4.Daemon(PyroUtils.getHostname())
 
     @staticmethod
     def fromPyro(controllerID=""):
