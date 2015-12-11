@@ -67,12 +67,16 @@ class ICStationSerialRelayCard(SerialRelayCard):
     def __init__(self, deviceID, serialDevice, channels=8, **kwargs):
         SerialRelayCard.__init__(self, deviceID, serialDevice, **kwargs)
         self.state = [False for _ in range(channels)]  # True = on, False = off
+        self.initialised = False
 
     def initialise(self):
-        SerialRelayCard.initialise(self)
-        self.sendCommand("\x50")
-        time.sleep(0.1)
-        self.sendCommand("\x51")
+        if not self.initialised:
+            SerialRelayCard.initialise(self)
+            self.sendCommand("\x50")
+            time.sleep(0.1)
+            self.sendCommand("\x51")
+            self.__sendStateCommand()
+            self.initialised = True
 
     def __sendStateCommand(self):
         result = self.sendCommand(SerialDevice.byteArrayToString([self.__createStateByte()]))
