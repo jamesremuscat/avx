@@ -47,7 +47,10 @@ class MiLight(Device):
         self.send("\x4E" + chr(2 + int(percentage / 4)) + "\x55")
 
     def setOff(self, group):
-        self.send(chr(groupID(group) + 1) + "\x00\x55")
+        if group == 0:
+            self.send("\x41\x00\x55")
+        else:
+            self.send(chr(groupID(group) + 1) + "\x00\x55")
 
 
 def groupID(group):
