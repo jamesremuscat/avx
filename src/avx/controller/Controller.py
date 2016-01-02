@@ -14,6 +14,10 @@ Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED.add('pickle')
 
 
+def versionsCompatible(remote, local):
+    return remote == local
+
+
 class Controller(object):
     '''
     A Controller is essentially a bucket of devices, each identified with a string deviceID.
@@ -40,7 +44,11 @@ class Controller(object):
             controllerAddress += "." + controllerID
         logging.info("Creating proxy to controller at " + controllerAddress)
 
-        return ControllerProxy(Pyro4.Proxy(controllerAddress))
+        controller = ControllerProxy(Pyro4.Proxy(controllerAddress))
+        remoteVersion = controller.getVersion()
+        if versionsCompatible(remoteVersion, Controller.version):
+            raise VersionMismatchError(remoteVersion, Controller.version)
+        return controller
 
     def loadConfig(self, configFile):
         try:
@@ -62,7 +70,7 @@ class Controller(object):
                         try:
                             sc = Controller.fromPyro(slave)
 
-                            if sc.getVersion() == self.getVersion():
+                            if versionsCompatible(sc.getVersion(), self.getVersion()):
                                 self.slaves.append(sc)
                             else:
                                 logging.error("This Controller is version " + str(self.getVersion()) + " but tried to add slave " + slave + " of version " + str(sc.getVersion()))
