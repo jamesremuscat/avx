@@ -1,10 +1,11 @@
 from argparse import ArgumentParser, FileType
-from logging import Handler
 from avx import PyroUtils, _version
 from avx.controller.ControllerHttp import ControllerHttp
 from avx.devices.Device import Device
 from avx.Sequencer import Sequencer
+from logging import Handler
 from Pyro4.errors import NamingError
+from semantic_version import Version as SemVer
 import atexit
 import logging
 import Pyro4
@@ -15,7 +16,11 @@ Pyro4.config.SERIALIZERS_ACCEPTED.add('pickle')
 
 
 def versionsCompatible(remote, local):
-    return remote == local
+    rv = SemVer(remote, partial=True)
+    lv = SemVer(local, partial=True)
+    if rv.major == 0:
+        return rv.major == lv.major and rv.minor == lv.minor
+    return rv.major == lv.major and rv.minor >= lv.minor
 
 
 class Controller(object):

@@ -91,10 +91,13 @@ class TestController(TestCase):
         table = [
             # remote, local, expected
             ("0.95", "0.95", True),
+            ("0.95.1", "0.95", True),
             ("0.95", "0.96", False),
             ("0.96", "0.95", False),
             ("1.0", "1.0", True),
-            ("1.1", "1.0", False),  # Will be changing to True when semver implemented
+            ("1.1", "1.0", True),
+            ("1.1", "1.0.1", True),
+            ("1.1.5", "1.0.1", True),
             ("1.0", "1.1", False),
             ("2.0", "1.0", False)
         ]
