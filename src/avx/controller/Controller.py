@@ -51,7 +51,7 @@ class Controller(object):
 
         controller = ControllerProxy(Pyro4.Proxy(controllerAddress))
         remoteVersion = controller.getVersion()
-        if versionsCompatible(remoteVersion, Controller.version):
+        if not versionsCompatible(remoteVersion, Controller.version):
             raise VersionMismatchError(remoteVersion, Controller.version)
         return controller
 
