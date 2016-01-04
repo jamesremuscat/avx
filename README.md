@@ -1,6 +1,6 @@
 # AVX - Audio-Visual Control Extensions 
 
-[![Build Status](https://travis-ci.org/jamesremuscat/avx.svg)](https://travis-ci.org/jamesremuscat/avx)
+[![Build Status](https://travis-ci.org/jamesremuscat/avx.svg?branch=master)](https://travis-ci.org/jamesremuscat/avx)
 [![Coverage Status](https://coveralls.io/repos/jamesremuscat/avx/badge.svg?branch=master&service=github)](https://coveralls.io/github/jamesremuscat/avx?branch=master)
 
 ## INTRODUCTION
