@@ -25,7 +25,7 @@ setup(
       long_description="""\
       AVX is a library for controlling A/V devices such as video switchers. ...
       """,
-    setup_requires=["nose>=1.0", "nosexcover"],
+    setup_requires=["nose>=1.0"],
     tests_require=["mock"],
     install_requires=["enum34", "Pyro4 >= 4.20", "pyserial", "PySide", "pyusb", "semantic_version"],
     entry_points={
