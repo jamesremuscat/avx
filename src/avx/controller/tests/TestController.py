@@ -1,4 +1,4 @@
-from avx.controller.Controller import Controller, DuplicateDeviceIDError, ControllerProxy
+from avx.controller.Controller import Controller, DuplicateDeviceIDError, ControllerProxy, versionsCompatible
 from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 from avx.devices.SerialDevice import FakeSerialPort
 from avx.devices.SerialRelayCard import UpDownStopArray
@@ -86,3 +86,21 @@ class TestController(TestCase):
 
         master.daemon.shutdown()
         slave.daemon.shutdown()
+
+    def testVersionCompatibility(self):
+        table = [
+            # remote, local, expected
+            ("0.95", "0.95", True),
+            ("0.95.1", "0.95", True),
+            ("0.95", "0.96", False),
+            ("0.96", "0.95", False),
+            ("1.0", "1.0", True),
+            ("1.1", "1.0", True),
+            ("1.1", "1.0.1", True),
+            ("1.1.5", "1.0.1", True),
+            ("1.0", "1.1", False),
+            ("2.0", "1.0", False)
+        ]
+
+        for remote, local, compatible in table:
+            self.assertEqual(compatible, versionsCompatible(remote, local), "Remote v{remote} unexpectedly {maybe}compatible with local v{local}".format(remote=remote, local=local, maybe="not " if compatible else ""))

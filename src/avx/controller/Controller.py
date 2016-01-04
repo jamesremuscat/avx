@@ -1,10 +1,11 @@
 from argparse import ArgumentParser, FileType
-from logging import Handler
 from avx import PyroUtils, _version
 from avx.controller.ControllerHttp import ControllerHttp
 from avx.devices.Device import Device
 from avx.Sequencer import Sequencer
+from logging import Handler
 from Pyro4.errors import NamingError
+from semantic_version import Version as SemVer
 import atexit
 import logging
 import Pyro4
@@ -12,6 +13,14 @@ import json
 
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED.add('pickle')
+
+
+def versionsCompatible(remote, local):
+    rv = SemVer(remote, partial=True)
+    lv = SemVer(local, partial=True)
+    if rv.major == 0:
+        return rv.major == lv.major and rv.minor == lv.minor
+    return rv.major == lv.major and rv.minor >= lv.minor
 
 
 class Controller(object):
@@ -40,7 +49,11 @@ class Controller(object):
             controllerAddress += "." + controllerID
         logging.info("Creating proxy to controller at " + controllerAddress)
 
-        return ControllerProxy(Pyro4.Proxy(controllerAddress))
+        controller = ControllerProxy(Pyro4.Proxy(controllerAddress))
+        remoteVersion = controller.getVersion()
+        if versionsCompatible(remoteVersion, Controller.version):
+            raise VersionMismatchError(remoteVersion, Controller.version)
+        return controller
 
     def loadConfig(self, configFile):
         try:
@@ -62,7 +75,7 @@ class Controller(object):
                         try:
                             sc = Controller.fromPyro(slave)
 
-                            if sc.getVersion() == self.getVersion():
+                            if versionsCompatible(sc.getVersion(), self.getVersion()):
                                 self.slaves.append(sc)
                             else:
                                 logging.error("This Controller is version " + str(self.getVersion()) + " but tried to add slave " + slave + " of version " + str(sc.getVersion()))
