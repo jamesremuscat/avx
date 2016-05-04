@@ -2,8 +2,9 @@ language: python
 python:
   - "2.7"
 install:
-  - pip install coveralls
+  - pip install pep8 coveralls
 script:
-  coverage run --source=avx setup.py nosetests
+  - pep8 --ignore=E501 src
+  - coverage run --source=avx setup.py nosetests
 after_success:
   coveralls
