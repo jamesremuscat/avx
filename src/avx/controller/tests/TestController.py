@@ -96,7 +96,6 @@ class TestController(TestCase):
         c.callAllClients(lambda c: c.doesNotExist())
         self.assertEqual([], c.clients)
 
-
     def testVersionCompatibility(self):
         table = [
             # remote, local, expected
