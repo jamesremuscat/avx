@@ -30,8 +30,6 @@ class Controller(object):
     pyroName = "avx.controller"
     version = _version.__version__
 
-    slaves = []
-
     def __init__(self):
         self.devices = {}
         self.proxies = {}
@@ -40,6 +38,7 @@ class Controller(object):
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
         self.clients = []
+        self.slaves = []
         self.daemon = Pyro4.Daemon(PyroUtils.getHostname())
 
     @staticmethod
