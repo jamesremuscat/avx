@@ -87,6 +87,16 @@ class TestController(TestCase):
         master.daemon.shutdown()
         slave.daemon.shutdown()
 
+    def testBadClientDisconnect(self):
+        c = Controller()
+
+        c.registerClient("DOES_NOT_EXIST")
+        self.assertEqual(["DOES_NOT_EXIST"], c.clients)
+
+        c.callAllClients(lambda c: c.doesNotExist())
+        self.assertEqual([], c.clients)
+
+
     def testVersionCompatibility(self):
         table = [
             # remote, local, expected
