@@ -51,7 +51,7 @@ class Kramer602Listener(SerialListener):
             if (message[1] & 0x20) == 0:  # Not just a "I switched successfully" message
                 outp = (((message[1] & 0x1F) - 1) % 2) + 1
                 inp = (((message[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
-                return {outp: inp}
+                for d in self.dispatchers:
+                    d.updateOutputMappings({self.parentDevice.deviceID: {outp: inp}})
             else:
                 self.parentDevice.requestStatus()  # Request device to send current status so listener can intercept
-        return {}

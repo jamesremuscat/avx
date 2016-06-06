@@ -91,9 +91,7 @@ class SerialListener(Thread):
         while self.running:
             message = [int(elem.encode("hex"), base=16) for elem in self.parentDevice.port.read(self.messageSize)]
             if len(message) == self.messageSize:
-                mapp = self.process(message)
-                for d in self.dispatchers:
-                    d.updateOutputMappings({self.parentDevice.deviceID: mapp})
+                self.process(message)
             elif len(message) != 0:
                 logging.warn("Malformed packet from " + self.deviceID + ": " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
         logging.info("No longer listening to serial port " + self.parentDevice.port.portstr)
