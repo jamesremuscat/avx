@@ -7,7 +7,7 @@ from logging import Handler
 from Pyro4.errors import NamingError
 from semantic_version import Version as SemVer
 import atexit
-import logging
+import logging.config
 import Pyro4
 import json
 
@@ -85,6 +85,9 @@ class Controller(object):
                     if config["options"]["http"] is True:
                         ch = ControllerHttp(self)
                         ch.start()
+
+            if "logging" in config:
+                logging.config.dictConfig(config["logging"])
 
         except ValueError:
             logging.exception("Cannot parse config.json:")
