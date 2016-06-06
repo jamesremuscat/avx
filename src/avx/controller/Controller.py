@@ -237,7 +237,10 @@ def main():
                         type=FileType("r"))
     args = parser.parse_args()
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=(logging.DEBUG if args.debug else logging.INFO))
+
     controller = Controller()
+    logging.info("Starting avx controller v{}".format(controller.getVersion()))
+
     if args.config:
         controller.loadConfig(args.config)
     else:
@@ -249,6 +252,7 @@ def main():
             exit(1)
     controller.initialise()
     controller.startServing()
+    logging.info("avx controller terminated.")
 
 if __name__ == "__main__":
     main()
