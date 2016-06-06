@@ -54,7 +54,7 @@ class Controller(object):
             raise VersionMismatchError(remoteVersion, Controller.version)
         return controller
 
-    def loadConfig(self, configFile):
+    def loadConfig(self, configFile, overrideToDebug=False):
         try:
             if isinstance(configFile, file):
                 config = json.load(configFile)
@@ -88,6 +88,9 @@ class Controller(object):
 
             if "logging" in config:
                 logging.config.dictConfig(config["logging"])
+                if overrideToDebug:
+                    logging.getLogger().setLevel(logging.DEBUG)
+                    logging.info("-d specified, overriding any specified default logger level to DEBUG")
 
         except ValueError:
             logging.exception("Cannot parse config.json:")
@@ -245,7 +248,7 @@ def main():
     logging.info("Starting avx controller v{}".format(controller.getVersion()))
 
     if args.config:
-        controller.loadConfig(args.config)
+        controller.loadConfig(args.config, args.debug)
     else:
         try:
             configFile = open('config.json', 'r')
