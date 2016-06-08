@@ -19,19 +19,18 @@ choice, using Python and Pyro4 for communications.
 
 ## INSTALLATION & CONFIGURATION
 
-You will need a Python (2.7 is what I've used) with python-serial, PySide, and
-Pyro4.
-
 The easiest method of installing is to either grab a pre-built egg or build one
 from source yourself (`python setup.py bdist_egg`) and install using easy_install. AVX requires:
 
 * Python 2.7
-* python-serial
-* PySide
+* enum34
 * Pyro4
+* pyserial
+* pyusb
 * setuptools
+* semantic_version
 
-In theory, `easy_install` should take care of the dependencies for you. 
+In theory, `easy_install` (or `setup.py`) should take care of the dependencies for you.
 
 Mapping of physical hardware devices through serial ports to virtual devices is
 done in the `config.json` file. A typical definition of a single-device system
@@ -115,6 +114,18 @@ The controller will respond with an appropriate HTTP response code:
  * 403 - not permitted to call methods on that device over HTTP
  * 404 - no such device
 
+## Logging
+
+Starting the controller with a commandline flag of `-d` or `--debug` will
+enable debugging messages.
+
+A custom Python logging configuration may be provided in the controller config
+file. If the key `logging` is present in the config, then its contents will be
+passed directly to `logging.config.dictConfig`.
+
+Using the `-d` flag when such a configuration is specified will overwrite the
+default logger's level to `DEBUG` but leave other loggers unchanged.
+
 ## Supported Devices
 
 Currently the devices best supported include:
@@ -129,6 +140,8 @@ Currently the devices best supported include:
 * ETC Unison lighting controller
 * Several models of USB relay cards
 * Philips amBx ambient lighting system
+* MiLight / easybulb wireless bulbs
+* Tivo (experimental)
 
 In many cases support is partial but straightforward to improve - patches
 welcome!
