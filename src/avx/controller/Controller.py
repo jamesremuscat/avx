@@ -7,7 +7,7 @@ from logging import Handler
 from Pyro4.errors import NamingError
 from semantic_version import Version as SemVer
 import atexit
-import logging
+import logging.config
 import Pyro4
 import json
 
@@ -54,7 +54,7 @@ class Controller(object):
             raise VersionMismatchError(remoteVersion, Controller.version)
         return controller
 
-    def loadConfig(self, configFile):
+    def loadConfig(self, configFile, overrideToDebug=False):
         try:
             if isinstance(configFile, file):
                 config = json.load(configFile)
@@ -86,6 +86,12 @@ class Controller(object):
                         ch = ControllerHttp(self)
                         ch.start()
 
+            if "logging" in config:
+                logging.config.dictConfig(config["logging"])
+                if overrideToDebug:
+                    logging.getLogger().setLevel(logging.DEBUG)
+                    logging.info("-d specified, overriding any specified default logger level to DEBUG")
+
         except ValueError:
             logging.exception("Cannot parse config.json:")
 
@@ -109,7 +115,7 @@ class Controller(object):
                 logging.debug("Client call returned " + str(result))
             except:
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
-                self.clients.pop(uri)
+                self.clients.remove(uri)
 
     def getVersion(self):
         return self.version
@@ -237,9 +243,12 @@ def main():
                         type=FileType("r"))
     args = parser.parse_args()
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=(logging.DEBUG if args.debug else logging.INFO))
+
     controller = Controller()
+    logging.info("Starting avx controller v{}".format(controller.getVersion()))
+
     if args.config:
-        controller.loadConfig(args.config)
+        controller.loadConfig(args.config, args.debug)
     else:
         try:
             configFile = open('config.json', 'r')
@@ -249,6 +258,7 @@ def main():
             exit(1)
     controller.initialise()
     controller.startServing()
+    logging.info("avx controller terminated.")
 
 if __name__ == "__main__":
     main()

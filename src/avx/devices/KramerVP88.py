@@ -48,5 +48,5 @@ class KramerVP88Listener(SerialListener):
             if (message[0] == 0x41) or (message[0] == 0x45):  # Notification of video switch or response to query
                 inp = message[1] - 0x80
                 outp = message[2] - 0x80
-                return {outp: inp}
-        return {}
+                for d in self.dispatchers:
+                    d.updateOutputMappings({self.parentDevice.deviceID: {outp: inp}})
