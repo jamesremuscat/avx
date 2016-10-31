@@ -13,6 +13,7 @@ import json
 
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED.add('pickle')
+Pyro4.config.REQUIRE_EXPOSE = False
 
 
 def versionsCompatible(remote, local):
