@@ -112,3 +112,14 @@ class CompositeEvent(object):
     def execute(self, controller):
         for event in self.events:
             event.execute(controller)
+
+
+class LogEvent(object):
+    '''An Event that writes to the controller's log.'''
+
+    def __init__(self, level, msg):
+        self.level = level
+        self.msg = msg
+
+    def execute(self, controller):
+        logging.log(self.level, self.msg)
