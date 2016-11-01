@@ -1,5 +1,6 @@
-import subprocess
 import logging
+import os
+import subprocess
 import Pyro4
 
 
@@ -10,4 +11,7 @@ def setHostname():
 
 
 def getHostname():
+    fromEnv = os.environ.get("PYRO_IP", False)
+    if fromEnv:
+        return fromEnv
     return subprocess.check_output(["hostname", "-I"]).split()[0].rstrip()
