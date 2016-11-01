@@ -158,9 +158,15 @@ class VISCACamera(SerialDevice):
     def setAperturePriority(self):
         self.sendVISCA([0x01, 0x04, 0x39, 0x0B])
 
+    def setShutterPriority(self):
+        self.sendVISCA([0x01, 0x04, 0x39, 0x0A])
+
+    def setManualExposure(self):
+        self.sendVISCA([0x01, 0x04, 0x39, 0x03])
+
     def setAperture(self, aperture):
         if isinstance(aperture, Aperture):
-            av = aperture.value
+            av = aperture.code
         else:
             av = aperture
         self.sendVISCA([0x01, 0x04, 0x4B,
@@ -168,6 +174,28 @@ class VISCACamera(SerialDevice):
                         (av & 0x0F00) >> 8,
                         (av & 0x00F0) >> 4,
                         (av & 0x000F)])
+
+    def setShutter(self, shutter):
+        if isinstance(shutter, Shutter):
+            tv = shutter.code
+        else:
+            tv = shutter
+        self.sendVISCA([0x01, 0x04, 0x4A,
+                        (tv & 0xF000) >> 12,
+                        (tv & 0x0F00) >> 8,
+                        (tv & 0x00F0) >> 4,
+                        (tv & 0x000F)])
+
+    def setGain(self, gain):
+        if isinstance(gain, Shutter):
+            h = gain.code
+        else:
+            h = gain
+        self.sendVISCA([0x01, 0x04, 0x4C,
+                        (h & 0xF000) >> 12,
+                        (h & 0x0F00) >> 8,
+                        (h & 0x00F0) >> 4,
+                        (h & 0x000F)])
 
     def get(self, query, responseSize):
         self.port.flushInput()
@@ -236,24 +264,78 @@ class VISCACamera(SerialDevice):
 
 
 class Aperture(Enum):
-    CLOSE = 0x00
-    F28 = 0x01
-    F22 = 0x02
-    F19 = 0x03
-    F16 = 0x04
-    F14 = 0x05
-    F11 = 0x06
-    F9_6 = 0x07
-    F8 = 0x08
-    F6_8 = 0x09
-    F5_6 = 0x0A
-    F4_8 = 0x0B
-    F4 = 0x0C
-    F3_4 = 0x0D
-    F2_8 = 0x0E
-    F2_4 = 0x0F
-    F2 = 0x10
-    F1_8 = 0x11
+    CLOSE = (0x00, "Closed")
+    F28 = (0x01, "F28")
+    F22 = (0x02, "F22")
+    F19 = (0x03, "F19")
+    F16 = (0x04, "F16")
+    F14 = (0x05, "F14")
+    F11 = (0x06, "F11")
+    F9_6 = (0x07, "F9.6")
+    F8 = (0x08, "F8")
+    F6_8 = (0x09, "F6.8")
+    F5_6 = (0x0A, "F5.6")
+    F4_8 = (0x0B, "F4.8")
+    F4 = (0x0C, "F4")
+    F3_4 = (0x0D, "F3.4")
+    F2_8 = (0x0E, "F2.8")
+    F2_4 = (0x0F, "F2.4")
+    F2 = (0x10, "F2")
+    F1_8 = (0x11, "F1.8")
+
+    def __init__(self, code, label):
+        self.code = code
+        self.label = label
+
+
+class Shutter(Enum):
+    T50 = (0x00, "1/50s")
+    T60 = (0x01, "1/60s")
+    T75 = (0x02, "1/75s")
+    T90 = (0x03, "1/90s")
+    T100 = (0x04, "1/100s")
+    T120 = (0x05, "1/120s")
+    T150 = (0x06, "1/150s")
+    T180 = (0x07, "1/180s")
+    T215 = (0x08, "1/215s")
+    T250 = (0x09, "1/250s")
+    T300 = (0x0A, "1/300s")
+    T350 = (0x0B, "1/350s")
+    T425 = (0x0C, "1/425s")
+    T500 = (0x0D, "1/500s")
+    T600 = (0x0E, "1/600s")
+    T725 = (0x0F, "1/725s")
+    T850 = (0x10, "1/850s")
+    T1000 = (0x11, "1/1000s")
+    T1250 = (0x12, "1/1250s")
+    T1500 = (0x13, "1/1500s")
+    T1750 = (0x14, "1/1750s")
+    T2000 = (0x15, "1/2000s")
+    T2500 = (0x16, "1/2500s")
+    T3000 = (0x17, "1/3000s")
+    T3500 = (0x18, "1/3500s")
+    T4000 = (0x19, "1/4000s")
+    T6000 = (0x1A, "1/6000s")
+    T10000 = (0x1B, "1/10000s")
+
+    def __init__(self, code, label):
+        self.code = code
+        self.label = label
+
+
+class Gain(Enum):
+    G_MINUS_3 = (0x00, "-3")
+    G_0 = (0x01, "0")
+    G_3 = (0x02, "3")
+    G_6 = (0x03, "6")
+    G_9 = (0x04, "9")
+    G_12 = (0x05, "12")
+    G_15 = (0x06, "15")
+    G_18 = (0x07, "18")
+
+    def __init__(self, code, label):
+        self.code = code
+        self.label = label
 
 
 def checkPan(pan):
