@@ -187,7 +187,7 @@ class VISCACamera(SerialDevice):
                         (tv & 0x000F)])
 
     def setGain(self, gain):
-        if isinstance(gain, Shutter):
+        if isinstance(gain, Gain):
             h = gain.code
         else:
             h = gain
