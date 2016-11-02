@@ -6,7 +6,6 @@ Created on 13 Nov 2012
 from avx.devices.Device import InvalidArgumentException
 from avx.devices.SerialDevice import SerialDevice
 from avx.CameraPosition import CameraPosition
-from avx.devices.VISCACommands import VISCACommand
 from enum import Enum
 
 
@@ -32,10 +31,6 @@ class VISCACamera(SerialDevice):
 
     def sendVISCA(self, commandBytes):
         return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
-
-    def execute(self, command):
-        if isinstance(command, VISCACommand):
-            return self.sendCommand(SerialDevice.byteArrayToString(command.getBytes(self.cameraID)))
 
     def moveUp(self, pan=panSpeed, tilt=tiltSpeed):
         checkPan(pan)
