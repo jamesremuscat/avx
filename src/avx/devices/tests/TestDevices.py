@@ -13,7 +13,7 @@ from avx.devices.SerialDevice import SerialDevice
 from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
     UpDownStopRelay, UpDownStopArray
 from avx.devices.tests.MockSerialPort import MockSerialPort
-from mock import MagicMock, call
+from mock import MagicMock, call, patch
 import threading
 import unittest
 from serial.serialutil import SerialException
@@ -232,7 +232,8 @@ class TestDevices(unittest.TestCase):
         directionRelay.off.assert_called_once_with()
         startStopRelay.on.assert_called_once_with()
 
-    def testUpDownStopArray(self):
+    @patch("avx.devices.SerialRelayCard.logging")
+    def testUpDownStopArray(self, mock_logging):
         udsr1 = MagicMock()
         udsr1.deviceID = "udsr1"
         udsr2 = MagicMock()
@@ -257,6 +258,15 @@ class TestDevices(unittest.TestCase):
 
         udsa.stop(2)
         udsr2.stop.assert_called_once_with()
+
+        udsa.raiseUp(3)
+        mock_logging.error.assert_called_once_with("Tried to raise relay channel 3 but no such device attached to Test")
+        mock_logging.reset_mock()
+        udsa.lower(-123)
+        mock_logging.error.assert_called_once_with("Tried to lower relay channel -123 but no such device attached to Test")
+        mock_logging.reset_mock()
+        udsa.stop(42)
+        mock_logging.error.assert_called_once_with("Tried to stop relay channel 42 but no such device attached to Test")
 
     def testKramerVP88Listener(self):
         port = MockSerialPort()
