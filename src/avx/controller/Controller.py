@@ -116,7 +116,7 @@ class Controller(object):
                 logging.debug("Client call returned " + str(result))
             except:
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
-                self.clients.remove(uri)
+                self.unregisterClient(uri)
 
     def getVersion(self):
         return self.version
