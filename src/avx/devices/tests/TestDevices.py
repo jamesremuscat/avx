@@ -55,7 +55,8 @@ class TestDevices(unittest.TestCase):
         vp88.sendInputToOutput(2, 8)
         self.assertBytesEqual([0x01, 0x82, 0x88, 0x81], port.bytes)
 
-    def testKramer602(self):
+    @patch('avx.devices.Kramer602.logging')
+    def testKramer602(self, logging):
         port = MockSerialPort()
         k602 = Kramer602("Test", port)
 
@@ -70,6 +71,9 @@ class TestDevices(unittest.TestCase):
 
         k602.sendInputToOutput(1, 2)
         self.assertBytesEqual([0x0, 0x82], port.bytes)
+
+        k602.sendInputToOutput(2, 3)
+        logging.error.assert_called_once_with("Output channel 3 does not exist on switcher Test")
 
     def testKramerVP703(self):
         port = MockSerialPort()
@@ -89,6 +93,10 @@ class TestDevices(unittest.TestCase):
 
         vp703.unfreeze()
         self.assertEqual(list(b"Image Freeze = 0\r\n"), port.bytes)
+        port.clear()
+
+        vp703.recalibrate()
+        self.assertEqual(list(b"AutoTrack = 1\r\n"), port.bytes)
 
     def testCoriogenEclipse(self):
         port = MockSerialPort()
