@@ -123,6 +123,14 @@ class TestDevices(unittest.TestCase):
 
         ce.overlayOff()
         self.assertEqual(list(b"Mode = 0\r\n"), port.bytes)
+        port.clear()
+
+        ce.overscanOn()
+        self.assertEqual(list(b"Overscan = On\r\n"), port.bytes)
+        port.clear()
+
+        ce.overscanOff()
+        self.assertEqual(list(b"Overscan = Off\r\n"), port.bytes)
 
     def testKMtronicSerialRelayCard(self):
         port = MockSerialPort()
