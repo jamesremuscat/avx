@@ -9,3 +9,12 @@ script:
 - pep8 --ignore=E501 src
 - coverage run --source=avx setup.py nosetests
 after_success: coveralls
+before_deploy: sed -i -e "s/\.dev//" setup.cfg
+deploy:
+  provider: pypi
+  user: jamesremuscat
+  password:
+    secure: 3bDooKbnnCqbeaIkQyVAUtriU5o8PCTFFf3DP6yDs7Pyw3wWUyTgUOEeBI2HKkAAtjm0mKEdDofL/Wit7VqHyq9RB1/ACAl4ycLI/4PtoKyKNfw+PzCoW0Vdl8zLqlxTHFdIp8WpqRGKxb+VQAEK/HF4qaZkTauWhUPijggIQ6MbX14fmvEeuxCkDJ6i/tiXamQBvpz0z8MaBOvDwZyap04rkxgCc4pS5yJGleNl730SK5zEKqUL62W8MHIwueI4a7SV0EGGbyG3ZrHY/XZW8gQO6oNayTU1kvJ3wtd6v4Bksle3UEiqjHtHzjJLPpPVJ2TNlwTbf6Mynqam374stt7utt6yb6DwjH7L2UBg9ERW842HC4pbaGQDwXn5nfvhGfzUa9e6ClDxJp19vzuAhCHDCl0fWa5Is/xi1dcdVyMFA/SoP2zP63DlKPWXp82IC6Gz5tpfjha0J4zKjyyzDfDVg5gT0qm/dJsHSeViAJzpBtV1hlYbnlY6tO9hO7Pkf3QLk2D7p/CG8lqE7GmKPmZHB+FqHMmWNdi05L91vo6niCkv2Hugj8iBlknVdDqg17JoQ2FJTgiKTkGHsU7O8yf8xJy9BLC89jXCPHrzgiZQuQFvcTJmqvpygDx+JkPxqTPFrTSqi3UP18QBSMhq0OywLYSgxX+kH74MrYyFXWY=
+  on:
+    tags: true
+
