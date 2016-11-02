@@ -10,9 +10,10 @@ from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 from avx.devices.Kramer602 import Kramer602, Kramer602Listener
 from avx.devices.KramerVP703 import KramerVP703
 from avx.devices.SerialDevice import SerialDevice
-from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard
+from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
+    UpDownStopRelay, UpDownStopArray
 from avx.devices.tests.MockSerialPort import MockSerialPort
-from mock import MagicMock
+from mock import MagicMock, call
 import threading
 import unittest
 from serial.serialutil import SerialException
@@ -192,6 +193,70 @@ class TestDevices(unittest.TestCase):
             self.fail("Didn't throw an exception when channel was out of range")
         except InvalidArgumentException:
             pass
+
+    def testUpDownStopRelay(self):
+        card = MagicMock()
+
+        directionRelay = MagicMock()
+        startStopRelay = MagicMock()
+
+        card.createDevice.side_effect = [directionRelay, startStopRelay]
+
+        card.deviceID = "Test"
+
+        c = Controller()
+        c.addDevice(card)
+
+        udsr = UpDownStopRelay("TestUDSR", c, ("Test", 1), ("Test", 2))
+
+        card.createDevice.assert_has_calls([
+            call("TestUDSR_direction", 1),
+            call("TestUDSR_startStop", 2)
+        ])
+
+        udsr.raiseUp()
+        directionRelay.on.assert_called_once_with()
+        startStopRelay.on.assert_called_once_with()
+
+        startStopRelay.reset_mock()
+        directionRelay.reset_mock()
+
+        udsr.stop()
+        startStopRelay.off.assert_called_once_with()
+        self.assertEqual(0, directionRelay.call_count)
+
+        startStopRelay.reset_mock()
+        directionRelay.reset_mock()
+
+        udsr.lower()
+        directionRelay.off.assert_called_once_with()
+        startStopRelay.on.assert_called_once_with()
+
+    def testUpDownStopArray(self):
+        udsr1 = MagicMock()
+        udsr1.deviceID = "udsr1"
+        udsr2 = MagicMock()
+        udsr2.deviceID = "udsr2"
+
+        c = Controller()
+        c.addDevice(udsr1)
+        c.addDevice(udsr2)
+
+        udsa = UpDownStopArray("Test", c, {1: 'udsr1'})
+
+        udsa.add(udsr2, 2)
+        self.assertEqual(2, len(udsa.relays.items()))
+
+        udsa.raiseUp(1)
+        udsr1.raiseUp.assert_called_once_with()
+        self.assertEqual(0, udsr2.raiseUp.call_count)
+
+        udsa.lower(0)
+        udsr1.lower.assert_called_once_with()
+        udsr2.lower.assert_called_once_with()
+
+        udsa.stop(2)
+        udsr2.stop.assert_called_once_with()
 
     def testKramerVP88Listener(self):
         port = MockSerialPort()
