@@ -12,12 +12,55 @@ class UnisonDevice(SerialDevice):
     def __init__(self, deviceID, serialDevice, **kwargs):
         super(UnisonDevice, self).__init__(deviceID, serialDevice, **kwargs)
 
+    # Commands for presets
+
     def activate(self, unisonObject):
         cmd = UnisonCommand(unisonObject + ".ACTI")
         return self.sendCommand(cmd.getByteString())
 
+    def activateWithFade(self, preset, fadeTime):
+        cmd = UnisonCommand("{}.nDFT={}".format(preset, fadeTime))
+        return self.sendCommand(cmd.getByteString())
+
     def deactivate(self, unisonObject):
         cmd = UnisonCommand(unisonObject + ".DACT")
+        return self.sendCommand(cmd.getByteString())
+
+    # Commands for walls
+
+    def open(self, wall):
+        cmd = UnisonCommand(wall + ".OPEN")
+        return self.sendCommand(cmd.getByteString())
+
+    def close(self, wall):
+        cmd = UnisonCommand(wall + ".CLOS")
+        return self.sendCommand(cmd.getByteString())
+
+    def toggleOpen(self, wall):
+        cmd = UnisonCommand(wall + ".TOGL")
+        return self.sendCommand(cmd.getByteString())
+
+    # Commands for zones
+
+    def setZoneIntensity(self, zone, intensity):
+        # 0 <= intensity <= 100, command needs a percentage of 65535
+        cmd = UnisonCommand("{}.nINT={:0.0f}".format(zone, intensity * 655.35))
+        return self.sendCommand(cmd.getByteString())
+
+    # Commands for macros
+
+    def execute(self, macroName):
+        cmd = UnisonCommand("{}.EXEC".format(macroName))
+        return self.sendCommand(cmd.getByteString())
+
+    def stop(self, macroName):
+        cmd = UnisonCommand("{}.STOP".format(macroName))
+        return self.sendCommand(cmd.getByteString())
+
+    # Commands for section masters
+
+    def master(self, section, level):
+        cmd = UnisonCommand("{}.Master.nVAL={:0.0f}".format(section, level * 655.35))
         return self.sendCommand(cmd.getByteString())
 
 
