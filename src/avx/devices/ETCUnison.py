@@ -4,6 +4,17 @@ from avx.devices.SerialDevice import SerialDevice
 max_command_length = 200
 
 
+def wrapUnisonCommand(func):
+    '''
+    Decorator for a function which should return the USAP command string to be sent.
+    The resulting function requires `self.sendCommand` to resolve to an appropriate function.
+    '''
+    def unisonCommandInner(self, *args):
+        cmd = UnisonCommand(func(self, *args))
+        return self.sendCommand(cmd.getByteString())
+    return unisonCommandInner
+
+
 class UnisonDevice(SerialDevice):
     '''
     An ETC Unison lighting controller speaking Unison Serial Access Protocol (USAP).
@@ -14,54 +25,54 @@ class UnisonDevice(SerialDevice):
 
     # Commands for presets
 
+    @wrapUnisonCommand
     def activate(self, unisonObject):
-        cmd = UnisonCommand(unisonObject + ".ACTI")
-        return self.sendCommand(cmd.getByteString())
+        return unisonObject + ".ACTI"
 
+    @wrapUnisonCommand
     def activateWithFade(self, preset, fadeTime):
-        cmd = UnisonCommand("{}.nDFT={}".format(preset, fadeTime))
-        return self.sendCommand(cmd.getByteString())
+        return "{}.nDFT={}".format(preset, fadeTime)
 
+    @wrapUnisonCommand
     def deactivate(self, unisonObject):
-        cmd = UnisonCommand(unisonObject + ".DACT")
-        return self.sendCommand(cmd.getByteString())
+        return unisonObject + ".DACT"
 
     # Commands for walls
 
+    @wrapUnisonCommand
     def open(self, wall):
-        cmd = UnisonCommand(wall + ".OPEN")
-        return self.sendCommand(cmd.getByteString())
+        return wall + ".OPEN"
 
+    @wrapUnisonCommand
     def close(self, wall):
-        cmd = UnisonCommand(wall + ".CLOS")
-        return self.sendCommand(cmd.getByteString())
+        return wall + ".CLOS"
 
+    @wrapUnisonCommand
     def toggleOpen(self, wall):
-        cmd = UnisonCommand(wall + ".TOGL")
-        return self.sendCommand(cmd.getByteString())
+        return wall + ".TOGL"
 
     # Commands for zones
 
+    @wrapUnisonCommand
     def setZoneIntensity(self, zone, intensity):
         # 0 <= intensity <= 100, command needs a percentage of 65535
-        cmd = UnisonCommand("{}.nINT={:0.0f}".format(zone, intensity * 655.35))
-        return self.sendCommand(cmd.getByteString())
+        return "{}.nINT={:0.0f}".format(zone, intensity * 655.35)
 
     # Commands for macros
 
+    @wrapUnisonCommand
     def execute(self, macroName):
-        cmd = UnisonCommand("{}.EXEC".format(macroName))
-        return self.sendCommand(cmd.getByteString())
+        return "{}.EXEC".format(macroName)
 
+    @wrapUnisonCommand
     def stop(self, macroName):
-        cmd = UnisonCommand("{}.STOP".format(macroName))
-        return self.sendCommand(cmd.getByteString())
+        return "{}.STOP".format(macroName)
 
     # Commands for section masters
 
+    @wrapUnisonCommand
     def master(self, section, level):
-        cmd = UnisonCommand("{}.Master.nVAL={:0.0f}".format(section, level * 655.35))
-        return self.sendCommand(cmd.getByteString())
+        return "{}.Master.nVAL={:0.0f}".format(section, level * 655.35)
 
 
 class UnisonCommand(object):
