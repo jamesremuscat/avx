@@ -27,7 +27,7 @@ class UnisonDevice(SerialDevice):
 
     @wrapUnisonCommand
     def activate(self, unisonObject):
-        return unisonObject + ".ACTI"
+        return "{}.ACTI".format(unisonObject)
 
     @wrapUnisonCommand
     def activateWithFade(self, preset, fadeTime):
@@ -35,21 +35,21 @@ class UnisonDevice(SerialDevice):
 
     @wrapUnisonCommand
     def deactivate(self, unisonObject):
-        return unisonObject + ".DACT"
+        return "{}.DACT".format(unisonObject)
 
     # Commands for walls
 
     @wrapUnisonCommand
     def open(self, wall):
-        return wall + ".OPEN"
+        return "{}.OPEN".format(wall)
 
     @wrapUnisonCommand
     def close(self, wall):
-        return wall + ".CLOS"
+        return "{}.CLOS".format(wall)
 
     @wrapUnisonCommand
     def toggleOpen(self, wall):
-        return wall + ".TOGL"
+        return "{}.TOGL".format(wall)
 
     # Commands for zones
 
