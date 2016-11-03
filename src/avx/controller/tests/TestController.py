@@ -94,6 +94,18 @@ class TestController(TestCase):
         c.proxyDevice("fakeDevice")
         fakeSlave.proxyDevice.assert_called_once_with("fakeDevice")
 
+    @patch("avx.controller.Controller.logging")
+    def testLoadConfigWithLogging(self, logging):
+        mockLogger = MagicMock()
+        logging.getLogger = MagicMock(return_value=mockLogger)
+
+        c = Controller()
+        c.loadConfig(os.path.join(os.path.dirname(__file__), 'testConfigWithLogging.json'), True)
+
+        logging.config.dictConfig.assert_called_once_with({"key": "value", "key2": "value2"})
+        mockLogger.setLevel.assert_called_once_with(logging.DEBUG)
+        logging.info.assert_called_once_with("-d specified, overriding any specified default logger level to DEBUG")
+
     def testCallRemoteController(self):
         master = Controller()
         slave = Controller()
