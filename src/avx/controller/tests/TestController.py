@@ -6,6 +6,7 @@ from mock import MagicMock, call, patch
 from threading import Thread
 from unittest import TestCase
 import os
+from Pyro4.errors import NamingError
 
 
 class TestController(TestCase):
@@ -74,15 +75,20 @@ class TestController(TestCase):
         incompatibleSlave = MagicMock()
         incompatibleSlave.getVersion = MagicMock(return_value="0.1.0")
 
-        fromPyro.side_effect = [fakeSlave, incompatibleSlave]
+        fromPyro.side_effect = [fakeSlave, incompatibleSlave, NamingError()]
 
         c.loadConfig(os.path.join(os.path.dirname(__file__), 'testConfigWithSlaves.json'))
 
         fromPyro.assert_has_calls([
             call('slave1'),  # Boba Fett? Boba Fett? Where?
-            call('incompatible')
+            call('incompatible'),
+            call('nonexistent')
         ])
-        logging.error.assert_called_once_with("This Controller is version {} but tried to add slave incompatible of version 0.1.0".format(c.getVersion()))
+
+        logging.error.assert_has_calls([
+            call("This Controller is version {} but tried to add slave incompatible of version 0.1.0".format(c.getVersion())),
+            call("Could not connect to slave with controller ID nonexistent")
+        ])
         self.assertEqual(1, len(c.slaves))
 
         c.proxyDevice("fakeDevice")
@@ -112,6 +118,20 @@ class TestController(TestCase):
 
         master.daemon.shutdown()
         slave.daemon.shutdown()
+
+    @patch("avx.controller.Controller.atexit")
+    def testInitAndDeinitDevices(self, atexit):
+        c = Controller()
+        d = MagicMock()
+        d.deviceID = "Test"
+        c.addDevice(d)
+
+        c.initialise()
+        d.initialise.assert_called_once_with()
+        atexit.register.assert_called_once_with(c.deinitialise)
+
+        c.deinitialise()
+        d.deinitialise.assert_called_once_with()
 
     def testBadClientDisconnect(self):
         c = Controller()

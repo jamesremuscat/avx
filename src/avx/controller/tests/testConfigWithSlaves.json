@@ -3,7 +3,8 @@
     "controllerID" : "testController",
     "slaves" : [
       "slave1",
-      "incompatible"
+      "incompatible",
+      "nonexistent"
     ]
   },
   "devices" : [
