@@ -2,7 +2,7 @@ from avx.controller.Controller import Controller, DuplicateDeviceIDError, Contro
 from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
 from avx.devices.SerialDevice import FakeSerialPort
 from avx.devices.SerialRelayCard import UpDownStopArray
-from mock import MagicMock
+from mock import MagicMock, call, patch
 from threading import Thread
 from unittest import TestCase
 import os
@@ -61,6 +61,32 @@ class TestController(TestCase):
             self.fail("Didn't throw an exception when adding a duplicated device ID")
         except DuplicateDeviceIDError as e:
             self.assertEqual("Device already exists: Duplicate", str(e))
+
+    @patch("avx.controller.Controller.logging")
+    @patch("avx.controller.Controller.Controller.fromPyro")
+    def testLoadConfigWithRemote(self, fromPyro, logging):
+
+        c = Controller()
+        fakeSlave = MagicMock()
+        fakeSlave.getVersion = MagicMock(return_value=c.getVersion())
+        fakeSlave.hasDevice = MagicMock(return_value=True)
+
+        incompatibleSlave = MagicMock()
+        incompatibleSlave.getVersion = MagicMock(return_value="0.1.0")
+
+        fromPyro.side_effect = [fakeSlave, incompatibleSlave]
+
+        c.loadConfig(os.path.join(os.path.dirname(__file__), 'testConfigWithSlaves.json'))
+
+        fromPyro.assert_has_calls([
+            call('slave1'),  # Boba Fett? Boba Fett? Where?
+            call('incompatible')
+        ])
+        logging.error.assert_called_once_with("This Controller is version {} but tried to add slave incompatible of version 0.1.0".format(c.getVersion()))
+        self.assertEqual(1, len(c.slaves))
+
+        c.proxyDevice("fakeDevice")
+        fakeSlave.proxyDevice.assert_called_once_with("fakeDevice")
 
     def testCallRemoteController(self):
         master = Controller()
