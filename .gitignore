@@ -5,6 +5,7 @@
 
 # Packages
 *.egg
+*.eggs
 *.egg-info
 dist
 build
@@ -37,3 +38,5 @@ nosetests.xml
 
 # Project-specific
 aldatesx.pid
+venv
+
