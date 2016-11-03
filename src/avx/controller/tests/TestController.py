@@ -106,6 +106,12 @@ class TestController(TestCase):
         mockLogger.setLevel.assert_called_once_with(logging.DEBUG)
         logging.info.assert_called_once_with("-d specified, overriding any specified default logger level to DEBUG")
 
+    @patch("avx.controller.Controller.logging")
+    def testLoadInvalidConfig(self, logging):
+        c = Controller()
+        c.loadConfig(os.path.join(os.path.dirname(__file__), 'notJson'))
+        logging.exception.assert_called_once_with("Cannot parse config.json!")
+
     def testCallRemoteController(self):
         master = Controller()
         slave = Controller()

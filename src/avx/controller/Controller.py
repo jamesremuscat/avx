@@ -94,7 +94,7 @@ class Controller(object):
                     logging.info("-d specified, overriding any specified default logger level to DEBUG")
 
         except ValueError:
-            logging.exception("Cannot parse config.json:")
+            logging.exception("Cannot parse config.json!")
 
     def registerClient(self, clientURI):
         self.clients.append(clientURI)
