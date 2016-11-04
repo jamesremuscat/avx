@@ -89,6 +89,16 @@ systemd script or `scripts/etc/init.d/avx-controller` init script to run the
 controller as a daemon.
 
 
+### Configuring IP address
+
+By default avx will use the first IP address printed by `hostname -I` to
+register with the nameserver. If you would like to use a different IP address
+(e.g. for a different network adapter) you can set the `PYRO_IP` environment
+variable, and that value will be used instead.
+
+On systems without `hostname`, or where `hostname -I` does not produce the
+required output, you should use the `PYRO_IP` environment variable.
+
 ## Using the HTTP interface
 
 There's a basic HTTP interface built in. To enable it, ensure you have the
