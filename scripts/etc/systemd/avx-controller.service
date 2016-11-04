@@ -1,0 +1,11 @@
+[Unit]
+Description=avx controller
+Wants=network-online.target
+Requires=pyro4-nsd.service
+After=network-online.target pyro4-nsd.service
+
+[Service]
+ExecStart=/opt/avx-venv/bin/avx-controller -c /etc/avx.config
+
+[Install]
+WantedBy=multi-user.target

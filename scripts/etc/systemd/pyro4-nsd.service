@@ -1,0 +1,11 @@
+[Unit]
+Description=Pyro4 nameserver daemon
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment=PYRO_SERIALIZERS_ACCEPTED=pickle
+ExecStart=/opt/avx-venv/bin/pyro4-ns -n 0.0.0.0
+
+[Install]
+WantedBy=multi-user.target
