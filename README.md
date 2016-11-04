@@ -19,8 +19,14 @@ choice, using Python and Pyro4 for communications.
 
 ## INSTALLATION & CONFIGURATION
 
-The easiest method of installing is to either grab a pre-built egg or build one
-from source yourself (`python setup.py bdist_egg`) and install using easy_install. AVX requires:
+The easiest method of installing is via `pip`, which will take care of all
+dependencies for you:
+
+```sudo pip install avx```
+
+You can also install from source with the usual `python setup.py install` routine.
+
+AVX requires:
 
 * Python 2.7
 * enum34
@@ -29,8 +35,6 @@ from source yourself (`python setup.py bdist_egg`) and install using easy_instal
 * pyusb
 * setuptools
 * semantic_version
-
-In theory, `easy_install` (or `setup.py`) should take care of the dependencies for you.
 
 Mapping of physical hardware devices through serial ports to virtual devices is
 done in the `config.json` file. A typical definition of a single-device system
@@ -56,9 +60,14 @@ constructor of the class. Most, but not all, current devices require
 a `serialDevice` option.
 
 
-Be sure to map devices based on their USB
-device path - `/dev/ttyUSBx`'es might get swapped round after a reboot, which
-would be sad. Everything GUI-side refers to the `deviceID` string you assign
+Be sure to map devices based on their USB device path - `/dev/ttyUSBx`'es 
+might get swapped round after a reboot, which would break your configuration.
+Scripts included under `scripts/etc/udev/rules.d` will create symlinks based on
+device path, which relates to the physical port a device is plugged in to, in a
+`/dev/usb-ports/` directory. This will not change unless you physically swap
+the port a device is plugged in to.
+
+Everything client-side will refer to the `deviceID` string you assign
 to each device, so balance these between descriptive and concise.
 
 
@@ -66,7 +75,8 @@ to each device, so balance these between descriptive and concise.
 
 You will need a Pyro4 nameserver running somewhere on your network. The 
 `runNameserver.sh` script will take care of this for you, or use the
-`contrib/pyro-nsd` init script for Debian (maybe others?)
+`scripts/etc/systemd/pyro4-nsd.service` systemd script to install as a system
+service. Systems still running initd can use `scripts/etc/init.d/pyro-nsd`.
 
 The `runController.py` script will start a Controller instance and register it
 with the Pyro4 nameserver, making it available to all machines on your network.
@@ -74,8 +84,9 @@ By default it will load a `config.json` configuration file, or whatever you
 specify with -c on the commandline. Installing via pip/easy_install will
 generate an `avx-controller` script which is run in the same way. 
 
-The controller machine can also use the `contrib/avx-controller` init script
-to run the controller as a daemon.
+The controller machine can also use the `scripts/etc/systemd/avx-controller.service`
+systemd script or `scripts/etc/init.d/avx-controller` init script to run the
+controller as a daemon.
 
 
 ## Using the HTTP interface
