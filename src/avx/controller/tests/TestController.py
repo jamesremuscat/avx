@@ -5,8 +5,26 @@ from avx.devices.SerialRelayCard import UpDownStopArray
 from mock import MagicMock, call, patch
 from threading import Thread
 from unittest import TestCase
-import os
 from Pyro4.errors import NamingError
+
+import json
+import os
+import shutil
+import tempfile
+
+
+def create_temporary_copy(src_file_name, preserve_extension=False):
+    '''
+    Copies the source file into a temporary file.
+    Returns a _TemporaryFileWrapper, whose destructor deletes the temp file
+    (i.e. the temp file is deleted when the object goes out of scope).
+    '''
+    tf_suffix = ''
+    if preserve_extension:
+        _, tf_suffix = os.path.splitext(src_file_name)
+    tf = tempfile.NamedTemporaryFile(suffix=tf_suffix)
+    shutil.copy2(src_file_name, tf.name)
+    return tf
 
 
 class TestController(TestCase):
@@ -159,6 +177,29 @@ class TestController(TestCase):
 
         c.callAllClients(lambda c: c.doesNotExist())
         self.assertEqual([], c.clients)
+
+    def testPersistClientList(self):
+        with create_temporary_copy(os.path.join(os.path.dirname(__file__), 'testConfig.json')) as confFile:
+            c = Controller()
+            c.loadConfig(confFile.name)
+
+            c.registerClient("DOES_NOT_EXIST")
+            withClient = json.load(confFile)
+            print withClient
+            self.assertEqual(withClient["clients"], ["DOES_NOT_EXIST"])
+
+            del c
+
+            c2 = Controller()
+            c2.loadConfig(confFile.name)
+
+            self.assertEqual(c2.clients, ["DOES_NOT_EXIST"])
+
+            c2.callAllClients(lambda c: c.notARealMethod())
+
+            with open(confFile.name, "r") as cf2:
+                withClient2 = json.load(cf2)
+                self.assertEqual(withClient2["clients"], [])
 
     def testVersionCompatibility(self):
         table = [
