@@ -59,11 +59,12 @@ class Controller(object):
         try:
             if isinstance(configFile, file):
                 config = json.load(configFile)
+                self.configFile = configFile.name
             else:
                 config = json.load(open(configFile))
+                self.configFile = configFile
 
             self.config = config
-            self.configFile = configFile
 
             for d in config["devices"]:
                 device = Device.create(d, self)
@@ -113,13 +114,13 @@ class Controller(object):
                 logging.exception("Cannot save config file!")
 
     def registerClient(self, clientURI):
-        self.clients.append(clientURI)
+        self.clients.append(str(clientURI))
         logging.info("Registered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) now connected")
         self.saveConfig()
 
     def unregisterClient(self, clientURI):
-        self.clients.remove(clientURI)
+        self.clients.remove(str(clientURI))
         logging.info("Unregistered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) still connected")
         self.saveConfig()
