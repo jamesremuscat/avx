@@ -160,6 +160,28 @@ class TestController(TestCase):
         c.callAllClients(lambda c: c.doesNotExist())
         self.assertEqual([], c.clients)
 
+    @patch("avx.controller.Controller.Pyro4")
+    def testCallsAllGoodClients(self, pyro4):
+        c = Controller()
+        c.registerClient("Bad")
+        c.registerClient("Good")
+
+        good = MagicMock()
+        good.clientMethod = MagicMock()
+
+        pyro4.Proxy = MagicMock()
+
+        pyro4.Proxy.side_effect = [Exception("Foo"), good]
+
+        c.callAllClients(lambda c: c.clientMethod("Bar"))
+
+        pyro4.Proxy.assert_has_calls([
+            call("Bad"),
+            call("Good")
+        ])
+
+        good.clientMethod.assert_called_once_with("Bar")
+
     def testVersionCompatibility(self):
         table = [
             # remote, local, expected

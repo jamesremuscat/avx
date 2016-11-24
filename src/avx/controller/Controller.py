@@ -108,7 +108,7 @@ class Controller(object):
 
     def callAllClients(self, function):
         ''' function should take a client and do things to it'''
-        for uri in self.clients:
+        for uri in list(self.clients):
             try:
                 logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
                 client = Pyro4.Proxy(uri)
