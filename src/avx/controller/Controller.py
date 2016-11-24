@@ -61,6 +61,10 @@ class Controller(object):
                 config = json.load(configFile)
             else:
                 config = json.load(open(configFile))
+
+            self.config = config
+            self.configFile = configFile
+
             for d in config["devices"]:
                 device = Device.create(d, self)
                 self.addDevice(device)
@@ -93,18 +97,32 @@ class Controller(object):
                     logging.getLogger().setLevel(logging.DEBUG)
                     logging.info("-d specified, overriding any specified default logger level to DEBUG")
 
+            if "clients" in config:
+                self.clients = list(config["clients"])
+            self.config["clients"] = self.clients
+
         except ValueError:
             logging.exception("Cannot parse config.json!")
+
+    def saveConfig(self):
+        if hasattr(self, "configFile"):
+            try:
+                with open(self.configFile, "w") as cfout:
+                    json.dump(self.config, cfout)
+            except IOError:
+                logging.exception("Cannot save config file!")
 
     def registerClient(self, clientURI):
         self.clients.append(clientURI)
         logging.info("Registered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) now connected")
+        self.saveConfig()
 
     def unregisterClient(self, clientURI):
         self.clients.remove(clientURI)
         logging.info("Unregistered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) still connected")
+        self.saveConfig()
 
     def callAllClients(self, function):
         ''' function should take a client and do things to it'''
