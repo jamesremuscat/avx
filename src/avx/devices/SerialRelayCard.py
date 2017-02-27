@@ -69,6 +69,8 @@ class ICStationSerialRelayCard(SerialRelayCard):
         self.state = [False for _ in range(channels)]  # True = on, False = off
         self.initialised = False
 
+        self.prevState = None
+
     def initialise(self):
         if not self.initialised:
             SerialRelayCard.initialise(self)
@@ -79,8 +81,11 @@ class ICStationSerialRelayCard(SerialRelayCard):
             self.initialised = True
 
     def __sendStateCommand(self):
-        result = self.sendCommand(SerialDevice.byteArrayToString([self.__createStateByte()]))
-        return result
+        toSend = self.__createStateByte()
+        if toSend != self.prevState:
+            result = self.sendCommand(SerialDevice.byteArrayToString([toSend]))
+            self.prevState = toSend
+            return result
 
     def __createStateByte(self):
         stateByte = 0x0
