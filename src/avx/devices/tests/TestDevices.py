@@ -18,6 +18,7 @@ import threading
 import unittest
 from serial.serialutil import SerialException
 from avx.devices.Device import InvalidArgumentException
+from time import sleep
 
 
 class TestDevices(unittest.TestCase):
@@ -182,6 +183,7 @@ class TestDevices(unittest.TestCase):
         card = ICStationSerialRelayCard("Test", port)
 
         card.initialise()
+        sleep(0.2)
         self.assertEqual(['\x50', '\x51', '\xff'], port.bytes)
         port.clear()
 
@@ -189,18 +191,22 @@ class TestDevices(unittest.TestCase):
         self.assertEqual([], port.bytes)
 
         card.on(1)
+        sleep(0.2)
         self.assertEqual(['\xfe'], port.bytes)
         port.clear()
 
         card.on(5)
+        sleep(0.2)
         self.assertEqual(['\xee'], port.bytes)
         port.clear()
 
         card.on(8)
+        sleep(0.2)
         self.assertEqual(['\x6e'], port.bytes)
         port.clear()
 
         card.off(5)
+        sleep(0.2)
         self.assertEqual(['\x7e'], port.bytes)
         port.clear()
 

@@ -97,8 +97,8 @@ class ICStationSerialRelayCard(SerialRelayCard):
     def __sendStateCommand(self):
         toSend = self.__createStateByte()
         if toSend != self.prevState:
-            result = self.sendCommand(SerialDevice.byteArrayToString([toSend]))
             self.prevState = toSend
+            result = self.sendCommand(SerialDevice.byteArrayToString([toSend]))
             return result
 
     def __createStateByte(self):
