@@ -2,6 +2,8 @@ from avx.devices.SerialDevice import SerialDevice
 from avx.devices.Device import Device, InvalidArgumentException
 import logging
 import time
+from time import sleep
+from threading import Thread
 
 
 class SerialRelayCard(SerialDevice):
@@ -77,8 +79,20 @@ class ICStationSerialRelayCard(SerialRelayCard):
             self.sendCommand("\x50")
             time.sleep(0.1)
             self.sendCommand("\x51")
-            self.__sendStateCommand()
             self.initialised = True
+        self.run_send_thread = True
+
+        def run():
+            while self.run_send_thread:
+                self.__sendStateCommand()
+                sleep(0.1)
+
+        runner = Thread(target=run)
+        runner.setDaemon(True)
+        runner.start()
+
+    def deinitialise(self):
+        self.run_send_thread = False
 
     def __sendStateCommand(self):
         toSend = self.__createStateByte()
@@ -97,12 +111,10 @@ class ICStationSerialRelayCard(SerialRelayCard):
     def on(self, channel):
         self.__checkChannel(channel)
         self.state[channel - 1] = True
-        self.__sendStateCommand()
 
     def off(self, channel):
         self.__checkChannel(channel)
         self.state[channel - 1] = False
-        self.__sendStateCommand()
 
     def __checkChannel(self, channel):
         if channel > len(self.state):
