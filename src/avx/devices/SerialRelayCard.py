@@ -108,12 +108,18 @@ class ICStationSerialRelayCard(SerialRelayCard):
                 stateByte += 1 << i
         return stateByte
 
+    def _checkSenderState(self):
+        if not self.run_send_thread:
+            logging.warn("State change requested for {} but run_send_thread is False - device uninitialised?".format(self.deviceID))
+
     def on(self, channel):
         self.__checkChannel(channel)
+        self._checkSenderState()
         self.state[channel - 1] = True
 
     def off(self, channel):
         self.__checkChannel(channel)
+        self._checkSenderState()
         self.state[channel - 1] = False
 
     def __checkChannel(self, channel):

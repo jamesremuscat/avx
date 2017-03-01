@@ -178,7 +178,8 @@ class TestDevices(unittest.TestCase):
         channel.off()
         self.assertEqual(['\x35'], port.bytes)
 
-    def testICStationSerialRelayCard(self):
+    @patch("avx.devices.SerialRelayCard.logging")
+    def testICStationSerialRelayCard(self, mock_logging):
         port = MockSerialPort()
         card = ICStationSerialRelayCard("Test", port)
 
@@ -215,6 +216,10 @@ class TestDevices(unittest.TestCase):
             self.fail("Didn't throw an exception when channel was out of range")
         except InvalidArgumentException:
             pass
+
+        card.deinitialise()
+        card.on(1)
+        mock_logging.warn.assert_called_once_with("State change requested for Test but run_send_thread is False - device uninitialised?")
 
     def testUpDownStopRelay(self):
         card = MagicMock()
