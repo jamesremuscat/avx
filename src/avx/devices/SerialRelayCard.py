@@ -84,7 +84,7 @@ class ICStationSerialRelayCard(SerialRelayCard):
 
         def run():
             while self.run_send_thread:
-                self.__sendStateCommand()
+                self._sendStateCommand()
                 sleep(0.1)
 
         runner = Thread(target=run)
@@ -94,14 +94,14 @@ class ICStationSerialRelayCard(SerialRelayCard):
     def deinitialise(self):
         self.run_send_thread = False
 
-    def __sendStateCommand(self):
-        toSend = self.__createStateByte()
+    def _sendStateCommand(self):
+        toSend = self._createStateByte()
         if toSend != self.prevState:
             self.prevState = toSend
             result = self.sendCommand(SerialDevice.byteArrayToString([toSend]))
             return result
 
-    def __createStateByte(self):
+    def _createStateByte(self):
         stateByte = 0x0
         for i in range(0, len(self.state)):
             if not self.state[i]:  # Card requires bit = 0 to turn relay on
