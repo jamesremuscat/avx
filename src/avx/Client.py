@@ -6,13 +6,14 @@ Created on 8 Apr 2013
 from avx import PyroUtils
 import Pyro4
 import atexit
+import threading
 
 
-class Client(Pyro4.threadutil.Thread):
+class Client(threading.Thread):
 
     def __init__(self):
-        Pyro4.threadutil.Thread.__init__(self)
-        self.started = Pyro4.threadutil.Event()
+        super(Client, self).__init__()
+        self.started = threading.Event()
 
     def run(self):
         PyroUtils.setHostname()
