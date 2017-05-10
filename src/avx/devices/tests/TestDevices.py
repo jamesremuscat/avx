@@ -11,7 +11,7 @@ from avx.devices.Kramer602 import Kramer602, Kramer602Listener
 from avx.devices.KramerVP703 import KramerVP703
 from avx.devices.SerialDevice import SerialDevice
 from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
-    UpDownStopRelay, UpDownStopArray
+    UpDownStopRelay, UpDownStopArray, MomentaryUpDownStopRelay
 from avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock, call, patch
 import threading
@@ -259,6 +259,88 @@ class TestDevices(unittest.TestCase):
         directionRelay.off.assert_called_once_with()
         startStopRelay.on.assert_called_once_with()
 
+    def testMomentaryUpDownStopRelay(self):
+        card = MagicMock()
+
+        upRelay = MagicMock()
+        downRelay = MagicMock()
+        stopRelay = MagicMock()
+
+        card.createDevice.side_effect = [upRelay, downRelay, stopRelay]
+
+        card.deviceID = "Test"
+
+        c = Controller()
+        c.addDevice(card)
+
+        mudsr = MomentaryUpDownStopRelay("TestUDSR", c, ("Test", 1), ("Test", 2), ("Test", 3))
+
+        card.createDevice.assert_has_calls([
+            call("TestUDSR_up", 1),
+            call("TestUDSR_down", 2),
+            call("TestUDSR_stop", 3)
+        ])
+
+        mudsr.raiseUp()
+        with mudsr.lock:  # wait for sequence to complete
+            upRelay.on.assert_called_once()
+            upRelay.off.assert_called_once()
+
+            downRelay.on.assert_not_called()
+            downRelay.off.assert_not_called()
+
+            stopRelay.on.assert_not_called()
+            stopRelay.off.assert_not_called()
+
+        upRelay.reset_mock()
+
+        mudsr.lower()
+        with mudsr.lock:
+            upRelay.on.assert_not_called()
+            upRelay.off.assert_not_called()
+
+            downRelay.on.assert_called_once()
+            downRelay.off.assert_called_once()
+
+            stopRelay.on.assert_not_called()
+            stopRelay.off.assert_not_called()
+
+        downRelay.reset_mock()
+
+        mudsr.stop()
+        with mudsr.lock:
+            upRelay.on.assert_not_called()
+            upRelay.off.assert_not_called()
+
+            downRelay.on.assert_not_called()
+            downRelay.off.assert_not_called()
+
+            stopRelay.on.assert_called_once()
+            stopRelay.off.assert_called_once()
+
+        stopRelay.reset_mock()
+
+        synctest = MagicMock()
+        relay = MagicMock()
+        synctest.createDevice.side_effect = [relay, relay, relay]
+        synctest.deviceID = "synctest"
+
+        c2 = Controller()
+        c2.addDevice(synctest)
+
+        mudsr2 = MomentaryUpDownStopRelay("testsync", c2, ("synctest", 1), ("synctest", 2), ("synctest", 3))
+
+        mudsr2.raiseUp()
+        mudsr2.lower()
+        sleep(1)
+        with mudsr2.lock:
+            relay.assert_has_calls([
+                call.on(),
+                call.off(),  # Specifically: this off() is called before the second on()
+                call.on(),
+                call.off()
+            ])
+
     @patch("avx.devices.SerialRelayCard.logging")
     def testUpDownStopArray(self, mock_logging):
         udsr1 = MagicMock()
@@ -371,6 +453,7 @@ class NullDispatcher(object):
 
     def updateOutputMappings(self):
         pass
+
 
 if __name__ == "__main__":
     unittest.main()

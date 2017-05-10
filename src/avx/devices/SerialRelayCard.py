@@ -3,7 +3,7 @@ from avx.devices.Device import Device, InvalidArgumentException
 import logging
 import time
 from time import sleep
-from threading import Thread
+from threading import Thread, Lock
 
 
 class SerialRelayCard(SerialDevice):
@@ -144,6 +144,34 @@ class UpDownStopRelay(Device):
 
     def stop(self):
         self.startStopRelay.off()
+
+
+class MomentaryUpDownStopRelay(Device):
+    def __init__(self, deviceID, controller, upRelay, downRelay, stopRelay, **kwargs):
+        super(MomentaryUpDownStopRelay, self).__init__(deviceID, **kwargs)
+        self.upRelay = controller.getDevice(upRelay[0]).createDevice(self.deviceID + "_up", upRelay[1])
+        self.downRelay = controller.getDevice(downRelay[0]).createDevice(self.deviceID + "_down", downRelay[1])
+        self.stopRelay = controller.getDevice(stopRelay[0]).createDevice(self.deviceID + "_stop", stopRelay[1])
+        self.lock = Lock()
+
+    def _touch(self, relay):
+        # We don't want to block the calling thread, so waiting for our lock happens in its own thread.
+        # Thus, UpDownStopArray still works quickly, but you can't force multiple relays to be on for a single MUDS.
+        def inner():
+            with self.lock:
+                relay.on()
+                time.sleep(0.5)
+                relay.off()
+        Thread(target=inner).start()
+
+    def raiseUp(self):
+        self._touch(self.upRelay)
+
+    def lower(self):
+        self._touch(self.downRelay)
+
+    def stop(self):
+        self._touch(self.stopRelay)
 
 
 class UpDownStopArray(Device):
