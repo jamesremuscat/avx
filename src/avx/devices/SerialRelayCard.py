@@ -70,7 +70,7 @@ class ICStationSerialRelayCard(SerialRelayCard):
         SerialRelayCard.__init__(self, deviceID, serialDevice, **kwargs)
         self.state = [False for _ in range(channels)]  # True = on, False = off
         self.initialised = False
-
+        self.run_send_thread = False
         self.prevState = None
 
     def initialise(self):
