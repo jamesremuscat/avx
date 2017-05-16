@@ -12,6 +12,22 @@ from threading import Lock, ThreadError, Event
 import logging
 
 
+# Pan speeds can vary from 0x01 - 0x18
+DEFAULT_PAN_SPEED = 0x06
+# Tilt speeds can vary from 0x01 - 0x14
+DEFAULT_TILT_SPEED = 0x06
+# Zoom speed can vary from 0x02-0x07
+DEFAULT_ZOOM_SPEED = 0x06
+
+
+def constrainPanTiltSpeed(func):
+    def inner(elf, panSpeed=DEFAULT_PAN_SPEED, tiltSpeed=DEFAULT_TILT_SPEED):
+        checkPan(panSpeed)
+        checkTilt(tiltSpeed)
+        func(elf, panSpeed, tiltSpeed)
+    return inner
+
+
 class VISCACamera(SerialDevice):
     '''
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
@@ -20,13 +36,6 @@ class VISCACamera(SerialDevice):
     before sending next command. We completely ignore ACKs and NACKs and just
     spew commands as often as we're asked to.
     '''
-
-    # Pan speeds can vary from 0x01 - 0x18
-    panSpeed = 0x06
-    # Tilt speeds can vary from 0x01 - 0x14
-    tiltSpeed = 0x06
-    # Zoom speed can vary from 0x02-0x07
-    zoomSpeed = 0x06
 
     def __init__(self, deviceID, serialDevice, cameraID, **kwargs):
         super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
@@ -50,56 +59,47 @@ class VISCACamera(SerialDevice):
             self._response_received.clear()
             return response
 
-    def moveUp(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveUp(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x01])
 
-    def moveUpLeft(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveUpLeft(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x01])
 
-    def moveLeft(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveLeft(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x03])
 
-    def moveDownLeft(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveDownLeft(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x01, 0x02])
 
-    def moveDown(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveDown(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x02])
 
-    def moveDownRight(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveDownRight(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x02])
 
-    def moveRight(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveRight(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x03])
 
-    def moveUpRight(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def moveUpRight(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x02, 0x01])
 
-    def stop(self, pan=panSpeed, tilt=tiltSpeed):
-        checkPan(pan)
-        checkTilt(tilt)
+    @constrainPanTiltSpeed
+    def stop(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x03])
 
-    def zoomIn(self, speed=zoomSpeed):
+    def zoomIn(self, speed=DEFAULT_ZOOM_SPEED):
         checkZoom(speed)
         return self.sendVISCA([0x01, 0x04, 0x07, 0x20 + speed])
 
-    def zoomOut(self, speed=zoomSpeed):
+    def zoomOut(self, speed=DEFAULT_ZOOM_SPEED):
         checkZoom(speed)
         return self.sendVISCA([0x01, 0x04, 0x07, 0x30 + speed])
 
@@ -240,7 +240,7 @@ class VISCACamera(SerialDevice):
 
         return CameraPosition(pan, tilt, zoom)
 
-    def goto(self, pos, panSpeed, tiltSpeed):
+    def goto(self, pos, DEFAULT_PAN_SPEED, DEFAULT_TILT_SPEED):
         '''
         Takes a CameraPosition to directly set the required tilt, pan and zoom of the camera, and the speed at which to get there.
         VISCA somewhat arbitrarily limits these values to:
@@ -258,8 +258,8 @@ class VISCACamera(SerialDevice):
             0x01,
             0x06,
             0x02,
-            panSpeed & 0xFF,
-            tiltSpeed & 0xFF,
+            DEFAULT_PAN_SPEED & 0xFF,
+            DEFAULT_TILT_SPEED & 0xFF,
             # Pan x 2 bytes, padded to four (ABCD -> 0A 0B 0C 0D)
             (p & 0xF000) >> 12,
             (p & 0x0F00) >> 8,
