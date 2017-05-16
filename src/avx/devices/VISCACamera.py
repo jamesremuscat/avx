@@ -7,7 +7,9 @@ from avx.devices.Device import InvalidArgumentException
 from avx.devices.SerialDevice import SerialDevice
 from avx.CameraPosition import CameraPosition
 from enum import Enum
-from threading import Lock, ThreadError
+from threading import Lock, ThreadError, Event
+
+import logging
 
 
 class VISCACamera(SerialDevice):
@@ -30,10 +32,23 @@ class VISCACamera(SerialDevice):
         super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
         self.cameraID = cameraID
         self._wait_for_ack = Lock()
+        self._wait_for_response = Lock()
+        self._response_received = Event()
+        self._last_response = None
 
     def sendVISCA(self, commandBytes):
         self._wait_for_ack.acquire()
         return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+    def getVISCA(self, commandBytes):
+        with self._wait_for_response:
+            self.sendVISCA(commandBytes)
+            logging.debug("Waiting for response.")
+            self._response_received.wait()
+            logging.debug("Received response")
+            response = self._last_response
+            self._response_received.clear()
+            return response
 
     def moveUp(self, pan=panSpeed, tilt=tiltSpeed):
         checkPan(pan)
@@ -199,26 +214,29 @@ class VISCACamera(SerialDevice):
         return len(recv_buffer) > 0 and recv_buffer[-1] == 0xFF
 
     def handleMessage(self, msgBytes):
-        responseType = (msgBytes[1] & 0x40) >> 4
-        if responseType == 4 or responseType == 6:  # ack or error
+        responseType = (msgBytes[1] & 0x70) >> 4
+        logging.debug("Response of type {}".format(responseType))
+        if responseType >= 4 and responseType <= 6:  # ack, response or error
             try:
                 self._wait_for_ack.release()
             except ThreadError:
                 # We weren't blocked anyway
                 pass
-
-    def get(self, query, responseSize):
-        self.port.flushInput()
-        self.sendVISCA(query)
-        return [int(elem.encode("hex"), base=16) for elem in self.port.read(responseSize)]
+        if responseType == 5:
+            self._last_response = msgBytes
+            self._response_received.set()
 
     def getPosition(self):
-        cameraInfo = self.get([0x09, 0x06, 0x12, 0xFF], 11)  # returns Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF where WWWW = pan, ZZZZ = tilt
-        pan = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
-        tilt = (cameraInfo[6] << 12) + (cameraInfo[7] << 8) + (cameraInfo[8] << 4) + cameraInfo[9]
+        # returns Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF where WWWW = pan, ZZZZ = tilt
+        pan_tilt_resp = self.getVISCA([0x09, 0x06, 0x12, 0xFF])
 
-        cameraInfo = self.get([0x09, 0x04, 0x47, 0xFF], 7)  # returns Y0 50 0Z 0Z 0Z 0Z FF where ZZZZ = zoom
-        zoom = (cameraInfo[2] << 12) + (cameraInfo[3] << 8) + (cameraInfo[4] << 4) + cameraInfo[5]
+        # returns Y0 50 0Z 0Z 0Z 0Z FF where ZZZZ = zoom
+        zoom_resp = self.getVISCA([0x09, 0x04, 0x47, 0xFF])
+
+        pan = (pan_tilt_resp[2] << 12) + (pan_tilt_resp[3] << 8) + (pan_tilt_resp[4] << 4) + pan_tilt_resp[5]
+        tilt = (pan_tilt_resp[6] << 12) + (pan_tilt_resp[7] << 8) + (pan_tilt_resp[8] << 4) + pan_tilt_resp[9]
+
+        zoom = (zoom_resp[2] << 12) + (zoom_resp[3] << 8) + (zoom_resp[4] << 4) + zoom_resp[5]
 
         return CameraPosition(pan, tilt, zoom)
 

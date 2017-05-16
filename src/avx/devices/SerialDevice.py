@@ -27,6 +27,7 @@ class SerialDevice(Device):
                 self.port = FakeSerialPort()
         else:
             self.port = serialDevice
+        self.recv_thread = None
 
     def initialise(self):
         self.recv_buffer = []
