@@ -10,14 +10,7 @@
           "serialDevice" : "/dev/usb-ports/1-1.3.3:1.0",
           "machineNumber" : 1
         }
-      },
-      {
-        "deviceID" : "Main Listener",
-        "class" : "avx.devices.KramerVP88.KramerVP88Listener",
-        "options" : {
-          "parent" : "Main"
       }
-    }
   ],
   "logging": {
     "key": "value",

@@ -28,6 +28,7 @@ class SerialDevice(Device):
         else:
             self.port = serialDevice
         self.recv_thread = None
+        self.dispatchers = []
 
     def initialise(self):
         self.recv_buffer = []
@@ -56,6 +57,9 @@ class SerialDevice(Device):
     def handleMessage(self, msgBytes):
         # Default implementation: just ignore messages.
         pass
+
+    def registerDispatcher(self, dispatcher):
+        self.dispatchers.append(dispatcher)
 
     def sendCommand(self, commandString):
         try:

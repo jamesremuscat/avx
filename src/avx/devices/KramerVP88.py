@@ -3,7 +3,7 @@ Created on 10 Nov 2012
 
 @author: james
 '''
-from avx.devices.SerialDevice import SerialDevice, SerialListener
+from avx.devices.SerialDevice import SerialDevice
 import logging
 import Pyro4
 
@@ -31,22 +31,15 @@ class KramerVP88(SerialDevice):
         for i in range(1, 9):
             self.sendCommand(SerialDevice.byteArrayToString([0x05, 0x80, 0x80 + i, 0x80 + self.machineNumber]))
 
+    def hasFullMessage(self, recv_buffer):
+        return len(recv_buffer) == 4
 
-class KramerVP88Listener(SerialListener):
-    ''' Class to listen to and interpret incoming messages from a VP88. '''
-
-    dispatchers = []
-
-    def __init__(self, deviceID, parent, controller, machineNumber=1):
-        ''' Initialise this KramerVP88 listener. parent should be the name of a KramerVP88 device within the controller. '''
-        super(KramerVP88Listener, self).__init__(deviceID, controller.getDevice(parent))
-        self.machineNumber = machineNumber
-
-    def process(self, message):
-        logging.debug("Received from Kramer VP-88: " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
-        if (message[3] == 0x80 + self.machineNumber):
-            if (message[0] == 0x41) or (message[0] == 0x45):  # Notification of video switch or response to query
-                inp = message[1] - 0x80
-                outp = message[2] - 0x80
+    def handleMessage(self, msgBytes):
+        logging.debug("Received from Kramer VP-88: " + SerialDevice.byteArrayToString(msgBytes).encode('hex_codec'))
+        print msgBytes, 0x80 + self.machineNumber
+        if (msgBytes[3] == 0x80 + self.machineNumber):
+            if (msgBytes[0] == 0x41) or (msgBytes[0] == 0x45):  # Notification of video switch or response to query
+                inp = msgBytes[1] - 0x80
+                outp = msgBytes[2] - 0x80
                 for d in self.dispatchers:
-                    d.updateOutputMappings({self.parentDevice.deviceID: {outp: inp}})
+                    d.updateOutputMappings({self.deviceID: {outp: inp}})

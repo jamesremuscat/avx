@@ -6,15 +6,14 @@ Created on 3 Jan 2013
 from avx.controller.Controller import Controller
 from avx.devices.CoriogenEclipse import CoriogenEclipse
 from avx.devices.Inline3808 import Inline3808
-from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
-from avx.devices.Kramer602 import Kramer602, Kramer602Listener
+from avx.devices.KramerVP88 import KramerVP88
+from avx.devices.Kramer602 import Kramer602
 from avx.devices.KramerVP703 import KramerVP703
 from avx.devices.SerialDevice import SerialDevice
 from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
     UpDownStopRelay, UpDownStopArray, MomentaryUpDownStopRelay
 from avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock, call, patch
-import threading
 import unittest
 from serial.serialutil import SerialException
 from avx.devices.Device import InvalidArgumentException
@@ -379,56 +378,53 @@ class TestDevices(unittest.TestCase):
 
     def testKramerVP88Listener(self):
         port = MockSerialPort()
-        port.read = MagicMock(return_value=[chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
+        port.setDataForRead([chr(0x41), chr(0x82), chr(0x83), chr(0x81)])  # Notification that input 2 sent to output 3
 
         k = KramerVP88("Test", port)
 
         c = Controller()
         c.addDevice(k)
-        kl = KramerVP88Listener("TestListener", k.deviceID, c, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
-        kl.registerDispatcher(dispatcher)
-        kl.start()
-        threading.Event().wait(0.1)
-        kl.stop()
+        k.registerDispatcher(dispatcher)
+        k.initialise()
+        sleep(1)
+        k.deinitialise()
 
         dispatcher.updateOutputMappings.assert_called_with({'Test': {3: 2}})
 
     def testKramer602Listener(self):
         port = MockSerialPort()
-        port.read = MagicMock(return_value=[chr(0x28), chr(0x81)])  # Notification that input 1 sent to output 1
+        port.setDataForRead([chr(0x28), chr(0x81)])  # Notification that input 1 sent to output 1
 
         k = Kramer602("Test", port)
 
         c = Controller()
         c.addDevice(k)
-        kl = Kramer602Listener("TestListener", k.deviceID, c, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
-        kl.registerDispatcher(dispatcher)
-        kl.start()
-        threading.Event().wait(0.1)
-        kl.stop()
+        k.registerDispatcher(dispatcher)
+        k.initialise()
+        sleep(1)
+        k.deinitialise()
 
         dispatcher.updateOutputMappings.assert_called_with({'Test': {1: 1}})
 
         port = MockSerialPort()
-        port.read = MagicMock(return_value=[chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
+        port.setDataForRead([chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
 
         k = Kramer602("Test", port)
         c = Controller()
         c.addDevice(k)
-        kl = Kramer602Listener("TestListener", k.deviceID, c, machineNumber=1)
 
         dispatcher = NullDispatcher()
         dispatcher.updateOutputMappings = MagicMock()
-        kl.registerDispatcher(dispatcher)
-        kl.start()
-        threading.Event().wait(0.1)
-        kl.stop()
+        k.registerDispatcher(dispatcher)
+        k.initialise()
+        sleep(1)
+        k.deinitialise()
 
         dispatcher.updateOutputMappings.assert_called_with({'Test': {2: 5}})
 

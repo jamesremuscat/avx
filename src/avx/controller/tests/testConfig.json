@@ -12,11 +12,8 @@
         }
       },
       {
-        "deviceID" : "Main Listener",
-        "class" : "avx.devices.KramerVP88.KramerVP88Listener",
-        "options" : {
-          "parent" : "Main"
-        }
+        "deviceID" : "Camera",
+        "class" : "avx.devices.Device.Device"
       }
     ]
 }
