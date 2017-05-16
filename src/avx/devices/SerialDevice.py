@@ -4,6 +4,7 @@ import logging
 from threading import Thread
 import atexit
 import time
+from __builtin__ import True
 
 
 class SerialDevice(Device):
@@ -27,6 +28,34 @@ class SerialDevice(Device):
         else:
             self.port = serialDevice
 
+    def initialise(self):
+        self.recv_buffer = []
+        self.run_receive = True
+        if not (self.recv_thread and self.recv_thread.is_alive()):
+            self.recv_thread = Thread(target=self._receive)
+            self.recv_thread.daemon = True
+            self.recv_thread.start()
+
+    def _receive(self):
+        while self.run_receive:
+            read_byte = self.port.read(1)
+            if read_byte:
+                self.recv_buffer.append(ord(read_byte))
+                if self.hasFullMessage(self.recv_buffer[:]):
+                    logging.debug("Received from {}: {}".format(self.deviceID, SerialDevice.byteArrayToString(self.recv_buffer).encode('hex_codec')))
+                    self.handleMessage(self.recv_buffer[:])
+                    self.recv_buffer = []
+
+    def hasFullMessage(self, recv_buffer):
+        # Default implementation: always return True. This is almost certainly not useful to you so override this!
+        # This a a safe default which, combined with handleMessage below, means that if you don't care about
+        # receiving messages then you can just forget about overriding the two methods.
+        return True
+
+    def handleMessage(self, msgBytes):
+        # Default implementation: just ignore messages.
+        pass
+
     def sendCommand(self, commandString):
         try:
             logging.debug("Sending " + commandString.encode('hex_codec') + " to " + self.port.portstr)
@@ -46,6 +75,7 @@ class SerialDevice(Device):
                 logging.exception("Really failed sending command to " + self.deviceID + " on " + self.port.portstr)
 
     def deinitialise(self):
+        self.run_receive = False
         self.port.close()
 
     @staticmethod

@@ -7,6 +7,7 @@ from avx.devices.Device import InvalidArgumentException
 from avx.devices.SerialDevice import SerialDevice
 from avx.CameraPosition import CameraPosition
 from enum import Enum
+from threading import Lock, ThreadError
 
 
 class VISCACamera(SerialDevice):
@@ -28,8 +29,10 @@ class VISCACamera(SerialDevice):
     def __init__(self, deviceID, serialDevice, cameraID, **kwargs):
         super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
         self.cameraID = cameraID
+        self._wait_for_ack = Lock()
 
     def sendVISCA(self, commandBytes):
+        self._wait_for_ack.acquire()
         return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
 
     def moveUp(self, pan=panSpeed, tilt=tiltSpeed):
@@ -191,6 +194,18 @@ class VISCACamera(SerialDevice):
                         (h & 0x0F00) >> 8,
                         (h & 0x00F0) >> 4,
                         (h & 0x000F)])
+
+    def hasFullMessage(self, recv_buffer):
+        return len(recv_buffer) > 0 and recv_buffer[-1] == 0xFF
+
+    def handleMessage(self, msgBytes):
+        responseType = (msgBytes[1] & 0x40) >> 4
+        if responseType == 4 or responseType == 6:  # ack or error
+            try:
+                self._wait_for_ack.release()
+            except ThreadError:
+                # We weren't blocked anyway
+                pass
 
     def get(self, query, responseSize):
         self.port.flushInput()
