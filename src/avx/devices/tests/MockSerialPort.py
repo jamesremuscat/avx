@@ -13,6 +13,7 @@ class MockSerialPort(object):
 
     def __init__(self, *params):
         self.portstr = "Test"
+        self.data = None
         self.clear()
 
     def setDataForRead(self, data):
@@ -32,7 +33,13 @@ class MockSerialPort(object):
         pass
 
     def read(self, length):
-        return self.data
+        if self.data:
+            if length == 1:
+                return self.data.pop(0)
+            result = self.data[0:length]
+            self.data = self.data[length:]
+            return result
+        return None
 
     def flushInput(self):
         pass

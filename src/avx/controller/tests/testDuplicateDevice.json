@@ -10,9 +10,10 @@
       },
       {
         "deviceID" : "Duplicate",
-        "class" : "avx.devices.KramerVP88.KramerVP88Listener",
+        "class" : "avx.devices.KramerVP88.KramerVP88",
         "options" : {
-          "parent" : "Duplicate"
+          "serialDevice" : "/dev/usb-ports/1-1.3.4:1.0",
+          "machineNumber" : 2
         }
       }
     ]

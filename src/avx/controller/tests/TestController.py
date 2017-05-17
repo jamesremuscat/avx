@@ -1,5 +1,5 @@
 from avx.controller.Controller import Controller, DuplicateDeviceIDError, ControllerProxy, versionsCompatible
-from avx.devices.KramerVP88 import KramerVP88, KramerVP88Listener
+from avx.devices.KramerVP88 import KramerVP88
 from avx.devices.SerialDevice import FakeSerialPort
 from avx.devices.SerialRelayCard import UpDownStopArray
 from mock import MagicMock, call, patch
@@ -11,6 +11,7 @@ import json
 import os
 import shutil
 import tempfile
+from avx.devices.Device import Device
 
 
 def create_temporary_copy(src_file_name, preserve_extension=False):
@@ -66,10 +67,10 @@ class TestController(TestCase):
         c.loadConfig(os.path.join(os.path.dirname(__file__), 'testConfig.json'))
 
         self.assertTrue(c.hasDevice("Main"))
-        self.assertTrue(c.hasDevice("Main Listener"))
+        self.assertTrue(c.hasDevice("Camera"))
 
         self.assertTrue(isinstance(c.getDevice("Main"), KramerVP88))
-        self.assertTrue(isinstance(c.getDevice("Main Listener"), KramerVP88Listener))
+        self.assertTrue(isinstance(c.getDevice("Camera"), Device))
 
         self.assertEqual("testController", c.controllerID)
 
