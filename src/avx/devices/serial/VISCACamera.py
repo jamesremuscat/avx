@@ -3,8 +3,8 @@ Created on 13 Nov 2012
 
 @author: james
 '''
-from avx.devices.Device import InvalidArgumentException
-from avx.devices.SerialDevice import SerialDevice
+from avx.devices import InvalidArgumentException
+from avx.devices.serial import SerialDevice
 from avx.CameraPosition import CameraPosition
 from enum import Enum
 from threading import Lock, ThreadError, Event

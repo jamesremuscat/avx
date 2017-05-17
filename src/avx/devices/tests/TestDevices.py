@@ -5,13 +5,13 @@ Created on 3 Jan 2013
 '''
 from avx.controller.Controller import Controller
 from avx.devices import InvalidArgumentException
-from avx.devices.CoriogenEclipse import CoriogenEclipse
-from avx.devices.Inline3808 import Inline3808
-from avx.devices.KramerVP88 import KramerVP88
-from avx.devices.Kramer602 import Kramer602
-from avx.devices.KramerVP703 import KramerVP703
-from avx.devices.SerialDevice import SerialDevice
-from avx.devices.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
+from avx.devices.serial import SerialDevice
+from avx.devices.serial.CoriogenEclipse import CoriogenEclipse
+from avx.devices.serial.Inline3808 import Inline3808
+from avx.devices.serial.KramerVP88 import KramerVP88
+from avx.devices.serial.Kramer602 import Kramer602
+from avx.devices.serial.KramerVP703 import KramerVP703
+from avx.devices.serial.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
     UpDownStopRelay, UpDownStopArray, MomentaryUpDownStopRelay
 from avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock, call, patch
@@ -55,7 +55,7 @@ class TestDevices(unittest.TestCase):
         vp88.sendInputToOutput(2, 8)
         self.assertBytesEqual([0x01, 0x82, 0x88, 0x81], port.bytes)
 
-    @patch('avx.devices.Kramer602.logging')
+    @patch('avx.devices.serial.Kramer602.logging')
     def testKramer602(self, logging):
         port = MockSerialPort()
         k602 = Kramer602("Test", port)
@@ -177,7 +177,7 @@ class TestDevices(unittest.TestCase):
         channel.off()
         self.assertEqual(['\x35'], port.bytes)
 
-    @patch("avx.devices.SerialRelayCard.logging")
+    @patch("avx.devices.serial.SerialRelayCard.logging")
     def testICStationSerialRelayCard(self, mock_logging):
         port = MockSerialPort()
         card = ICStationSerialRelayCard("Test", port)
@@ -340,7 +340,7 @@ class TestDevices(unittest.TestCase):
                 call.off()
             ])
 
-    @patch("avx.devices.SerialRelayCard.logging")
+    @patch("avx.devices.serial.SerialRelayCard.logging")
     def testUpDownStopArray(self, mock_logging):
         udsr1 = MagicMock()
         udsr1.deviceID = "udsr1"

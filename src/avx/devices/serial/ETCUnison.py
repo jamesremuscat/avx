@@ -1,4 +1,4 @@
-from avx.devices.SerialDevice import SerialDevice
+from avx.devices.serial import SerialDevice
 
 
 max_command_length = 200

@@ -1,7 +1,8 @@
 from avx.controller.Controller import Controller, DuplicateDeviceIDError, ControllerProxy, versionsCompatible
-from avx.devices.KramerVP88 import KramerVP88
-from avx.devices.SerialDevice import FakeSerialPort
-from avx.devices.SerialRelayCard import UpDownStopArray
+from avx.devices import Device
+from avx.devices.serial import FakeSerialPort
+from avx.devices.serial.KramerVP88 import KramerVP88
+from avx.devices.serial.SerialRelayCard import UpDownStopArray
 from mock import MagicMock, call, patch
 from threading import Thread
 from unittest import TestCase
@@ -11,7 +12,6 @@ import json
 import os
 import shutil
 import tempfile
-from avx.devices import Device
 
 
 def create_temporary_copy(src_file_name, preserve_extension=False):

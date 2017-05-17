@@ -1,9 +1,10 @@
-from avx.devices.SerialDevice import SerialDevice
+from avx.devices.serial import SerialDevice
 from avx.devices import Device, InvalidArgumentException
-import logging
-import time
 from time import sleep
 from threading import Thread, Lock
+
+import logging
+import time
 
 
 class SerialRelayCard(SerialDevice):

@@ -3,7 +3,8 @@ Created on 10 Nov 2012
 
 @author: james
 '''
-from avx.devices.SerialDevice import SerialDevice
+from avx.devices.serial import SerialDevice
+
 import logging
 import Pyro4
 

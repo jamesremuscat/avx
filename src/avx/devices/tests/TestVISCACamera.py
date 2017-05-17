@@ -5,7 +5,7 @@ Created on 18 Mar 2013
 '''
 import unittest
 from avx.devices.tests.MockSerialPort import MockSerialPort
-from avx.devices.VISCACamera import VISCACamera, Aperture
+from avx.devices.serial.VISCACamera import VISCACamera, Aperture
 from threading import Thread
 from time import sleep
 

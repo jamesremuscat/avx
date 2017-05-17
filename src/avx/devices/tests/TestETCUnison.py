@@ -1,5 +1,5 @@
 import unittest
-from avx.devices.ETCUnison import UnisonCommand,\
+from avx.devices.serial.ETCUnison import UnisonCommand,\
     CommandStringTooLongError, UnisonDevice
 from avx.devices.tests.MockSerialPort import MockSerialPort
 
