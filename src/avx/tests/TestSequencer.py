@@ -2,7 +2,7 @@ import unittest
 from mock import MagicMock, call, patch
 from avx.controller.Controller import Controller
 from avx.Sequencer import Sequencer, Event, ControllerEvent, DeviceEvent,\
-    SleepEvent, LogEvent, CompositeEvent
+    SleepEvent, LogEvent, CompositeEvent, BroadcastEvent
 from time import sleep
 
 
@@ -72,3 +72,9 @@ class TestSequencer(unittest.TestCase):
         e = LogEvent(logging.INFO, "This is informational")
         self.performSequenceTest(e)
         logging.log.assert_called_once_with(logging.INFO, "This is informational")
+
+    def testBroadcastEvent(self):
+        self.controller.broadcast = MagicMock()
+        e = BroadcastEvent("TYPE", "SOURCE", "DATA")
+        self.performSequenceTest(e)
+        self.controller.broadcast.assert_called_once_with("TYPE", "SOURCE", "DATA")

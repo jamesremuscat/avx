@@ -224,6 +224,27 @@ class TestController(TestCase):
                 withClient2 = json.load(cf2)
                 self.assertEqual(withClient2["clients"], [])
 
+    def testInjectBroadcast(self):
+        device = Device("test")
+        controller = Controller()
+
+        controller.broadcast = MagicMock()
+
+        controller.addDevice(device)
+        device.broadcast("TEST", "Test", None)
+        controller.broadcast.assert_called_once_with("TEST", "Test", None)
+        controller.broadcast.reset_mock()
+
+        class DudDevice(Device):
+            def initialise(self):
+                self.broadcast("TEST", "Test2", "Initialise")
+
+        dd = DudDevice("Test2")
+        controller.addDevice(dd)
+        controller.initialise()
+
+        controller.broadcast.assert_called_once_with("TEST", "Test2", "Initialise")
+
     def testVersionCompatibility(self):
         table = [
             # remote, local, expected

@@ -137,6 +137,19 @@ class Controller(object):
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
                 self.unregisterClient(uri)
 
+    def broadcast(self, msgType, source, data):
+        ''' Send a message to all clients '''
+        logging.info("Broadcast: {}, {}, {}".format(msgType, source, data))
+        for uri in list(self.clients):
+            try:
+                logging.debug("Calling handleMessage on client at {}".format(uri))
+                client = Pyro4.Proxy(uri)
+                result = client.handleMessage()
+                logging.debug("Client call returned " + str(result))
+            except Exception:
+                logging.exception("Failed to call handleMessage on registered client {}, removing.".format(uri))
+                self.unregisterClient(uri)
+
     def getVersion(self):
         return self.version
 
@@ -146,6 +159,7 @@ class Controller(object):
         self.devices[device.deviceID] = device
         if hasattr(device, "registerDispatcher") and callable(getattr(device, "registerDispatcher")):
             device.registerDispatcher(self)
+        device.broadcast = self.broadcast
 
     def getDevice(self, deviceID):
         return self.devices[deviceID]

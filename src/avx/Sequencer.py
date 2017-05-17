@@ -123,3 +123,13 @@ class LogEvent(object):
 
     def execute(self, controller):
         logging.log(self.level, self.msg)
+
+
+class BroadcastEvent(object):
+    def __init__(self, msgType, source, data):
+        self.msgType = msgType
+        self.source = source
+        self.data = data
+
+    def execute(self, controller):
+        controller.broadcast(self.msgType, self.source, self.data)
