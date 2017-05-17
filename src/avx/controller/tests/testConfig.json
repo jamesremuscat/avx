@@ -13,7 +13,7 @@
       },
       {
         "deviceID" : "Camera",
-        "class" : "avx.devices.Device.Device"
+        "class" : "avx.devices.Device"
       }
     ]
 }

@@ -11,7 +11,7 @@ import json
 import os
 import shutil
 import tempfile
-from avx.devices.Device import Device
+from avx.devices import Device
 
 
 def create_temporary_copy(src_file_name, preserve_extension=False):

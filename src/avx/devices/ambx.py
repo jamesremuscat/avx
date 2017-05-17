@@ -2,7 +2,7 @@
 Heavily borrowing from https://bitbucket.org/wump/ambx-python/ and https://code.google.com/p/combustd before it
 '''
 
-from avx.devices.Device import Device
+from avx.devices import Device
 import usb
 from array import array
 

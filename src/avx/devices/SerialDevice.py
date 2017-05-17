@@ -1,4 +1,4 @@
-from avx.devices.Device import Device
+from avx.devices import Device
 from serial import Serial, SerialException
 from threading import Thread
 

@@ -4,6 +4,7 @@ Created on 3 Jan 2013
 @author: james
 '''
 from avx.controller.Controller import Controller
+from avx.devices import InvalidArgumentException
 from avx.devices.CoriogenEclipse import CoriogenEclipse
 from avx.devices.Inline3808 import Inline3808
 from avx.devices.KramerVP88 import KramerVP88
@@ -16,7 +17,6 @@ from avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock, call, patch
 import unittest
 from serial.serialutil import SerialException
-from avx.devices.Device import InvalidArgumentException
 from time import sleep
 
 

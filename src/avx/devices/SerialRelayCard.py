@@ -1,5 +1,5 @@
 from avx.devices.SerialDevice import SerialDevice
-from avx.devices.Device import Device, InvalidArgumentException
+from avx.devices import Device, InvalidArgumentException
 import logging
 import time
 from time import sleep
