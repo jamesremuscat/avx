@@ -2,7 +2,6 @@ from avx.controller.Controller import Controller, DuplicateDeviceIDError, Contro
 from avx.devices.KramerVP88 import KramerVP88
 from avx.devices.SerialDevice import FakeSerialPort
 from avx.devices.SerialRelayCard import UpDownStopArray
-from avx.devices.VISCACamera import VISCACamera
 from mock import MagicMock, call, patch
 from threading import Thread
 from unittest import TestCase
