@@ -2,7 +2,6 @@ from avx.devices.Device import Device
 from serial import Serial, SerialException
 from threading import Thread
 
-import atexit
 import logging
 import time
 
@@ -86,50 +85,6 @@ class SerialDevice(Device):
     @staticmethod
     def byteArrayToString(byteArray):
         return ''.join(chr(b) for b in byteArray)
-
-
-class SerialListener(Thread):
-    ''' Class to listen to and interpret incoming messages from a serial device.
-        Should implement a process(message) method where message is the hex array received.
-    '''
-
-    dispatchers = []
-    running = False
-
-    def __init__(self, deviceID, parentDevice, messageSize=4):
-        ''' parentDevice should be an already initialised SerialDevice. '''
-        Thread.__init__(self)
-        self.parentDevice = parentDevice
-        self.deviceID = deviceID
-        self.messageSize = messageSize
-        atexit.register(self.stop)
-
-    def registerDispatcher(self, dispatcher):
-        self.dispatchers.append(dispatcher)
-
-    def start(self):
-        if not self.running:
-            self.running = True
-            Thread.start(self)
-
-    def stop(self):
-        self.running = False
-
-    def initialise(self):
-        self.start()
-
-    def deinitialise(self):
-        self.stop()
-
-    def run(self):
-        logging.info("Listening to serial port " + self.parentDevice.port.portstr)
-        while self.running:
-            message = [int(elem.encode("hex"), base=16) for elem in self.parentDevice.port.read(self.messageSize)]
-            if len(message) == self.messageSize:
-                self.process(message)
-            elif len(message) != 0:
-                logging.warn("Malformed packet from " + self.deviceID + ": " + SerialDevice.byteArrayToString(message).encode('hex_codec'))
-        logging.info("No longer listening to serial port " + self.parentDevice.port.portstr)
 
 
 class FakeSerialPort(object):
