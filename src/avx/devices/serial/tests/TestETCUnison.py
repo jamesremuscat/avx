@@ -1,7 +1,7 @@
 import unittest
 from avx.devices.serial.ETCUnison import UnisonCommand,\
     CommandStringTooLongError, UnisonDevice
-from avx.devices.tests.MockSerialPort import MockSerialPort
+from avx.devices.serial.tests.MockSerialPort import MockSerialPort
 
 
 def ordify(string):

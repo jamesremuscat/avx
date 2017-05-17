@@ -3,6 +3,7 @@ Created on 3 Jan 2013
 
 @author: james
 '''
+from .MockSerialPort import MockSerialPort
 from avx.controller.Controller import Controller
 from avx.devices import InvalidArgumentException
 from avx.devices.serial import SerialDevice
@@ -13,11 +14,10 @@ from avx.devices.serial.Kramer602 import Kramer602
 from avx.devices.serial.KramerVP703 import KramerVP703
 from avx.devices.serial.SerialRelayCard import ICStationSerialRelayCard, JBSerialRelayCard, KMtronicSerialRelayCard,\
     UpDownStopRelay, UpDownStopArray, MomentaryUpDownStopRelay
-from avx.devices.tests.MockSerialPort import MockSerialPort
 from mock import MagicMock, call, patch
-import unittest
 from serial.serialutil import SerialException
 from time import sleep
+import unittest
 
 
 class TestDevices(unittest.TestCase):

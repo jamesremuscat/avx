@@ -3,11 +3,12 @@ Created on 18 Mar 2013
 
 @author: jrem
 '''
-import unittest
-from avx.devices.tests.MockSerialPort import MockSerialPort
+from avx.devices.serial.tests.MockSerialPort import MockSerialPort
 from avx.devices.serial.VISCACamera import VISCACamera, Aperture
 from threading import Thread
 from time import sleep
+
+import unittest
 
 
 class TestVISCACamera(unittest.TestCase):
@@ -26,7 +27,7 @@ class TestVISCACamera(unittest.TestCase):
         t.start()
 
         cam.handleMessage([0x10, 0x50, 0x01, 0x02, 0x03, 0x04, 0x0A, 0x0B, 0x0C, 0x0D, 0xFF])
-        sleep(0.2)
+        sleep(0.5)
         cam.handleMessage([0x10, 0x50, 0x05, 0x06, 0x07, 0x08, 0xFF])
 
         t.join()
