@@ -12,18 +12,31 @@ from time import sleep
 
 class TestVISCACamera(unittest.TestCase):
 
-    #     def testGetPosition(self):
-    #         port = MockSerialPort()
-    #
-    #         cam = VISCACamera("Test Camera", port, 1)
-    #
-    #         port.setDataForRead([chr(0x10), chr(0x50), chr(0x01), chr(0x02), chr(0x03), chr(0x04), chr(0x0A), chr(0x0B), chr(0x0C), chr(0x0D), chr(0xFF)])
-    #
-    #         pos = cam.getPosition()
-    #
-    #         self.assertEqual(pos.pan, 0x1234)
-    #         self.assertEqual(pos.tilt, 0xABCD)
-    #         self.assertEqual(pos.zoom, 0x1234)  # This is a bit of a hack since getPosition() results in two calls to port.read()
+    def testGetPosition(self):
+        port = MockSerialPort()
+
+        cam = VISCACamera("Test Camera", port, 1)
+
+        result = []
+
+        def getPos(result):
+            result.append(cam.getPosition())
+
+        t = Thread(target=getPos, args=[result])
+        t.start()
+
+        cam.handleMessage([0x10, 0x50, 0x01, 0x02, 0x03, 0x04, 0x0A, 0x0B, 0x0C, 0x0D, 0xFF])
+        sleep(0.2)
+        cam.handleMessage([0x10, 0x50, 0x05, 0x06, 0x07, 0x08, 0xFF])
+
+        t.join()
+
+        self.assertTrue(len(result) == 1)
+        pos = result[0]
+
+        self.assertEqual(pos.pan, 0x1234)
+        self.assertEqual(pos.tilt, 0xABCD)
+        self.assertEqual(pos.zoom, 0x5678)
 
     def testSetAperture(self):
         port = MockSerialPort()
