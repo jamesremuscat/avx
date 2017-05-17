@@ -133,7 +133,7 @@ class Controller(object):
                 client = Pyro4.Proxy(uri)
                 result = function(client)
                 logging.debug("Client call returned " + str(result))
-            except:
+            except Exception:
                 logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
                 self.unregisterClient(uri)
 
@@ -279,6 +279,7 @@ def main():
     controller.initialise()
     controller.startServing()
     logging.info("avx controller terminated.")
+
 
 if __name__ == "__main__":
     main()
