@@ -223,6 +223,18 @@ class TestController(TestCase):
 
         controller.broadcast.assert_called_once_with("TEST", "Test2", "Initialise")
 
+    @patch("avx.controller.Controller.Pyro4.Proxy")
+    def testBroadcast(self, moxy):
+        client = MagicMock()
+        client.handleMessage = MagicMock()
+        moxy.return_value = client
+
+        c = Controller()
+        c.registerClient("mock://uri")
+
+        c.broadcast("Test", "testBroadcast", "data")
+        client.handleMessage.assert_called_once_with("Test", "testBroadcast", "data")
+
     def testVersionCompatibility(self):
         table = [
             # remote, local, expected
