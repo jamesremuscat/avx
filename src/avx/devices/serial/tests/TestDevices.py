@@ -37,6 +37,19 @@ class TestDevices(unittest.TestCase):
         inline.sendInputToOutput(3, 2)
         self.assertEqual(list("[PT1O02I03]"), port.bytes)
 
+        inline.broadcast = MagicMock()
+        inline.handleMessage(map(ord, "[VID02000608]"))
+
+        inline.broadcast.assert_called_once_with(
+            "avx.client.OutputMapping",
+            {
+                1: 2,
+                2: 0,
+                3: 6,
+                4: 8
+            }
+        )
+
     def testKramerVP88(self):
         port = MockSerialPort()
         vp88 = KramerVP88("Test", port)

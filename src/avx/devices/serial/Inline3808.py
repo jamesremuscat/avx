@@ -1,3 +1,4 @@
+from avx.Client import MessageTypes
 from avx.devices.serial import SerialDevice
 
 
@@ -14,3 +15,22 @@ class Inline3808(SerialDevice):
 
     def sendInputToOutput(self, inChannel, outChannel):
         return self.sendCommand("[PT1O0" + str(outChannel) + "I0" + str(inChannel) + "]")
+
+    def requestStatus(self):
+        self.sendCommand("[VID]")
+
+    def hasFullMessage(self, recv_buffer):
+        return recv_buffer[-1] == "]"
+
+    def handleMessage(self, msgBytes):
+        msgString = ''.join(map(chr, msgBytes))
+        if len(msgString) == 13 and msgString[1:4] == "VID":
+            self.broadcast(
+                MessageTypes.OUTPUT_MAPPING,
+                {
+                    1: int(msgString[5]),
+                    2: int(msgString[7]),
+                    3: int(msgString[9]),
+                    4: int(msgString[11]),
+                }
+            )
