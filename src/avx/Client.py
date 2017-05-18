@@ -30,3 +30,7 @@ class Client(threading.Thread):
     @Pyro4.expose
     def handleMessage(self, msgType, sourceDeviceID, data):
         pass
+
+
+class MessageTypes(object):
+    OUTPUT_MAPPING = "avx.client.OutputMapping"

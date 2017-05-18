@@ -4,6 +4,7 @@ Created on 10 Nov 2012
 @author: james
 '''
 from avx.devices.serial import SerialDevice
+from avx.Client import MessageTypes
 
 import logging
 
@@ -40,5 +41,4 @@ class KramerVP88(SerialDevice):
             if (msgBytes[0] == 0x41) or (msgBytes[0] == 0x45):  # Notification of video switch or response to query
                 inp = msgBytes[1] - 0x80
                 outp = msgBytes[2] - 0x80
-                for d in self.dispatchers:
-                    d.updateOutputMappings({self.deviceID: {outp: inp}})
+                self.broadcast(MessageTypes.OUTPUT_MAPPING, {outp: inp})

@@ -159,7 +159,7 @@ class Controller(object):
         self.devices[device.deviceID] = device
         if hasattr(device, "registerDispatcher") and callable(getattr(device, "registerDispatcher")):
             device.registerDispatcher(self)
-        device.broadcast = self.broadcast
+        device.broadcast = lambda t, b: self.broadcast(t, device.deviceID, b)
 
     def getDevice(self, deviceID):
         return self.devices[deviceID]
@@ -219,9 +219,6 @@ class Controller(object):
 
     def getLog(self):
         return self.logHandler.entries
-
-    def updateOutputMappings(self, mapping):
-        self.callAllClients(lambda c: c.updateOutputMappings(mapping))
 
 
 class ControllerProxy(object):

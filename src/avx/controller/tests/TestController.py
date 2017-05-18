@@ -231,13 +231,13 @@ class TestController(TestCase):
         controller.broadcast = MagicMock()
 
         controller.addDevice(device)
-        device.broadcast("TEST", "Test", None)
-        controller.broadcast.assert_called_once_with("TEST", "Test", None)
+        device.broadcast("TEST", None)
+        controller.broadcast.assert_called_once_with("TEST", "test", None)
         controller.broadcast.reset_mock()
 
         class DudDevice(Device):
             def initialise(self):
-                self.broadcast("TEST", "Test2", "Initialise")
+                self.broadcast("TEST", "Initialise")
 
         dd = DudDevice("Test2")
         controller.addDevice(dd)

@@ -4,6 +4,7 @@ Created on 13 Nov 2012
 @author: jrem
 '''
 from avx.devices.serial import SerialDevice
+from avx.Client import MessageTypes
 
 import logging
 
@@ -43,7 +44,6 @@ class Kramer602(SerialDevice):
             if (msgBytes[1] & 0x20) == 0:  # Not just a "I switched successfully" message
                 outp = (((msgBytes[1] & 0x1F) - 1) % 2) + 1
                 inp = (((msgBytes[1] & 0x1F) - outp) / 2) + 1  # int(math.ceil((message[1] & 0x1F) + (2 / 2)) - 1)
-                for d in self.dispatchers:
-                    d.updateOutputMappings({self.deviceID: {outp: inp}})
+                self.broadcast(MessageTypes.OUTPUT_MAPPING, {outp: inp})
             else:
                 self.requestStatus()  # Request device to send current status so listener can intercept
