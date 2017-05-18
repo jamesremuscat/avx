@@ -125,18 +125,6 @@ class Controller(object):
         logging.info(str(len(self.clients)) + " client(s) still connected")
         self.saveConfig()
 
-    def callAllClients(self, function):
-        ''' function should take a client and do things to it'''
-        for uri in list(self.clients):
-            try:
-                logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
-                client = Pyro4.Proxy(uri)
-                result = function(client)
-                logging.debug("Client call returned " + str(result))
-            except Exception:
-                logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
-                self.unregisterClient(uri)
-
     def broadcast(self, msgType, source, data):
         ''' Send a message to all clients '''
         logging.info("Broadcast: {}, {}, {}".format(msgType, source, data))
@@ -207,15 +195,6 @@ class Controller(object):
 
     def sequence(self, *events):
         self.sequencer.sequence(*events)
-
-    def showPowerOnDialogOnClients(self):
-        self.callAllClients(lambda c: c.showPowerOnDialog())
-
-    def showPowerOffDialogOnClients(self):
-        self.callAllClients(lambda c: c.showPowerOffDialog())
-
-    def hidePowerDialogOnClients(self):
-        self.callAllClients(lambda c: c.hidePowerDialog())
 
     def getLog(self):
         return self.logHandler.entries

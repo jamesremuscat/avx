@@ -176,30 +176,8 @@ class TestController(TestCase):
         c.registerClient("DOES_NOT_EXIST")
         self.assertEqual(["DOES_NOT_EXIST"], c.clients)
 
-        c.callAllClients(lambda c: c.doesNotExist())
+        c.broadcast("Test", "Test message", None)
         self.assertEqual([], c.clients)
-
-    @patch("avx.controller.Controller.Pyro4")
-    def testCallsAllGoodClients(self, pyro4):
-        c = Controller()
-        c.registerClient("Bad")
-        c.registerClient("Good")
-
-        good = MagicMock()
-        good.clientMethod = MagicMock()
-
-        pyro4.Proxy = MagicMock()
-
-        pyro4.Proxy.side_effect = [Exception("Foo"), good]
-
-        c.callAllClients(lambda c: c.clientMethod("Bar"))
-
-        pyro4.Proxy.assert_has_calls([
-            call("Bad"),
-            call("Good")
-        ])
-
-        good.clientMethod.assert_called_once_with("Bar")
 
     def testPersistClientList(self):
         with create_temporary_copy(os.path.join(os.path.dirname(__file__), 'testConfig.json')) as confFile:
@@ -218,7 +196,7 @@ class TestController(TestCase):
 
             self.assertEqual(c2.clients, ["DOES_NOT_EXIST"])
 
-            c2.callAllClients(lambda c: c.notARealMethod())
+            c2.broadcast("Test", "Test message", None)
 
             with open(confFile.name, "r") as cf2:
                 withClient2 = json.load(cf2)
