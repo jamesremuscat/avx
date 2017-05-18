@@ -235,6 +235,28 @@ class TestController(TestCase):
         c.broadcast("Test", "testBroadcast", "data")
         client.handleMessage.assert_called_once_with("Test", "testBroadcast", "data")
 
+    @patch("avx.controller.Controller.Pyro4")
+    def testBroadcastWithBadClient(self, pyro):
+        # Tests that, good clients are still called, even if bad clients come before them in the list.
+        c = Controller()
+        c.registerClient("Bad")
+        c.registerClient("Good")
+
+        good = MagicMock()
+
+        pyro.Proxy = MagicMock()
+
+        pyro.Proxy.side_effect = [Exception("Foo"), good]
+
+        c.broadcast("Test", "testBroadcastWithBadClient", "Bar")
+
+        pyro.Proxy.assert_has_calls([
+            call("Bad"),
+            call("Good")
+        ])
+
+        good.handleMessage.assert_called_once_with("Test", "testBroadcastWithBadClient", "Bar")
+
     def testVersionCompatibility(self):
         table = [
             # remote, local, expected
