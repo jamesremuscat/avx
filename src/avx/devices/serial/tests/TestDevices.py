@@ -37,6 +37,19 @@ class TestDevices(unittest.TestCase):
         inline.sendInputToOutput(3, 2)
         self.assertEqual(list("[PT1O02I03]"), port.bytes)
 
+        inline.broadcast = MagicMock()
+        inline.handleMessage(map(ord, "[VID02000608]"))
+
+        inline.broadcast.assert_called_once_with(
+            "avx.client.OutputMapping",
+            {
+                1: 2,
+                2: 0,
+                3: 6,
+                4: 8
+            }
+        )
+
     def testKramerVP88(self):
         port = MockSerialPort()
         vp88 = KramerVP88("Test", port)
@@ -385,14 +398,13 @@ class TestDevices(unittest.TestCase):
         c = Controller()
         c.addDevice(k)
 
-        dispatcher = NullDispatcher()
-        dispatcher.updateOutputMappings = MagicMock()
-        k.registerDispatcher(dispatcher)
+        k.broadcast = MagicMock()
+
         k.initialise()
         sleep(1)
         k.deinitialise()
 
-        dispatcher.updateOutputMappings.assert_called_with({'Test': {3: 2}})
+        k.broadcast.assert_called_with('avx.client.OutputMapping', {3: 2})
 
     def testKramer602Listener(self):
         port = MockSerialPort()
@@ -403,14 +415,13 @@ class TestDevices(unittest.TestCase):
         c = Controller()
         c.addDevice(k)
 
-        dispatcher = NullDispatcher()
-        dispatcher.updateOutputMappings = MagicMock()
-        k.registerDispatcher(dispatcher)
+        k.broadcast = MagicMock()
+
         k.initialise()
         sleep(1)
         k.deinitialise()
 
-        dispatcher.updateOutputMappings.assert_called_with({'Test': {1: 1}})
+        k.broadcast.assert_called_with('avx.client.OutputMapping', {1: 1})
 
         port = MockSerialPort()
         port.setDataForRead([chr(0x28), chr(0x8A)])  # Notification that input 5 sent to output 2
@@ -419,14 +430,13 @@ class TestDevices(unittest.TestCase):
         c = Controller()
         c.addDevice(k)
 
-        dispatcher = NullDispatcher()
-        dispatcher.updateOutputMappings = MagicMock()
-        k.registerDispatcher(dispatcher)
+        k.broadcast = MagicMock()
+
         k.initialise()
         sleep(1)
         k.deinitialise()
 
-        dispatcher.updateOutputMappings.assert_called_with({'Test': {2: 5}})
+        k.broadcast.assert_called_with('avx.client.OutputMapping', {2: 5})
 
     def testSerialDevice(self):
         port = MockSerialPort()

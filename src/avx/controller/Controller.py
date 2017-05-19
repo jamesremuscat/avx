@@ -125,16 +125,17 @@ class Controller(object):
         logging.info(str(len(self.clients)) + " client(s) still connected")
         self.saveConfig()
 
-    def callAllClients(self, function):
-        ''' function should take a client and do things to it'''
+    def broadcast(self, msgType, source, data):
+        ''' Send a message to all clients '''
+        logging.info("Broadcast: {}, {}, {}".format(msgType, source, data))
         for uri in list(self.clients):
             try:
-                logging.debug("Calling function " + function.__name__ + " with client at " + str(uri))
+                logging.debug("Calling handleMessage on client at {}".format(uri))
                 client = Pyro4.Proxy(uri)
-                result = function(client)
+                result = client.handleMessage(msgType, source, data)
                 logging.debug("Client call returned " + str(result))
             except Exception:
-                logging.exception("Failed to call function on registered client " + str(uri) + ", removing.")
+                logging.exception("Failed to call handleMessage on registered client {}, removing.".format(uri))
                 self.unregisterClient(uri)
 
     def getVersion(self):
@@ -146,6 +147,7 @@ class Controller(object):
         self.devices[device.deviceID] = device
         if hasattr(device, "registerDispatcher") and callable(getattr(device, "registerDispatcher")):
             device.registerDispatcher(self)
+        device.broadcast = lambda t, b: self.broadcast(t, device.deviceID, b)
 
     def getDevice(self, deviceID):
         return self.devices[deviceID]
@@ -194,20 +196,8 @@ class Controller(object):
     def sequence(self, *events):
         self.sequencer.sequence(*events)
 
-    def showPowerOnDialogOnClients(self):
-        self.callAllClients(lambda c: c.showPowerOnDialog())
-
-    def showPowerOffDialogOnClients(self):
-        self.callAllClients(lambda c: c.showPowerOffDialog())
-
-    def hidePowerDialogOnClients(self):
-        self.callAllClients(lambda c: c.hidePowerDialog())
-
     def getLog(self):
         return self.logHandler.entries
-
-    def updateOutputMappings(self, mapping):
-        self.callAllClients(lambda c: c.updateOutputMappings(mapping))
 
 
 class ControllerProxy(object):

@@ -166,3 +166,37 @@ Currently the devices best supported include:
 
 In many cases support is partial but straightforward to improve - patches
 welcome!
+
+## Cross-client communication
+
+`avx` includes a mechanism for cross-client, and controller-to-client, communication.
+Clients should override the `handleMessage(msgType, source, data)` method to handle
+messages, which are sent via the controller's `broadcast` method. All messages are
+broadcast to all currently-connected clients. The arguments to `broadcast`, which are
+the same as those to `handleMessage`, are:
+ 
+ * `msgType`: string representing the type of message. Built-in message types are defined
+   in `avx.Client.MessageTypes` but client implementations are free to specify their own
+   as required.
+ * `source`: the origin of this message. When called from devices, this will be the device
+   ID of the device that calls `broadcast`. Client implementations may use this field as
+   required.
+ * `data`: the message payload. May be any Python object, or `None`.
+
+Clients may broadcast messages by calling `Controller.broadcast()` or by scheduling a
+`BroadcastEvent`, for example as part of a macro sequence. 
+
+Built-in message types currently include:
+
+ * `avx.Client.MessageTypes.OUTPUT_MAPPING`: sent by video switcher devices to describe their
+   current output state. `source` will be the device ID of the switcher. `data` will be a
+   `dict` whose keys are the numbered outputs of the switcher, and whose values are the
+   numbered inputs. For example, a switcher currently displaying input 1 on output 4 may send
+   the data
+   
+   ```{ 4: 1 }```
+   
+   Note that the complete state of the switcher may not be represented (a single message may
+   only describe a single output state). Nor is it guaranteed that such a message will
+   automatically be sent when a switcher changes state (the Inline IN3808, for example, only
+   sends its state when asked for).

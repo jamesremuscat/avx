@@ -176,30 +176,8 @@ class TestController(TestCase):
         c.registerClient("DOES_NOT_EXIST")
         self.assertEqual(["DOES_NOT_EXIST"], c.clients)
 
-        c.callAllClients(lambda c: c.doesNotExist())
+        c.broadcast("Test", "Test message", None)
         self.assertEqual([], c.clients)
-
-    @patch("avx.controller.Controller.Pyro4")
-    def testCallsAllGoodClients(self, pyro4):
-        c = Controller()
-        c.registerClient("Bad")
-        c.registerClient("Good")
-
-        good = MagicMock()
-        good.clientMethod = MagicMock()
-
-        pyro4.Proxy = MagicMock()
-
-        pyro4.Proxy.side_effect = [Exception("Foo"), good]
-
-        c.callAllClients(lambda c: c.clientMethod("Bar"))
-
-        pyro4.Proxy.assert_has_calls([
-            call("Bad"),
-            call("Good")
-        ])
-
-        good.clientMethod.assert_called_once_with("Bar")
 
     def testPersistClientList(self):
         with create_temporary_copy(os.path.join(os.path.dirname(__file__), 'testConfig.json')) as confFile:
@@ -218,11 +196,66 @@ class TestController(TestCase):
 
             self.assertEqual(c2.clients, ["DOES_NOT_EXIST"])
 
-            c2.callAllClients(lambda c: c.notARealMethod())
+            c2.broadcast("Test", "Test message", None)
 
             with open(confFile.name, "r") as cf2:
                 withClient2 = json.load(cf2)
                 self.assertEqual(withClient2["clients"], [])
+
+    def testInjectBroadcast(self):
+        device = Device("test")
+        controller = Controller()
+
+        controller.broadcast = MagicMock()
+
+        controller.addDevice(device)
+        device.broadcast("TEST", None)
+        controller.broadcast.assert_called_once_with("TEST", "test", None)
+        controller.broadcast.reset_mock()
+
+        class DudDevice(Device):
+            def initialise(self):
+                self.broadcast("TEST", "Initialise")
+
+        dd = DudDevice("Test2")
+        controller.addDevice(dd)
+        controller.initialise()
+
+        controller.broadcast.assert_called_once_with("TEST", "Test2", "Initialise")
+
+    @patch("avx.controller.Controller.Pyro4.Proxy")
+    def testBroadcast(self, moxy):
+        client = MagicMock()
+        client.handleMessage = MagicMock()
+        moxy.return_value = client
+
+        c = Controller()
+        c.registerClient("mock://uri")
+
+        c.broadcast("Test", "testBroadcast", "data")
+        client.handleMessage.assert_called_once_with("Test", "testBroadcast", "data")
+
+    @patch("avx.controller.Controller.Pyro4")
+    def testBroadcastWithBadClient(self, pyro):
+        # Tests that, good clients are still called, even if bad clients come before them in the list.
+        c = Controller()
+        c.registerClient("Bad")
+        c.registerClient("Good")
+
+        good = MagicMock()
+
+        pyro.Proxy = MagicMock()
+
+        pyro.Proxy.side_effect = [Exception("Foo"), good]
+
+        c.broadcast("Test", "testBroadcastWithBadClient", "Bar")
+
+        pyro.Proxy.assert_has_calls([
+            call("Bad"),
+            call("Good")
+        ])
+
+        good.handleMessage.assert_called_once_with("Test", "testBroadcastWithBadClient", "Bar")
 
     def testVersionCompatibility(self):
         table = [
