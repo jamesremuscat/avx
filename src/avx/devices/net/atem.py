@@ -7,6 +7,7 @@ import struct
 import threading
 import time
 from avx.devices.Device import InvalidArgumentException
+from avx.Client import MessageTypes
 
 # Standing on the shoulders of giants:
 # Much of this module derives from previous work including:
@@ -332,9 +333,10 @@ class ATEM(Device):
         dsk_setting['autoTransitioning'] = (data[3] != 0)
         dsk_setting['framesRemaining'] = data[4]
 
-    def _recv_AuxS(self, data):
+    def _recv_AuxS(self, data):  # Aux source set
         auxIndex = data[0]
         self._state['aux'][auxIndex] = struct.unpack('!H', data[2:4])[0]
+        self.broadcast(MessageTypes.AUX_OUTPUT_MAPPING, self._state['aux'])
 
     def _recv_CCdo(self, data):
         input_num = data[1]

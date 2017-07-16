@@ -22,6 +22,12 @@ class Device(object):
         '''
         pass
 
+    def broadcast(self, msgType, data):
+        '''
+        This method is automatically overridden when a device is added to a Controller.
+        '''
+        pass
+
     @staticmethod
     def create(d, controller):
         deviceID = d["deviceID"]
