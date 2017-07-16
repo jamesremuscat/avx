@@ -6,6 +6,7 @@ import socket
 import struct
 import threading
 import time
+from avx.devices.Device import InvalidArgumentException
 
 # Standing on the shoulders of giants:
 # Much of this module derives from previous work including:
@@ -58,6 +59,14 @@ def parseBitmask(num, labels):
     for i, label in enumerate(labels):
         states[label] = bool(num & (1 << len(labels) - i - 1))
     return states
+
+
+def byteArrayToString(byteArray):
+    return ''.join(chr(b) for b in byteArray)
+
+
+class NotInitializedException(Exception):
+    pass
 
 
 class ATEM(Device):
@@ -198,6 +207,15 @@ class ATEM(Device):
         buf += struct.pack('!H', packageId)
         return buf
 
+    def _sendCommand(self, command, payload):
+        size = len(command) + len(payload) + 4
+        dg = self._createCommandHeader(CMD_ACKREQUEST, size, self._currentUid, 0)
+        dg += struct.pack('!H', size)
+        dg += "\x00\x00"
+        dg += command
+        dg += payload
+        self._sendDatagram(dg)
+
     def _sendDatagram(self, datagram):
         self.log.debug("Sending packet {} to {}:{}".format(datagram.encode('hex_codec'), self.ipAddr, self.port))
         self._socket.sendto(datagram, (self.ipAddr, self.port))
@@ -316,7 +334,7 @@ class ATEM(Device):
 
     def _recv_AuxS(self, data):
         auxIndex = data[0]
-        self._state[auxIndex] = struct.unpack('!H', data[2:4])[0]
+        self._state['aux'][auxIndex] = struct.unpack('!H', data[2:4])[0]
 
     def _recv_CCdo(self, data):
         input_num = data[1]
@@ -484,3 +502,17 @@ class ATEM(Device):
 
     def _recv_Time(self, data):
         self._state['last_state_change'] = struct.unpack('!BBBB', data[0:4])
+
+#############
+# Public control functions
+#############
+
+    def setAuxSource(self, auxChannel, inputID):
+        if not self._isInitialized:
+            raise NotInitializedException()
+        if auxChannel <= 0 or auxChannel > self._system_config['topology']['aux_busses']:
+            raise InvalidArgumentException()
+        self._sendCommand(
+            "CAuS",
+            byteArrayToString([0x01, auxChannel - 1, (inputID >> 8), (inputID & 0xFF)])
+        )
