@@ -5,6 +5,7 @@ import logging
 import socket
 import struct
 import threading
+import time
 
 # Standing on the shoulders of giants:
 # Much of this module derives from previous work including:
@@ -102,7 +103,7 @@ class ATEM(Device):
             self.recv_thread.daemon = True
             self.recv_thread.start()
 
-        self._connectToSwitcher()
+        threading.Thread(target=self._connectToSwitcher).start()
 
     def deinitialise(self):
         self.run_receive = False
@@ -130,6 +131,7 @@ class ATEM(Device):
                         self._sendDatagram(ackDatagram)
                         if not self._isInitialized:
                             self._isInitialized = True
+                            self.log.info("Connection to ATEM initialised")
 
                     if len(data) > SIZE_OF_HEADER + 2 and not (header['bitmask'] & CMD_HELLOPACKET):
                         self._handlePayload(data[SIZE_OF_HEADER:])
@@ -170,10 +172,14 @@ class ATEM(Device):
                 self.log.warning("Unhandled ATEM packet type {}".format(ptype))
 
     def _connectToSwitcher(self):
-        datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
-        datagram += struct.pack('!I', 0x01000000)
-        datagram += struct.pack('!I', 0x00)
-        self._sendDatagram(datagram)
+        while not self._isInitialized:
+            self.log.info("Attempting to connect to ATEM at {}:{}".format(self.ipAddr, self.port))
+            datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
+            datagram += struct.pack('!I', 0x01000000)
+            datagram += struct.pack('!I', 0x00)
+            self._sendDatagram(datagram)
+
+            time.sleep(5)
 
     def _createCommandHeader(self, bitmask, payloadSize, uid, ackId):
         buf = b''
