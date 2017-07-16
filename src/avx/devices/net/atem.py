@@ -514,6 +514,8 @@ class ATEM(Device):
             raise NotInitializedException()
         if auxChannel <= 0 or auxChannel > self._system_config['topology']['aux_busses']:
             raise InvalidArgumentException()
+        if inputID not in self._system_config['inputs'].keys():
+            raise InvalidArgumentException()
         self._sendCommand(
             "CAuS",
             byteArrayToString([0x01, auxChannel - 1, (inputID >> 8), (inputID & 0xFF)])
