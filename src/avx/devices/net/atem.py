@@ -1,4 +1,5 @@
 from avx.devices import Device
+from enum import Enum
 
 import ctypes
 import logging
@@ -36,7 +37,6 @@ LABELS_PORTS_INTERNAL = {0: 'External', 1: 'Black', 2: 'Color Bars', 3: 'Color G
                          5: 'Media Player Key', 6: 'SuperSource', 128: 'ME Output', 129: 'Auxilary', 130: 'Mask'}
 LABELS_MULTIVIEWER_LAYOUT = ['top', 'bottom', 'left', 'right']
 LABELS_AUDIO_PLUG = ['Internal', 'SDI', 'HDMI', 'Component', 'Composite', 'SVideo', 'XLR', 'AES/EBU', 'RCA']
-LABELS_VIDEOSRC = {0: 'Black', 1: 'Input 1', 2: 'Input 2', 3: 'Input 3', 4: 'Input 4', 5: 'Input 5', 6: 'Input 6', 7: 'Input 7', 8: 'Input 8', 9: 'Input 9', 10: 'Input 10', 11: 'Input 11', 12: 'Input 12', 13: 'Input 13', 14: 'Input 14', 15: 'Input 15', 16: 'Input 16', 17: 'Input 17', 18: 'Input 18', 19: 'Input 19', 20: 'Input 20', 1000: 'Color Bars', 2001: 'Color 1', 2002: 'Color 2', 3010: 'Media Player 1', 3011: 'Media Player 1 Key', 3020: 'Media Player 2', 3021: 'Media Player 2 Key', 4010: 'Key 1 Mask', 4020: 'Key 2 Mask', 4030: 'Key 3 Mask', 4040: 'Key 4 Mask', 5010: 'DSK 1 Mask', 5020: 'DSK 2 Mask', 6000: 'Super Source', 7001: 'Clean Feed 1', 7002: 'Clean Feed 2', 8001: 'Auxilary 1', 8002: 'Auxilary 2', 8003: 'Auxilary 3', 8004: 'Auxilary 4', 8005: 'Auxilary 5', 8006: 'Auxilary 6', 10010: 'ME 1 Prog', 10011: 'ME 1 Prev', 10020: 'ME 2 Prog', 10021: 'ME 2 Prev'}
 LABELS_AUDIOSRC = {1: 'Input 1', 2: 'Input 2', 3: 'Input 3', 4: 'Input 4', 5: 'Input 5', 6: 'Input 6', 7: 'Input 7', 8: 'Input 8', 9: 'Input 9', 10: 'Input 10', 11: 'Input 11', 12: 'Input 12', 13: 'Input 13', 14: 'Input 14', 15: 'Input 15', 16: 'Input 16', 17: 'Input 17', 18: 'Input 18', 19: 'Input 19', 20: 'Input 20', 1001: 'XLR', 1101: 'AES/EBU', 1201: 'RCA', 2001: 'MP1', 2002: 'MP2'}
 # cc
 LABELS_CC_DOMAIN = {0: 'lens', 1: 'camera', 8: 'chip'}
@@ -49,6 +49,56 @@ VALUES_CC_GAIN = {512: '0db', 1024: '6db', 2048: '12db', 4096: '18db'}
 VALUES_CC_WB = {3200: '3200K', 4500: '4500K', 5000: '5000K', 5600: '5600K', 6500: '6500K', 7500: '7500K'}
 VALUES_CC_SHUTTER = {20000: '1/50', 16667: '1/60', 13333: '1/75', 11111: '1/90', 10000: '1/100', 8333: '1/120', 6667: '1/150', 5556: '1/180', 4000: '1/250', 2778: '1/360', 2000: '1/500', 1379: '1/725', 1000: '1/1000', 690: '1/1450', 500: '1/2000'}
 VALUES_AUDIO_MIX = {0: 'off', 1: 'on', 2: 'AFV'}
+
+
+class VideoSource(Enum):
+    BLACK = 0
+    INPUT_1 = 1
+    INPUT_2 = 2
+    INPUT_3 = 3
+    INPUT_4 = 4
+    INPUT_5 = 5
+    INPUT_6 = 6
+    INPUT_7 = 7
+    INPUT_8 = 8
+    INPUT_9 = 9
+    INPUT_10 = 10
+    INPUT_11 = 11
+    INPUT_12 = 12
+    INPUT_13 = 13
+    INPUT_14 = 14
+    INPUT_15 = 15
+    INPUT_16 = 16
+    INPUT_17 = 17
+    INPUT_18 = 18
+    INPUT_19 = 19
+    INPUT_20 = 20
+    COLOUR_BARS = 1000
+    COLOUR_1 = 2001
+    COLOUR_2 = 2002
+    MEDIA_PLAYER_1 = 3010
+    MEDIA_PLAYER_1_KEY = 3011
+    MEDIA_PLAYER_2 = 3020
+    MEDIA_PLAYER_2_KEY = 3021
+    KEY_1_MASK = 4010
+    KEY_2_MASK = 4020
+    KEY_3_MASK = 4030
+    KEY_4_MASK = 4040
+    DSK_1_MASK = 5010
+    DSK_2_MASK = 5020
+    SUPER_SOURCE = 6000
+    CLEAN_FEED_1 = 7001
+    CLEAN_FEED_2 = 7002
+    AUX_1 = 8001
+    AUX_2 = 8002
+    AUX_3 = 8003
+    AUX_4 = 8004
+    AUX_5 = 8005
+    AUX_6 = 8006
+    ME_1_PROGRAM = 10010
+    ME_1_PREVIEW = 10011
+    ME_2_PROGRAM = 10020
+    ME_2_PREVIEW = 10021
 
 
 def convert_cstring(bs):
@@ -514,6 +564,8 @@ class ATEM(Device):
             raise NotInitializedException()
         if auxChannel <= 0 or auxChannel > self._system_config['topology']['aux_busses']:
             raise InvalidArgumentException()
+        if isinstance(inputID, VideoSource):
+            inputID = inputID.value
         if inputID not in self._system_config['inputs'].keys():
             raise InvalidArgumentException()
         self._sendCommand(
