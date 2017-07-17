@@ -183,6 +183,7 @@ class ATEM(Device):
     def _handlePacket(self, data):
                 header = self._parseCommandHeader(data)
                 if header:
+                    self.log.debug(data.encode('hex_codec'))
                     self._currentUid = header['uid']
                     if header['bitmask'] & CMD_HELLOPACKET:
                         # print('not initialized, received HELLOPACKET, sending ACK packet')

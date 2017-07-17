@@ -47,6 +47,10 @@ class TestATEM(unittest.TestCase):
         self.assertTrue(self.atem._isInitialized)
         self.atem._socket.sendto.assert_called_with('\x80\x0c' + chr(uid) + '\x09\x00\x12\x00\x00\x00\x00\x00\x00', ('localhost', 1234))
 
+########
+# System setup / topology related packets
+########
+
     def testRecv_ver(self):
         self.send_command('_ver', [0x00, 0x0B, 0x00, 0x26])
         self.assertEqual("11.38", self.atem._system_config['version'])
@@ -54,3 +58,38 @@ class TestATEM(unittest.TestCase):
     def testRecv_pin(self):
         self.send_command('_pin', map(ord, 'I am not an ATEM'))
         self.assertEqual('I am not an ATEM', self.atem._system_config['name'])
+
+    def testRecv_top(self):
+        self.send_command('_top', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+
+        top = self.atem._system_config['topology']
+        self.assertEqual(1, top['mes'])
+        self.assertEqual(2, top['sources'])
+        self.assertEqual(3, top['color_generators'])
+        self.assertEqual(4, top['aux_busses'])
+        self.assertEqual(5, top['dsks'])
+        self.assertEqual(6, top['stingers'])
+        self.assertEqual(7, top['dves'])
+        self.assertEqual(8, top['supersources'])
+        # Remainder of bytes are unknowns
+
+    def testRecv_MeC(self):
+        self.send_command('_MeC', [8, 27, 0])
+        self.assertEqual(27, self.atem._system_config['keyers'][8])
+
+    def testRecv_mpl(self):
+        self.send_command('_mpl', [29, 42, 0])
+        self.assertEqual(29, self.atem._system_config['media_players']['still'])
+        self.assertEqual(42, self.atem._system_config['media_players']['clip'])
+
+    def testRecv_MvC(self):
+        self.send_command('_MvC', [17, 0])
+        self.assertEqual(17, self.atem._system_config['multiviewers'])
+
+    def testRecv_SSC(self):
+        self.send_command('_SSC', [99, 0, 0, 0])
+        self.assertEqual(99, self.atem._system_config['super_source_boxes'])
+
+    def testRecv_TlC(self):
+        self.send_command('_TlC', [0, 0, 0, 0, 99, 0, 0, 0])
+        self.assertEqual(99, self.atem._system_config['tally_channels'])
