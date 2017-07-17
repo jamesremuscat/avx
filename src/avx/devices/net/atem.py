@@ -134,6 +134,17 @@ class ATEM(Device):
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._socket.bind(('0.0.0.0', self.port))
 
+        self._initialiseState()
+
+        self.run_receive = True
+        if not (self.recv_thread and self.recv_thread.is_alive()):
+            self.recv_thread = threading.Thread(target=self._receivePackets)
+            self.recv_thread.daemon = True
+            self.recv_thread.start()
+
+        threading.Thread(target=self._connectToSwitcher).start()
+
+    def _initialiseState(self):
         self._packetCounter = 0
         self._isInitialized = False
         self._currentUid = 0x1337
@@ -157,14 +168,6 @@ class ATEM(Device):
 
         self._state['booted'] = True
 
-        self.run_receive = True
-        if not (self.recv_thread and self.recv_thread.is_alive()):
-            self.recv_thread = threading.Thread(target=self._receivePackets)
-            self.recv_thread.daemon = True
-            self.recv_thread.start()
-
-        threading.Thread(target=self._connectToSwitcher).start()
-
     def deinitialise(self):
         self.run_receive = False
         self._state['booted'] = False
@@ -175,6 +178,9 @@ class ATEM(Device):
             # self.log.debug("Received {} from {}:{}".format(data.encode('hex_codec'), *remoteIP))
 
             if remoteIP == (self.ipAddr, self.port):
+                self._handlePacket(data)
+
+    def _handlePacket(self, data):
                 header = self._parseCommandHeader(data)
                 if header:
                     self._currentUid = header['uid']
