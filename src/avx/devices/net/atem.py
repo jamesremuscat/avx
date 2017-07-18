@@ -157,6 +157,11 @@ class MultiviewerLayout(Enum):
     RIGHT = 3
 
 
+class ClipType(Enum):
+    STILL = 1
+    CLIP = 2
+
+
 def convert_cstring(bs):
     return ctypes.create_string_buffer(str(bs)).value.decode('utf-8')
 
@@ -469,7 +474,7 @@ class ATEM(Device):
     def _recv_MPCE(self, data):
         player_num = data[0]
         player = self._state['mediaplayer'].setdefault(player_num, {})
-        player['type'] = {1: 'still', 2: 'clip'}.get(data[1])
+        player['type'] = ClipType(data[1])
         player['still_index'] = data[2]
         player['clip_index'] = data[3]
 

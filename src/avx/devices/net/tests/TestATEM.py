@@ -1,5 +1,5 @@
 from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
-    PortType, SIZE_OF_HEADER, VideoMode, VideoSource
+    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType
 from mock import MagicMock
 
 import struct
@@ -18,6 +18,10 @@ def _createCommandHeader(payloadSize, uid, ackId):
     buf += struct.pack('!I', 0)
     buf += struct.pack('!H', packageId)
     return buf
+
+
+def zeroes(count):
+    return [0 for _ in range(count)]
 
 
 class TestATEM(unittest.TestCase):
@@ -215,3 +219,105 @@ class TestATEM(unittest.TestCase):
         self.send_command('AuxS', [1, 0, 0x27, 0x1A])
         self.assertEqual(VideoSource.ME_1_PROGRAM, self.atem._state['aux'][1])
         self.atem.broadcast.assert_called_once_with(MessageTypes.AUX_OUTPUT_MAPPING, {1: VideoSource.ME_1_PROGRAM})
+
+########
+# Media players
+########
+
+    def testRecvRCPS(self):
+        self.send_command('RCPS', [0, 1, 1, 0, 0, 24])
+
+        expected = {
+            'playing': True,
+            'loop': True,
+            'beginning': False,
+            'clip_frame': 24
+        }
+
+        self.assertEqual(expected, self.atem._state['mediaplayer'][0])
+
+    def testRecvMPCE(self):
+        self.send_command('MPCE', [0, 1, 2, 3])
+
+        expected = {
+            'type': ClipType.STILL,
+            'still_index': 2,
+            'clip_index': 3
+        }
+
+        self.assertEqual(expected, self.atem._state['mediaplayer'][0])
+
+    def testRecvMPSp(self):
+        self.send_command('MPSp', [0x01, 0x1D, 0x00, 0x4B])
+        expected = {
+            0: {
+                'maxlength': 285
+            },
+            1: {
+                'maxlength': 75
+            }
+        }
+        self.assertEqual(expected, self.atem._config['mediapool'])
+
+    def testRecvMPCS(self):
+        self.send_command(
+            'MPCS',
+            [1, 1] +
+            map(ord, 'Clip Name String') +
+            zeroes(48) +
+            [0, 0xFF]
+        )
+
+        expected = {
+            'clips': {
+                1: {
+                    'used': True,
+                    'filename': 'Clip Name String',
+                    'length': 255
+                }
+            }
+        }
+
+        self.assertEqual(expected, self.atem._state['mediapool'])
+
+    def testRecvMPAS(self):
+        self.send_command(
+            'MPAS',
+            [1, 1] +
+            zeroes(16) +
+            map(ord, 'Clip Name String') +
+            zeroes(49)
+        )
+
+        expected = {
+            'audio': {
+                1: {
+                    'used': True,
+                    'filename': 'Clip Name String',
+                }
+            }
+        }
+
+        self.assertEqual(expected, self.atem._state['mediapool'])
+
+    def testRecvMPfe(self):
+        filename = 'Clip Filename String'
+        self.send_command(
+            'MPfe',
+            [0, 0, 0, 24, 1] +
+            map(ord, 'ABCDEF1234567890') +
+            [0, 0, len(filename)] +
+            map(ord, filename)
+        )
+
+        expected = {
+            'stills': {
+                24: {
+                    'used': True,
+                    'hash': 'ABCDEF1234567890',
+                    'filename': filename,
+                }
+            }
+        }
+
+        self.assertEqual(expected, self.atem._state['mediapool'])
