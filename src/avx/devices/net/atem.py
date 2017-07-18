@@ -453,83 +453,10 @@ class ATEM(Device):
         self.broadcast(MessageTypes.AUX_OUTPUT_MAPPING, self._state['aux'])
 
     def _recv_CCdo(self, data):
-        input_num = data[1]
-        domain = data[2]
-        feature = data[3]
-        feature_label = feature
-        try:
-            if domain == 0:
-                feature_label = LABELS_CC_LENS_FEATURE[feature]
-            elif domain == 1:
-                feature_label = LABELS_CC_CAM_FEATURE[feature]
-            elif domain == 8:
-                feature_label = LABELS_CC_CHIP_FEATURE[feature]
-            self.cameracontrol.setdefault(input_num, {}).setdefault('features', {}).setdefault(LABELS_CC_DOMAIN[domain], {})[feature_label] = bool(data[4])
-        except KeyError:
-            self.log.warning("CC Feature not recognized (no label)")
+        pass
 
     def _recv_CCdP(self, data):
-        input_num = data[1]
-        domain = data[2]
-        feature = data[3]
-        feature_label = feature
-        val = None
-        val_translated = None
-        if domain == 0:  # lens
-            if feature == 0:  # focus
-                val = val_translated = struct.unpack('!h', data[16:18])[0]
-            elif feature == 1:  # auto focused
-                pass
-            elif feature == 3:  # iris
-                val = val_translated = struct.unpack('!h', data[16:18])[0]
-            elif feature == 9:  # zoom
-                val = val_translated = struct.unpack('!h', data[16:18])[0]
-        elif domain == 1:  # camera
-            if feature == 1:  # gain
-                val = struct.unpack('!h', data[16:18])[0]
-                val_translated = VALUES_CC_GAIN.get(val, 'unknown')
-            elif feature == 2:  # white balance
-                val = struct.unpack('!h', data[16:18])[0]
-                val_translated = VALUES_CC_WB.get(val, val + 'K')
-            elif feature == 5:  # shutter
-                val = struct.unpack('!h', data[18:20])[0]
-                val_translated = VALUES_CC_SHUTTER.get(val, 'off')
-        elif domain == 8:  # chip
-            val_keys_color = ['R', 'G', 'B', 'Y']
-            if feature == 0:  # lift
-                val = dict(zip(val_keys_color, struct.unpack('!hhhh', data[16:24])))
-                val_translated = {k: float(v) / 4096 for k, v in val.items()}
-            elif feature == 1:  # gamma
-                val = dict(zip(val_keys_color, struct.unpack('!hhhh', data[16:24])))
-                val_translated = {k: float(v) / 8192 for k, v in val.items()}
-            elif feature == 2:  # gain
-                val = dict(zip(val_keys_color, struct.unpack('!hhhh', data[16:24])))
-                val_translated = {k: float(v) * 16 / 32767 for k, v in val.items()}
-            elif feature == 3:  # aperture
-                pass  # no idea - todo
-            elif feature == 4:  # contrast
-                val = struct.unpack('!h', data[18:20])[0]
-                val_translated = float(val) / 4096
-            elif feature == 5:  # luminance
-                val = struct.unpack('!h', data[16:18])[0]
-                val_translated = float(val) / 2048
-            elif feature == 6:  # hue-saturation
-                val_keys = ['hue', 'saturation']
-                val = dict(zip(val_keys, struct.unpack('!hh', data[16:20])))
-                val_translated = {}
-                val_translated['hue'] = float(val['hue']) * 360 / 2048 + 180
-                val_translated['saturation'] = float(val['saturation']) / 4096
-        try:
-            if domain == 0:
-                feature_label = LABELS_CC_LENS_FEATURE[feature]
-            elif domain == 1:
-                feature_label = LABELS_CC_CAM_FEATURE[feature]
-            elif domain == 8:
-                feature_label = LABELS_CC_CHIP_FEATURE[feature]
-            self.cameracontrol.setdefault(input_num, {}).setdefault('state_raw', {}).setdefault(LABELS_CC_DOMAIN[domain], {})[feature_label] = val
-            self.cameracontrol.setdefault(input_num, {}).setdefault('state', {}).setdefault(LABELS_CC_DOMAIN[domain], {})[feature_label] = val_translated
-        except KeyError:
-            print("Warning: CC Feature not recognized (no label)")
+        pass
 
     def _recv_RCPS(self, data):
         player_num = data[0]
