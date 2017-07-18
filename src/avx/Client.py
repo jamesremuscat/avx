@@ -34,4 +34,3 @@ class Client(threading.Thread):
 
 class MessageTypes(object):
     OUTPUT_MAPPING = "avx.client.OutputMapping"
-    AUX_OUTPUT_MAPPING = "avx.client.AuxOutputMapping"

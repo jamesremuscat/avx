@@ -8,7 +8,6 @@ import struct
 import threading
 import time
 from avx.devices.Device import InvalidArgumentException
-from avx.Client import MessageTypes
 
 # Standing on the shoulders of giants:
 # Much of this module derives from previous work including:
@@ -160,6 +159,11 @@ class MultiviewerLayout(Enum):
 class ClipType(Enum):
     STILL = 1
     CLIP = 2
+
+
+class MessageTypes(object):
+    AUX_OUTPUT_MAPPING = "avx.devices.net.atem.AuxOutputMapping"
+    TALLY = "avx.devices.net.atem.Tally"
 
 
 def convert_cstring(bs):
@@ -575,7 +579,7 @@ class ATEM(Device):
         for i in range(2, src_count * 3 + 2, 3):
             source = VideoSource(struct.unpack('!H', data[i:i + 2])[0])
             self._state['tally'][source] = parseBitmask(data[i + 2], ['prv', 'pgm'])
-        # TODO self.tallyHandler(self)
+        self.broadcast(MessageTypes.TALLY, self._state['tally'])
 
     def _recv_Time(self, data):
         self._state['last_state_change'] = struct.unpack('!BBBB', data[0:4])

@@ -1,11 +1,10 @@
 from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
-    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType,\
+    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType, MessageTypes, \
     NotInitializedException
 from mock import MagicMock
 
 import struct
 import unittest
-from avx.Client import MessageTypes
 from avx.devices.Device import InvalidArgumentException
 
 
@@ -352,6 +351,7 @@ class TestATEM(unittest.TestCase):
         self.assertEqual(expected.keys(), self.atem._state['tally'].keys())
         for k in expected.keys():
             self.assertEqual(expected[k], self.atem._state['tally'][k])
+        self.atem.broadcast.assert_called_once_with('avx.devices.net.atem.Tally', expected)
 
 ########
 # Commands what do stuff
