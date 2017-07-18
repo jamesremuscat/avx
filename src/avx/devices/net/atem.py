@@ -327,6 +327,10 @@ class ATEM(Device):
         return buf
 
     def _sendCommand(self, command, payload):
+
+        if not isinstance(payload, str):
+            payload = byteArrayToString(payload)
+
         size = len(command) + len(payload) + 4
         dg = self._createCommandHeader(CMD_ACKREQUEST, size, self._currentUid, 0)
         dg += struct.pack('!H', size)
@@ -551,34 +555,43 @@ class ATEM(Device):
     def _recv_Time(self, data):
         self._state['last_state_change'] = struct.unpack('!BBBB', data[0:4])
 
+########
+# Input validation
+########
+
+    def _assertInitialised(self):
+        if not self._isInitialized:
+            raise NotInitializedException()
+
+    def _resolveInputBytes(self, inputID):
+        if isinstance(inputID, VideoSource):
+            inputID = inputID.value
+        if inputID not in self._system_config['inputs'].keys():
+            raise InvalidArgumentException()
+        return [(inputID >> 8), (inputID & 0xFF)]
+
+    def _assertTopology(self, item, value):
+        if value <= 0 or value > self._system_config['topology'][item]:
+            raise InvalidArgumentException()
+
 #############
 # Public control functions
 #############
 
     def setAuxSource(self, auxChannel, inputID):
-        if not self._isInitialized:
-            raise NotInitializedException()
-        if auxChannel <= 0 or auxChannel > self._system_config['topology']['aux_busses']:
-            raise InvalidArgumentException()
-        if isinstance(inputID, VideoSource):
-            inputID = inputID.value
-        if inputID not in self._system_config['inputs'].keys():
-            raise InvalidArgumentException()
+        self._assertInitialised()
+        self._assertTopology('aux_busses', auxChannel)
+
         self._sendCommand(
             "CAuS",
-            byteArrayToString([0x01, auxChannel - 1, (inputID >> 8), (inputID & 0xFF)])
+            [0x01, auxChannel - 1] + self._resolveInputBytes(inputID)
         )
 
     def setPreview(self, inputID, me=1):
-        if not self._isInitialized:
-            raise NotInitializedException()
-        if me > self._system_config['topology']['mes']:
-            raise InvalidArgumentException()
-        if isinstance(inputID, VideoSource):
-            inputID = inputID.value
-        if inputID not in self._system_config['inputs'].keys():
-            raise InvalidArgumentException()
+        self._assertInitialised()
+        self._assertTopology('mes', me)
+
         self._sendCommand(
             'CPvI',
-            byteArrayToString([me - 1, 0, (inputID >> 8), (inputID & 0xFF), 0, 0, 0, 0])
+            [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
         )
