@@ -1,4 +1,4 @@
-from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, SIZE_OF_HEADER, VideoMode
+from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, PortType, SIZE_OF_HEADER, VideoMode
 from mock import MagicMock
 
 import struct
@@ -117,3 +117,47 @@ class TestATEM(unittest.TestCase):
     def testRecvDcOt(self):
         self.send_command('DcOt', [2, 0, 0])
         self.assertEqual(DownconverterMode.ANAMORPHIC, self.atem._config['down_converter'])
+
+    def testRecvVidM(self):
+        self.send_command('VidM', [17])
+        self.assertEqual(VideoMode.HD_4K_29, self.atem._config['video_mode'])
+
+    def testRecvInPr(self):
+        self.send_command(
+            'InPr',
+            [0, 2] +
+            map(ord, 'Input Long Name') + [0, 0, 0, 0, 0] +  # Long name always 20 bytes
+            map(ord, 'InLN') +  # Short name always 4 bytes
+            [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
+        )
+
+        self.maxDiff = None
+
+        expected = {
+            2: {
+                'availability': {
+                    'Auxilary': True,
+                    'KeySource': False,
+                    'Multiviewer': True,
+                    'SuperSourceArt': True,
+                    'SuperSourceBox': True
+                },
+                'me_availability': {
+                    'ME1': True,
+                    'ME2': False
+                },
+                'name_long': u'Input Long Name',
+                'name_short': u'InLN',
+                'port_type_external': ExternalPortType.SDI,
+                'port_type_internal': PortType.COLOR_BARS,
+                'types_available': {
+                    0: False,
+                    1: True,
+                    2: True,
+                    3: True,
+                    4: True
+                }
+            }
+        }
+
+        self.assertEqual(expected, self.atem._system_config['inputs'])

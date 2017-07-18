@@ -101,7 +101,7 @@ class VideoSource(Enum):
     ME_2_PREVIEW = 10021
 
 
-class VideoMode(IntEnum):
+class VideoMode(Enum):
     NTSC_525I = 0
     PAL_625I = 1
     NTSC_525I_16_9 = 2
@@ -126,6 +126,28 @@ class DownconverterMode(Enum):
     CENTER_CUT = 0
     LETTERBOX = 1
     ANAMORPHIC = 2
+
+
+class ExternalPortType(Enum):
+    INTERNAL = 0
+    SDI = 1
+    HDMI = 2
+    COMPOSITE = 3
+    COMPONENT = 4
+    SVIDEO = 5
+
+
+class PortType(Enum):
+    EXTERNAL = 0
+    BLACK = 1
+    COLOR_BARS = 2
+    COLOR_GENERATOR = 3
+    MEDIA_PLAYER_FILL = 4
+    MEDIA_PLAYER_KEY = 5
+    SUPER_SOURCE = 6
+    ME_OUTPUT = 128
+    AUXILIARY = 129
+    MASK = 130
 
 
 def convert_cstring(bs):
@@ -366,7 +388,7 @@ class ATEM(Device):
         self._config['down_converter'] = DownconverterMode(data[0])
 
     def _recv_VidM(self, data):
-        self._config['video_mode'] = data[0]
+        self._config['video_mode'] = VideoMode(data[0])
 
     def _recv_InPr(self, data):
         index = struct.unpack('!H', data[0:2])[0]
@@ -375,8 +397,8 @@ class ATEM(Device):
         input_setting['name_long'] = convert_cstring(data[2:22])
         input_setting['name_short'] = convert_cstring(data[22:26])
         input_setting['types_available'] = parseBitmask(data[27], LABELS_PORTS_EXTERNAL)
-        input_setting['port_type_external'] = data[29]
-        input_setting['port_type_internal'] = data[30]
+        input_setting['port_type_external'] = ExternalPortType(data[29])
+        input_setting['port_type_internal'] = PortType(data[30])
         input_setting['availability'] = parseBitmask(data[32], ['Auxilary', 'Multiviewer', 'SuperSourceArt',
                                                                 'SuperSourceBox', 'KeySource'])
         input_setting['me_availability'] = parseBitmask(data[33], ['ME1', 'ME2'])
