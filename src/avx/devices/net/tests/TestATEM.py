@@ -171,6 +171,10 @@ class TestATEM(unittest.TestCase):
         self.send_command('MvIn', [0, 3, 0x1F, 0x46])
         self.assertEqual(VideoSource.AUX_6, self.atem._config['multiviewers'][0]['windows'][3])
 
+########
+# Mixer state packets
+########
+
     def testRecvPrgI(self):
         self.send_command('PrgI', [0, 0, 0x03, 0xE8])
         self.send_command('PrgI', [1, 0, 0, 15])
