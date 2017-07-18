@@ -357,6 +357,17 @@ class TestATEM(unittest.TestCase):
 # Commands what do stuff
 ########
 
+    def assert_sent_packet(self, cmd, payload):
+        args = self.atem._socket.sendto.call_args[0]
+        self.assertEqual(2, len(args))
+        packet = args[0]
+
+        if not isinstance(payload, str):
+            payload = byteArrayToString(payload)
+
+        self.assertEqual(cmd, packet[SIZE_OF_HEADER + 4:SIZE_OF_HEADER + 8])
+        self.assertEqual(payload, packet[SIZE_OF_HEADER + 8:])
+
     def testSetAuxSource(self):
         try:
             self.atem.setAuxSource("Not initialised so going to fail", 0)
@@ -383,7 +394,4 @@ class TestATEM(unittest.TestCase):
             pass
 
         self.atem.setAuxSource(1, VideoSource.COLOUR_BARS)
-        self.atem._socket.sendto.assert_called_once_with(
-            '\x08\x18\x04r\x00\x00\x00\x00\x00\x00\x00\x01\x00\x0c\x00\x00CAuS\x01\x00\x03\xe8',
-            ('localhost', 1234)
-        )
+        self.assert_sent_packet('CAuS', [1, 0] + bytes_of(VideoSource.COLOUR_BARS.value))
