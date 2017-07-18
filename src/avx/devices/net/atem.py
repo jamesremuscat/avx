@@ -543,8 +543,8 @@ class ATEM(Device):
 
     def _recv_TlSr(self, data):
         src_count = struct.unpack('!H', data[0:2])[0]
-        for i in range(2, src_count * 3 + 2):
-            source = struct.unpack('!H', data[i:i + 2])[0]
+        for i in range(2, src_count * 3 + 2, 3):
+            source = VideoSource(struct.unpack('!H', data[i:i + 2])[0])
             self._state['tally'][source] = parseBitmask(data[i + 2], ['prv', 'pgm'])
         # TODO self.tallyHandler(self)
 

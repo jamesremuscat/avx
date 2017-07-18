@@ -321,3 +321,28 @@ class TestATEM(unittest.TestCase):
         }
 
         self.assertEqual(expected, self.atem._state['mediapool'])
+
+########
+# Tally
+########
+
+    def testRecvTlIn(self):
+        self.send_command('TlIn', [0, 4, 3, 2, 1, 0])
+        expected = {
+            '1': {'prv': True, 'pgm': True},
+            '2': {'prv': True, 'pgm': False},
+            '3': {'prv': False, 'pgm': True},
+            '4': {'prv': False, 'pgm': False},
+        }
+        self.assertEqual(expected, self.atem._state['tally_by_index'])
+
+    def testRecvTlSr(self):
+        self.send_command('TlSr', [0, 2, 0x0B, 0xC2, 2, 0, 1, 0])
+
+        expected = {
+            VideoSource.MEDIA_PLAYER_1: {'prv': False, 'pgm': True},
+            VideoSource.INPUT_1: {'prv': False, 'pgm': False}
+        }
+        self.assertEqual(expected.keys(), self.atem._state['tally'].keys())
+        for k in expected.keys():
+            self.assertEqual(expected[k], self.atem._state['tally'][k])
