@@ -417,28 +417,16 @@ class TestATEM(unittest.TestCase):
         self.atem.setPreview(VideoSource.COLOUR_BARS, 1)
         self.assert_sent_packet('CPvI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value) + [0, 0, 0, 0])
 
-# OK, I think we've tested the @requiresInit decorator enough now...
+# OK, I think we've tested the @requiresInit and @assertTopology decorators enough now...
 
     def testSetProgram(self):
         self._init_with_defaults()
-
-        try:
-            self.atem.setProgram(VideoSource.COLOUR_BARS, 2)
-            self.fail("ME 2 shouldn't exist!")
-        except InvalidArgumentException:
-            pass
 
         self.atem.setProgram(VideoSource.COLOUR_BARS, 1)
         self.assert_sent_packet('CPgI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value) + [0, 0, 0, 0])
 
     def testPerformCut(self):
         self._init_with_defaults()
-
-        try:
-            self.atem.performCut(2)
-            self.fail("ME 2 shouldn't exist!")
-        except InvalidArgumentException:
-            pass
 
         self.atem.performCut(1)
         self.assert_sent_packet('DCut', [0, 0, 0, 0])

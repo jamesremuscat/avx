@@ -185,6 +185,20 @@ def requiresInit(func):
     return inner
 
 
+def assertTopology(topType, argIndex):
+    def wrap(func):
+        def wrapped_func(self, *args):
+            value = args[argIndex]
+            limit = self._system_config['topology'][topType]
+
+            if value <= 0 or value > limit:
+                raise InvalidArgumentException
+
+            func(self, *args)
+        return wrapped_func
+    return wrap
+
+
 class NotInitializedException(Exception):
     pass
 
@@ -578,44 +592,37 @@ class ATEM(Device):
             raise InvalidArgumentException()
         return [(inputID >> 8), (inputID & 0xFF)]
 
-    def _assertTopology(self, item, value):
-        if value <= 0 or value > self._system_config['topology'][item]:
-            raise InvalidArgumentException()
-
 #############
 # Public control functions
 #############
-    @requiresInit
-    def setAuxSource(self, auxChannel, inputID):
-        self._assertTopology('aux_busses', auxChannel)
 
+    @requiresInit
+    @assertTopology('aux_busses', 0)
+    def setAuxSource(self, auxChannel, inputID):
         self._sendCommand(
             "CAuS",
             [0x01, auxChannel - 1] + self._resolveInputBytes(inputID)
         )
 
     @requiresInit
+    @assertTopology('mes', 1)
     def setPreview(self, inputID, me=1):
-        self._assertTopology('mes', me)
-
         self._sendCommand(
             'CPvI',
             [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
         )
 
     @requiresInit
+    @assertTopology('mes', 1)
     def setProgram(self, inputID, me=1):
-        self._assertTopology('mes', me)
-
         self._sendCommand(
             'CPgI',
             [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
         )
 
     @requiresInit
+    @assertTopology('mes', 0)
     def performCut(self, me=1):
-        self._assertTopology('mes', me)
-
         self._sendCommand(
             'DCut',
             [me - 1, 0, 0, 0]
