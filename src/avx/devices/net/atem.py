@@ -177,6 +177,14 @@ def byteArrayToString(byteArray):
     return ''.join(chr(b) for b in byteArray)
 
 
+def requiresInit(func):
+    def inner(self, *args):
+        if not self._isInitialized:
+            raise NotInitializedException()
+        func(self, *args)
+    return inner
+
+
 class NotInitializedException(Exception):
     pass
 
@@ -577,9 +585,8 @@ class ATEM(Device):
 #############
 # Public control functions
 #############
-
+    @requiresInit
     def setAuxSource(self, auxChannel, inputID):
-        self._assertInitialised()
         self._assertTopology('aux_busses', auxChannel)
 
         self._sendCommand(
@@ -587,8 +594,8 @@ class ATEM(Device):
             [0x01, auxChannel - 1] + self._resolveInputBytes(inputID)
         )
 
+    @requiresInit
     def setPreview(self, inputID, me=1):
-        self._assertInitialised()
         self._assertTopology('mes', me)
 
         self._sendCommand(
