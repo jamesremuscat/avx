@@ -340,7 +340,7 @@ class TestATEM(unittest.TestCase):
         self.send_command('TlSr', [0, 2, 0x0B, 0xC2, 2, 0, 1, 0])
 
         expected = {
-            VideoSource.MEDIA_PLAYER_1: {'prv': False, 'pgm': True},
+            VideoSource.MEDIA_PLAYER_1: {'prv': True, 'pgm': False},
             VideoSource.INPUT_1: {'prv': False, 'pgm': False}
         }
         self.assertEqual(expected.keys(), self.atem._state['tally'].keys())
