@@ -436,16 +436,16 @@ class ATEM(Device):
     def _recv_DskB(self, data):
         keyer = data[0]
         keyer_setting = self._state['dskeyers'].setdefault(keyer, {})
-        keyer_setting['fill'] = struct.unpack('!H', data[2:4])[0]
-        keyer_setting['key'] = struct.unpack('!H', data[4:6])[0]
+        keyer_setting['fill'] = VideoSource(struct.unpack('!H', data[2:4])[0])
+        keyer_setting['key'] = VideoSource(struct.unpack('!H', data[4:6])[0])
 
     def _recv_DskS(self, data):
         keyer = data[0]
         dsk_setting = self._state['dskeyers'].setdefault(keyer, {})
-        dsk_setting['onAir'] = (data[1] != 0)
-        dsk_setting['inTransition'] = (data[2] != 0)
-        dsk_setting['autoTransitioning'] = (data[3] != 0)
-        dsk_setting['framesRemaining'] = data[4]
+        dsk_setting['on_air'] = (data[1] != 0)
+        dsk_setting['in_transition'] = (data[2] != 0)
+        dsk_setting['auto_transitioning'] = (data[3] != 0)
+        dsk_setting['frames_remaining'] = data[4]
 
     def _recv_AuxS(self, data):  # Aux source set
         auxIndex = data[0]

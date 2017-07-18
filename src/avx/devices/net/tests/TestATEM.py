@@ -186,3 +186,25 @@ class TestATEM(unittest.TestCase):
         self.send_command('PrvI', [1, 0, 0, 15])
         self.assertEqual(VideoSource.COLOUR_BARS, self.atem._state['preview'][0])
         self.assertEqual(VideoSource.INPUT_15, self.atem._state['preview'][1])
+
+    def testRecvKeOn(self):
+        self.send_command('KeOn', [0, 1, 1, 0])
+        self.assertEqual(True, self.atem._state['keyers'][0][1])
+
+    def testRecvDskB(self):
+        self.send_command('DskB', [0, 0, 0, 1, 0, 2, 0])
+        expected = {
+            'fill': VideoSource.INPUT_1,
+            'key': VideoSource.INPUT_2
+        }
+        self.assertEqual(expected, self.atem._state['dskeyers'][0])
+
+    def testRecvDskS(self):
+        self.send_command('DskS', [0, 0, 1, 1, 17, 0, 0, 0])
+        expected = {
+            'on_air': False,
+            'in_transition': True,
+            'auto_transitioning': True,
+            'frames_remaining': 17
+        }
+        self.assertEqual(expected, self.atem._state['dskeyers'][0])
