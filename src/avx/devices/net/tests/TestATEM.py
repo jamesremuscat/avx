@@ -369,16 +369,9 @@ class TestATEM(unittest.TestCase):
         self.assertEqual(cmd, packet[SIZE_OF_HEADER + 4:SIZE_OF_HEADER + 8])
         self.assertEqual(payload, packet[SIZE_OF_HEADER + 8:])
 
-    def testSetAuxSource(self):
-        try:
-            self.atem.setAuxSource("Not initialised so going to fail", 0)
-            self.fail("Should have thrown an exception as not initialised")
-        except NotInitializedException:
-            pass
-
-        # Initialise with a single aux bus
+    def _init_with_defaults(self):
         self.atem._handlePacket(byteArrayToString([0x08, 0x0c, 0xab, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12]))
-        self.send_command('_top', [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0])
+        self.send_command('_top', [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
         self.send_command(
             'InPr',
             bytes_of(VideoSource.COLOUR_BARS.value) +
@@ -387,6 +380,15 @@ class TestATEM(unittest.TestCase):
             [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
         )
         self.atem._socket.reset_mock()
+
+    def testSetAuxSource(self):
+        try:
+            self.atem.setAuxSource("Not initialised so going to fail", 0)
+            self.fail("Should have thrown an exception as not initialised")
+        except NotInitializedException:
+            pass
+
+        self._init_with_defaults()
 
         try:
             self.atem.setAuxSource(2, 0)
@@ -404,17 +406,7 @@ class TestATEM(unittest.TestCase):
         except NotInitializedException:
             pass
 
-        # Initialise with a single ME and input
-        self.atem._handlePacket(byteArrayToString([0x08, 0x0c, 0xab, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12]))
-        self.send_command('_top', [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0])
-        self.send_command(
-            'InPr',
-            bytes_of(VideoSource.COLOUR_BARS.value) +
-            map(ord, 'Input Long Name') + [0, 0, 0, 0, 0] +  # Long name always 20 bytes
-            map(ord, 'InLN') +  # Short name always 4 bytes
-            [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
-        )
-        self.atem._socket.reset_mock()
+        self._init_with_defaults()
 
         try:
             self.atem.setPreview(VideoSource.COLOUR_BARS, 2)
@@ -424,3 +416,29 @@ class TestATEM(unittest.TestCase):
 
         self.atem.setPreview(VideoSource.COLOUR_BARS, 1)
         self.assert_sent_packet('CPvI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value) + [0, 0, 0, 0])
+
+# OK, I think we've tested the @requiresInit decorator enough now...
+
+    def testSetProgram(self):
+        self._init_with_defaults()
+
+        try:
+            self.atem.setProgram(VideoSource.COLOUR_BARS, 2)
+            self.fail("ME 2 shouldn't exist!")
+        except InvalidArgumentException:
+            pass
+
+        self.atem.setProgram(VideoSource.COLOUR_BARS, 1)
+        self.assert_sent_packet('CPgI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value) + [0, 0, 0, 0])
+
+    def testPerformCut(self):
+        self._init_with_defaults()
+
+        try:
+            self.atem.performCut(2)
+            self.fail("ME 2 shouldn't exist!")
+        except InvalidArgumentException:
+            pass
+
+        self.atem.performCut(1)
+        self.assert_sent_packet('DCut', [0, 0, 0, 0])

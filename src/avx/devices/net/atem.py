@@ -602,3 +602,21 @@ class ATEM(Device):
             'CPvI',
             [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
         )
+
+    @requiresInit
+    def setProgram(self, inputID, me=1):
+        self._assertTopology('mes', me)
+
+        self._sendCommand(
+            'CPgI',
+            [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
+        )
+
+    @requiresInit
+    def performCut(self, me=1):
+        self._assertTopology('mes', me)
+
+        self._sendCommand(
+            'DCut',
+            [me - 1, 0, 0, 0]
+        )
