@@ -170,3 +170,15 @@ class TestATEM(unittest.TestCase):
     def testRecvMvIn(self):
         self.send_command('MvIn', [0, 3, 0x1F, 0x46])
         self.assertEqual(VideoSource.AUX_6, self.atem._config['multiviewers'][0]['windows'][3])
+
+    def testRecvPrgI(self):
+        self.send_command('PrgI', [0, 0, 0x03, 0xE8])
+        self.send_command('PrgI', [1, 0, 0, 15])
+        self.assertEqual(VideoSource.COLOUR_BARS, self.atem._state['program'][0])
+        self.assertEqual(VideoSource.INPUT_15, self.atem._state['program'][1])
+
+    def testRecvPrvI(self):
+        self.send_command('PrvI', [0, 0, 0x03, 0xE8])
+        self.send_command('PrvI', [1, 0, 0, 15])
+        self.assertEqual(VideoSource.COLOUR_BARS, self.atem._state['preview'][0])
+        self.assertEqual(VideoSource.INPUT_15, self.atem._state['preview'][1])

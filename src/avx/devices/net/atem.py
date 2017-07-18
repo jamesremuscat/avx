@@ -421,12 +421,12 @@ class ATEM(Device):
 
     def _recv_PrgI(self, data):
         meIndex = data[0]
-        self._state['program'][meIndex] = struct.unpack('!H', data[2:4])[0]
+        self._state['program'][meIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])
         # TODO self.pgmInputHandler(self)
 
     def _recv_PrvI(self, data):
         meIndex = data[0]
-        self._state['preview'][meIndex] = struct.unpack('!H', data[2:4])[0]
+        self._state['preview'][meIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])
 
     def _recv_KeOn(self, data):
         meIndex = data[0]
