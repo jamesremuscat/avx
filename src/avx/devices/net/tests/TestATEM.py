@@ -4,6 +4,7 @@ from mock import MagicMock
 
 import struct
 import unittest
+from avx.Client import MessageTypes
 
 
 def _createCommandHeader(payloadSize, uid, ackId):
@@ -25,6 +26,7 @@ class TestATEM(unittest.TestCase):
         self.atem = ATEM("testAtem", "localhost", 1234)
 
         self.atem._socket = MagicMock()
+        self.atem.broadcast = MagicMock()
 
         # We initialise the state of the ATEM but not its networking
         self.atem._initialiseState()
@@ -208,3 +210,8 @@ class TestATEM(unittest.TestCase):
             'frames_remaining': 17
         }
         self.assertEqual(expected, self.atem._state['dskeyers'][0])
+
+    def testRecvAuxS(self):
+        self.send_command('AuxS', [1, 0, 0x27, 0x1A])
+        self.assertEqual(VideoSource.ME_1_PROGRAM, self.atem._state['aux'][1])
+        self.atem.broadcast.assert_called_once_with(MessageTypes.AUX_OUTPUT_MAPPING, {1: VideoSource.ME_1_PROGRAM})

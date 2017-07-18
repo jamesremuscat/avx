@@ -449,7 +449,7 @@ class ATEM(Device):
 
     def _recv_AuxS(self, data):  # Aux source set
         auxIndex = data[0]
-        self._state['aux'][auxIndex] = struct.unpack('!H', data[2:4])[0]
+        self._state['aux'][auxIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])
         self.broadcast(MessageTypes.AUX_OUTPUT_MAPPING, self._state['aux'])
 
     def _recv_CCdo(self, data):
