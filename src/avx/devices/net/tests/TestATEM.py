@@ -415,18 +415,23 @@ class TestATEM(unittest.TestCase):
             pass
 
         self.atem.setPreview(VideoSource.COLOUR_BARS, 1)
-        self.assert_sent_packet('CPvI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value) + [0, 0, 0, 0])
+        self.assert_sent_packet('CPvI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value))
 
 # OK, I think we've tested the @requiresInit and @assertTopology decorators enough now...
 
     def testSetProgram(self):
         self._init_with_defaults()
 
-        self.atem.setProgram(VideoSource.COLOUR_BARS, 1)
-        self.assert_sent_packet('CPgI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value) + [0, 0, 0, 0])
+        self.atem.setProgram(VideoSource.COLOUR_BARS)
+        self.assert_sent_packet('CPgI', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value))
 
     def testPerformCut(self):
         self._init_with_defaults()
 
         self.atem.performCut(1)
         self.assert_sent_packet('DCut', [0, 0, 0, 0])
+
+    def testPerformAutoTake(self):
+        self._init_with_defaults()
+        self.atem.performAutoTake()
+        self.assert_sent_packet('DAut', [0, 0, 0, 0])

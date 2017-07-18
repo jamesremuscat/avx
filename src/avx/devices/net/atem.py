@@ -188,7 +188,10 @@ def requiresInit(func):
 def assertTopology(topType, argIndex):
     def wrap(func):
         def wrapped_func(self, *args):
-            value = args[argIndex]
+            if argIndex >= len(args):
+                value = func.__defaults__[argIndex - len(args)]
+            else:
+                value = args[argIndex]
             limit = self._system_config['topology'][topType]
 
             if value <= 0 or value > limit:
@@ -609,7 +612,7 @@ class ATEM(Device):
     def setPreview(self, inputID, me=1):
         self._sendCommand(
             'CPvI',
-            [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
+            [me - 1, 0] + self._resolveInputBytes(inputID)
         )
 
     @requiresInit
@@ -617,7 +620,7 @@ class ATEM(Device):
     def setProgram(self, inputID, me=1):
         self._sendCommand(
             'CPgI',
-            [me - 1, 0] + self._resolveInputBytes(inputID) + [0, 0, 0, 0]
+            [me - 1, 0] + self._resolveInputBytes(inputID)
         )
 
     @requiresInit
@@ -625,5 +628,13 @@ class ATEM(Device):
     def performCut(self, me=1):
         self._sendCommand(
             'DCut',
+            [me - 1, 0, 0, 0]
+        )
+
+    @requiresInit
+    @assertTopology('mes', 0)
+    def performAutoTake(self, me=1):
+        self._sendCommand(
+            'DAut',
             [me - 1, 0, 0, 0]
         )
