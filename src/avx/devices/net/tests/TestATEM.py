@@ -1,4 +1,4 @@
-from avx.devices.net.atem import ATEM, byteArrayToString, SIZE_OF_HEADER
+from avx.devices.net.atem import ATEM, byteArrayToString, SIZE_OF_HEADER, VideoMode
 from mock import MagicMock
 
 import struct
@@ -93,3 +93,15 @@ class TestATEM(unittest.TestCase):
     def testRecv_TlC(self):
         self.send_command('_TlC', [0, 0, 0, 0, 99, 0, 0, 0])
         self.assertEqual(99, self.atem._system_config['tally_channels'])
+
+    def testRecv_AMC(self):
+        self.send_command('_AMC', [42, 1, 0])
+        self.assertEqual(42, self.atem._system_config['audio_channels'])
+        self.assertTrue(self.atem._system_config['has_monitor'])
+
+    def testRecv_VMC(self):
+        self.send_command('_VMC', [0, 0xFF, 0xFF, 0xC0])
+
+        expected = {v: True for v in VideoMode}
+
+        self.assertEqual(expected, self.atem._system_config['video_modes'])

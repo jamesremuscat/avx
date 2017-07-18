@@ -1,5 +1,5 @@
 from avx.devices import Device
-from enum import Enum
+from enum import Enum, IntEnum
 
 import ctypes
 import logging
@@ -99,6 +99,27 @@ class VideoSource(Enum):
     ME_1_PREVIEW = 10011
     ME_2_PROGRAM = 10020
     ME_2_PREVIEW = 10021
+
+
+class VideoMode(IntEnum):
+    NTSC_525I = 0
+    PAL_625I = 1
+    NTSC_525I_16_9 = 2
+    PAL_625I_16_9 = 3
+    HD_720_50 = 4
+    HD_720_59 = 5
+    HD_1080I_50 = 6
+    HD_1080I_59 = 7
+    HD_1080P_23 = 8
+    HD_1080P_24 = 9
+    HD_1080P_25 = 10
+    HD_1080P_29 = 11
+    HD_1080P_50 = 12
+    HD_1080P_59 = 13
+    HD_4K_23 = 14
+    HD_4K_24 = 15
+    HD_4K_25 = 16
+    HD_4K_29 = 17
 
 
 def convert_cstring(bs):
@@ -324,9 +345,10 @@ class ATEM(Device):
         self._system_config['has_monitor'] = (data[1] > 0)
 
     def _recv__VMC(self, data):
-        size = 18
-        for i in range(size):
-            self._system_config.setdefault('video_modes', {})[i] = bool(data[0] & (1 << size - i - 1))
+        videomodes = (data[1] << 16) | (data[2] << 8) | (data[3])
+        for vidmode in VideoMode:
+            has_mode = ((videomodes >> (24 - vidmode.value - 1)) & 0x1) > 0
+            self._system_config.setdefault('video_modes', {})[vidmode] = has_mode
 
     def _recv__MAC(self, data):
         self._system_config['macro_banks'] = data[0]
