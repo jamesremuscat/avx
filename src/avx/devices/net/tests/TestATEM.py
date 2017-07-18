@@ -1,10 +1,12 @@
 from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
-    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType
+    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType,\
+    NotInitializedException
 from mock import MagicMock
 
 import struct
 import unittest
 from avx.Client import MessageTypes
+from avx.devices.Device import InvalidArgumentException
 
 
 def _createCommandHeader(payloadSize, uid, ackId):
@@ -22,6 +24,10 @@ def _createCommandHeader(payloadSize, uid, ackId):
 
 def zeroes(count):
     return [0 for _ in range(count)]
+
+
+def bytes_of(val):
+    return [(val >> 8), (val & 0xFF)]
 
 
 class TestATEM(unittest.TestCase):
@@ -346,3 +352,38 @@ class TestATEM(unittest.TestCase):
         self.assertEqual(expected.keys(), self.atem._state['tally'].keys())
         for k in expected.keys():
             self.assertEqual(expected[k], self.atem._state['tally'][k])
+
+########
+# Commands what do stuff
+########
+
+    def testSetAuxSource(self):
+        try:
+            self.atem.setAuxSource("Not initialised so going to fail", 0)
+            self.fail("Should have thrown an exception as not initialised")
+        except NotInitializedException:
+            pass
+
+        # Initialise with a single aux bus
+        self.atem._handlePacket(byteArrayToString([0x08, 0x0c, 0xab, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12]))
+        self.send_command('_top', [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0])
+        self.send_command(
+            'InPr',
+            bytes_of(VideoSource.COLOUR_BARS.value) +
+            map(ord, 'Input Long Name') + [0, 0, 0, 0, 0] +  # Long name always 20 bytes
+            map(ord, 'InLN') +  # Short name always 4 bytes
+            [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
+        )
+        self.atem._socket.reset_mock()
+
+        try:
+            self.atem.setAuxSource(2, 0)
+            self.fail("Aux 2 shouldn't exist!")
+        except InvalidArgumentException:
+            pass
+
+        self.atem.setAuxSource(1, VideoSource.COLOUR_BARS)
+        self.atem._socket.sendto.assert_called_once_with(
+            '\x08\x18\x04r\x00\x00\x00\x00\x00\x00\x00\x01\x00\x0c\x00\x00CAuS\x01\x00\x03\xe8',
+            ('localhost', 1234)
+        )
