@@ -1,4 +1,4 @@
-from avx.devices.net.atem import ATEM, byteArrayToString, SIZE_OF_HEADER, VideoMode
+from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, SIZE_OF_HEADER, VideoMode
 from mock import MagicMock
 
 import struct
@@ -113,3 +113,7 @@ class TestATEM(unittest.TestCase):
     def testRecvPowr(self):
         self.send_command('Powr', [0x3, 0x0, 0x0, 0x0])
         self.assertEqual({'main': True, 'backup': True}, self.atem._status['power'])
+
+    def testRecvDcOt(self):
+        self.send_command('DcOt', [2, 0, 0])
+        self.assertEqual(DownconverterMode.ANAMORPHIC, self.atem._config['down_converter'])

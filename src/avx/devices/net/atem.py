@@ -122,6 +122,12 @@ class VideoMode(IntEnum):
     HD_4K_29 = 17
 
 
+class DownconverterMode(Enum):
+    CENTER_CUT = 0
+    LETTERBOX = 1
+    ANAMORPHIC = 2
+
+
 def convert_cstring(bs):
     return ctypes.create_string_buffer(str(bs)).value.decode('utf-8')
 
@@ -357,7 +363,7 @@ class ATEM(Device):
         self._status['power'] = parseBitmask(data[0], ['main', 'backup'])
 
     def _recv_DcOt(self, data):
-        self._config['down_converter'] = data[0]
+        self._config['down_converter'] = DownconverterMode(data[0])
 
     def _recv_VidM(self, data):
         self._config['video_mode'] = data[0]
