@@ -105,3 +105,11 @@ class TestATEM(unittest.TestCase):
         expected = {v: True for v in VideoMode}
 
         self.assertEqual(expected, self.atem._system_config['video_modes'])
+
+    def testRecv_MAC(self):
+        self.send_command('_MAC', [12, 0, 0, 0])
+        self.assertEqual(12, self.atem._system_config['macro_banks'])
+
+    def testRecvPowr(self):
+        self.send_command('Powr', [0x3, 0x0, 0x0, 0x0])
+        self.assertEqual({'main': True, 'backup': True}, self.atem._status['power'])
