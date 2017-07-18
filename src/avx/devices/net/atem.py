@@ -1,5 +1,5 @@
 from avx.devices import Device
-from enum import Enum, IntEnum
+from enum import Enum
 
 import ctypes
 import logging
@@ -148,6 +148,13 @@ class PortType(Enum):
     ME_OUTPUT = 128
     AUXILIARY = 129
     MASK = 130
+
+
+class MultiviewerLayout(Enum):
+    TOP = 0
+    BOTTOM = 1
+    LEFT = 2
+    RIGHT = 3
 
 
 def convert_cstring(bs):
@@ -405,12 +412,12 @@ class ATEM(Device):
 
     def _recv_MvPr(self, data):
         index = data[0]
-        self._config['multiviewers'].setdefault(index, {})['layout'] = data[1]
+        self._config['multiviewers'].setdefault(index, {})['layout'] = MultiviewerLayout(data[1])
 
     def _recv_MvIn(self, data):
         index = data[0]
         window = data[1]
-        self._config['multiviewers'].setdefault(index, {}).setdefault('windows', {})[window] = struct.unpack('!H', data[2:4])[0]
+        self._config['multiviewers'].setdefault(index, {}).setdefault('windows', {})[window] = VideoSource(struct.unpack('!H', data[2:4])[0])
 
     def _recv_PrgI(self, data):
         meIndex = data[0]

@@ -1,4 +1,5 @@
-from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, PortType, SIZE_OF_HEADER, VideoMode
+from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
+    PortType, SIZE_OF_HEADER, VideoMode, VideoSource
 from mock import MagicMock
 
 import struct
@@ -161,3 +162,11 @@ class TestATEM(unittest.TestCase):
         }
 
         self.assertEqual(expected, self.atem._system_config['inputs'])
+
+    def testRecvMvPr(self):
+        self.send_command('MvPr', [0, 2, 0])
+        self.assertEqual(MultiviewerLayout.LEFT, self.atem._config['multiviewers'][0]['layout'])
+
+    def testRecvMvIn(self):
+        self.send_command('MvIn', [0, 3, 0x1F, 0x46])
+        self.assertEqual(VideoSource.AUX_6, self.atem._config['multiviewers'][0]['windows'][3])
