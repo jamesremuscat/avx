@@ -568,3 +568,17 @@ class ATEM(Device):
             "CAuS",
             byteArrayToString([0x01, auxChannel - 1, (inputID >> 8), (inputID & 0xFF)])
         )
+
+    def setPreview(self, inputID, me=1):
+        if not self._isInitialized:
+            raise NotInitializedException()
+        if me > self._system_config['topology']['mes']:
+            raise InvalidArgumentException()
+        if isinstance(inputID, VideoSource):
+            inputID = inputID.value
+        if inputID not in self._system_config['inputs'].keys():
+            raise InvalidArgumentException()
+        self._sendCommand(
+            'CPvI',
+            byteArrayToString([me - 1, 0, (inputID >> 8), (inputID & 0xFF), 0, 0, 0, 0])
+        )
