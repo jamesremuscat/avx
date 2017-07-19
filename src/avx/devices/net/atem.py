@@ -1,6 +1,7 @@
 from avx.devices import Device
 from avx.devices.Device import InvalidArgumentException
-from avx.devices.net.atem_constants import ClipType, DownconverterMode, ExternalPortType, MessageTypes, MultiviewerLayout, PortType, VideoMode, VideoSource
+from avx.devices.net.atem_constants import ClipType, DownconverterMode, ExternalPortType, MessageTypes, MultiviewerLayout, PortType, \
+    TransitionStyle, VideoMode, VideoSource
 
 import ctypes
 import logging
@@ -115,7 +116,8 @@ class ATEM(Device):
             'mediapool': {},
             'audio': {},
             'tally_by_index': {},
-            'tally': {}
+            'tally': {},
+            'transition': {}
         }
         self._cameracontrol = {}
 
@@ -446,6 +448,19 @@ class ATEM(Device):
 
     def _recv_Time(self, data):
         self._state['last_state_change'] = struct.unpack('!BBBB', data[0:4])
+
+    def _recv_TrSS(self, data):
+        meIndex = data[0]
+        self._state['transition'][meIndex] = {
+            'current': {
+                'style': TransitionStyle(data[1]),
+                'tied': parseBitmask(data[2], [4, 3, 2, 1, 0])
+            },
+            'next': {
+                'style': TransitionStyle(data[3]),
+                'tied': parseBitmask(data[4], [4, 3, 2, 1, 0])
+            }
+        }
 
 ########
 # Input validation

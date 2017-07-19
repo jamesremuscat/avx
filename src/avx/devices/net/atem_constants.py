@@ -112,6 +112,14 @@ class ClipType(Enum):
     CLIP = 2
 
 
+class TransitionStyle(Enum):
+    MIX = 0
+    DIP = 1
+    WIPE = 2
+    DVE = 3
+    STING = 4
+
+
 class MessageTypes(object):
     AUX_OUTPUT_MAPPING = "avx.devices.net.atem.AuxOutputMapping"
     TALLY = "avx.devices.net.atem.Tally"

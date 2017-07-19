@@ -1,5 +1,5 @@
 from avx.devices.net.atem import ATEM, byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
-    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType, MessageTypes, \
+    PortType, SIZE_OF_HEADER, VideoMode, VideoSource, ClipType, MessageTypes, TransitionStyle, \
     NotInitializedException
 from mock import MagicMock
 
@@ -326,6 +326,38 @@ class TestATEM(unittest.TestCase):
         }
 
         self.assertEqual(expected, self.atem._state['mediapool'])
+
+########
+# Transitions
+########
+
+    def testRecvTrSS(self):
+        self.send_command('TrSS', [0, 2, 3, 4, 5])
+        expected = {
+            0: {
+                'current': {
+                    'style': TransitionStyle.WIPE,
+                    'tied': {
+                        0: True,
+                        1: True,
+                        2: False,
+                        3: False,
+                        4: False
+                    }
+                },
+                'next': {
+                    'style': TransitionStyle.STING,
+                    'tied': {
+                        0: True,
+                        1: False,
+                        2: True,
+                        3: False,
+                        4: False
+                    }
+                }
+            }
+        }
+        self.assertEqual(expected, self.atem._state['transition'])
 
 ########
 # Tally
