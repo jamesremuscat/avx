@@ -1,5 +1,18 @@
 from enum import Enum
 
+# size of header data
+SIZE_OF_HEADER = 0x0c
+
+# packet types
+CMD_NOCOMMAND = 0x00
+CMD_ACKREQUEST = 0x01
+CMD_HELLOPACKET = 0x02
+CMD_RESEND = 0x04
+CMD_UNDEFINED = 0x08
+CMD_ACK = 0x10
+
+LABELS_PORTS_EXTERNAL = {0: 'SDI', 1: 'HDMI', 2: 'Component', 3: 'Composite', 4: 'SVideo'}
+
 
 class VideoSource(Enum):
     BLACK = 0
@@ -121,5 +134,5 @@ class TransitionStyle(Enum):
 
 
 class MessageTypes(object):
-    AUX_OUTPUT_MAPPING = "avx.devices.net.atem.AuxOutputMapping"
-    TALLY = "avx.devices.net.atem.Tally"
+    AUX_OUTPUT_MAPPING = "avx.devices.net.atem.atem.AuxOutputMapping"
+    TALLY = "avx.devices.net.atem.atem.Tally"

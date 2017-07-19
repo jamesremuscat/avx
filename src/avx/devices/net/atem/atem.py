@@ -1,10 +1,9 @@
 from avx.devices import Device
 from avx.devices.Device import InvalidArgumentException
-from avx.devices.net.atem_constants import ClipType, DownconverterMode, ExternalPortType, MessageTypes, MultiviewerLayout, PortType, \
-    TransitionStyle, VideoMode, VideoSource
+from .constants import ClipType, CMD_ACK, CMD_ACKREQUEST, CMD_HELLOPACKET, DownconverterMode, ExternalPortType, LABELS_PORTS_EXTERNAL, \
+    MessageTypes, MultiviewerLayout, PortType, SIZE_OF_HEADER, TransitionStyle, VideoMode, VideoSource
+from .utils import assertTopology, byteArrayToString, convert_cstring, NotInitializedException, requiresInit, parseBitmask
 
-import ctypes
-import inspect
 import logging
 import socket
 import struct
@@ -15,63 +14,6 @@ import time
 # Much of this module derives from previous work including:
 # - http://skaarhoj.com/fileadmin/BMDPROTOCOL.html
 # - https://github.com/mraerino/PyATEM
-
-
-# size of header data
-SIZE_OF_HEADER = 0x0c
-
-# packet types
-CMD_NOCOMMAND = 0x00
-CMD_ACKREQUEST = 0x01
-CMD_HELLOPACKET = 0x02
-CMD_RESEND = 0x04
-CMD_UNDEFINED = 0x08
-CMD_ACK = 0x10
-
-LABELS_PORTS_EXTERNAL = {0: 'SDI', 1: 'HDMI', 2: 'Component', 3: 'Composite', 4: 'SVideo'}
-
-
-def convert_cstring(bs):
-    return ctypes.create_string_buffer(str(bs)).value.decode('utf-8')
-
-
-def parseBitmask(num, labels):
-    states = {}
-    for i, label in enumerate(labels):
-        states[label] = bool(num & (1 << len(labels) - i - 1))
-    return states
-
-
-def byteArrayToString(byteArray):
-    return ''.join(chr(b) for b in byteArray)
-
-
-def requiresInit(func):
-    def inner(self, *args, **kwargs):
-        if not self._isInitialized:
-            raise NotInitializedException()
-        func(self, *args, **kwargs)
-    return inner
-
-
-def assertTopology(topType, argKey):
-    def wrap(func):
-        def wrapped_func(self, *args, **kwargs):
-            args_dict = inspect.getcallargs(func, self, *args, **kwargs)
-            value = args_dict[argKey]
-
-            limit = self._system_config['topology'][topType]
-
-            if value <= 0 or value > limit:
-                raise InvalidArgumentException
-
-            func(self, *args, **kwargs)
-        return wrapped_func
-    return wrap
-
-
-class NotInitializedException(Exception):
-    pass
 
 
 class ATEM(Device):
