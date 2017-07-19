@@ -4,6 +4,7 @@ from avx.devices.net.atem_constants import ClipType, DownconverterMode, External
     TransitionStyle, VideoMode, VideoSource
 
 import ctypes
+import inspect
 import logging
 import socket
 import struct
@@ -53,15 +54,12 @@ def requiresInit(func):
     return inner
 
 
-def assertTopology(topType, argIndex, argKey=None):
+def assertTopology(topType, argKey):
     def wrap(func):
         def wrapped_func(self, *args, **kwargs):
-            if argKey and argKey in kwargs:
-                value = kwargs[argKey]
-            elif argIndex >= len(args):
-                value = func.__defaults__[argIndex - len(args) - len(kwargs)]
-            else:
-                value = args[argIndex]
+            args_dict = inspect.getcallargs(func, self, *args, **kwargs)
+            value = args_dict[argKey]
+
             limit = self._system_config['topology'][topType]
 
             if value <= 0 or value > limit:
@@ -484,7 +482,7 @@ class ATEM(Device):
 #############
 
     @requiresInit
-    @assertTopology('aux_busses', 0)
+    @assertTopology('aux_busses', 'auxChannel')
     def setAuxSource(self, auxChannel, inputID):
         self._sendCommand(
             "CAuS",
@@ -492,7 +490,7 @@ class ATEM(Device):
         )
 
     @requiresInit
-    @assertTopology('mes', 1)
+    @assertTopology('mes', 'me')
     def setPreview(self, inputID, me=1):
         self._sendCommand(
             'CPvI',
@@ -500,7 +498,7 @@ class ATEM(Device):
         )
 
     @requiresInit
-    @assertTopology('mes', 1)
+    @assertTopology('mes', 'me')
     def setProgram(self, inputID, me=1):
         self._sendCommand(
             'CPgI',
@@ -508,7 +506,7 @@ class ATEM(Device):
         )
 
     @requiresInit
-    @assertTopology('mes', 0)
+    @assertTopology('mes', 'me')
     def performCut(self, me=1):
         self._sendCommand(
             'DCut',
@@ -516,7 +514,7 @@ class ATEM(Device):
         )
 
     @requiresInit
-    @assertTopology('mes', 0)
+    @assertTopology('mes', 'me')
     def performAutoTake(self, me=1):
         self._sendCommand(
             'DAut',
@@ -524,7 +522,7 @@ class ATEM(Device):
         )
 
     @requiresInit
-    @assertTopology('mes', 6, argKey='me')
+    @assertTopology('mes', 'me')
     def setNextTransition(self, transitionStyle, bkgd=None, key1=None, key2=None, key3=None, key4=None, me=1):
         if (bkgd is None and key1 is None and key2 is None and key3 is None and key4 is None):
             set_mask = 1

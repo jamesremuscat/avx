@@ -472,3 +472,11 @@ class TestATEM(unittest.TestCase):
         self._init_with_defaults()
         self.atem.setNextTransition(TransitionStyle.MIX, bkgd=True, key1=True, key2=False, key3=False, key4=False, me=1)
         self.assert_sent_packet('CTTp', [0x03, 0, 0, 0x03])
+
+        self.atem._socket.reset_mock()
+        self.atem.setNextTransition(TransitionStyle.WIPE)
+        self.assert_sent_packet('CTTp', [0x01, 0, 2, 0x00])
+
+        self.atem._socket.reset_mock()
+        self.atem.setNextTransition(TransitionStyle.DIP, True, True, True, True, True)
+        self.assert_sent_packet('CTTp', [0x03, 0, 1, 0x1F])
