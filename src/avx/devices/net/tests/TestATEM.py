@@ -467,3 +467,8 @@ class TestATEM(unittest.TestCase):
         self._init_with_defaults()
         self.atem.performAutoTake()
         self.assert_sent_packet('DAut', [0, 0, 0, 0])
+
+    def testSetNextTransition(self):
+        self._init_with_defaults()
+        self.atem.setNextTransition(TransitionStyle.MIX, bkgd=True, key1=True, key2=False, key3=False, key4=False, me=1)
+        self.assert_sent_packet('CTTp', [0x03, 0, 0, 0x03])

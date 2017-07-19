@@ -46,18 +46,20 @@ def byteArrayToString(byteArray):
 
 
 def requiresInit(func):
-    def inner(self, *args):
+    def inner(self, *args, **kwargs):
         if not self._isInitialized:
             raise NotInitializedException()
-        func(self, *args)
+        func(self, *args, **kwargs)
     return inner
 
 
-def assertTopology(topType, argIndex):
+def assertTopology(topType, argIndex, argKey=None):
     def wrap(func):
-        def wrapped_func(self, *args):
-            if argIndex >= len(args):
-                value = func.__defaults__[argIndex - len(args)]
+        def wrapped_func(self, *args, **kwargs):
+            if argKey and argKey in kwargs:
+                value = kwargs[argKey]
+            elif argIndex >= len(args):
+                value = func.__defaults__[argIndex - len(args) - len(kwargs)]
             else:
                 value = args[argIndex]
             limit = self._system_config['topology'][topType]
@@ -65,7 +67,7 @@ def assertTopology(topType, argIndex):
             if value <= 0 or value > limit:
                 raise InvalidArgumentException
 
-            func(self, *args)
+            func(self, *args, **kwargs)
         return wrapped_func
     return wrap
 
@@ -519,4 +521,29 @@ class ATEM(Device):
         self._sendCommand(
             'DAut',
             [me - 1, 0, 0, 0]
+        )
+
+    @requiresInit
+    @assertTopology('mes', 6, argKey='me')
+    def setNextTransition(self, transitionStyle, bkgd=None, key1=None, key2=None, key3=None, key4=None, me=1):
+        if (bkgd is None and key1 is None and key2 is None and key3 is None and key4 is None):
+            set_mask = 1
+        else:
+            set_mask = 3
+
+        tie_mask = 0
+        if bkgd:
+            tie_mask |= 1
+        if key1:
+            tie_mask |= 2
+        if key2:
+            tie_mask |= 4
+        if key3:
+            tie_mask |= 8
+        if key4:
+            tie_mask |= 16
+
+        self._sendCommand(
+            'CTTp',
+            [set_mask, me - 1, transitionStyle.value, tie_mask]
         )
