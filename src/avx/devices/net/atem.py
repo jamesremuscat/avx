@@ -1,5 +1,6 @@
 from avx.devices import Device
-from enum import Enum
+from avx.devices.Device import InvalidArgumentException
+from avx.devices.net.atem_constants import ClipType, DownconverterMode, ExternalPortType, MessageTypes, MultiviewerLayout, PortType, VideoMode, VideoSource
 
 import ctypes
 import logging
@@ -7,7 +8,6 @@ import socket
 import struct
 import threading
 import time
-from avx.devices.Device import InvalidArgumentException
 
 # Standing on the shoulders of giants:
 # Much of this module derives from previous work including:
@@ -26,144 +26,7 @@ CMD_RESEND = 0x04
 CMD_UNDEFINED = 0x08
 CMD_ACK = 0x10
 
-# labels
-LABELS_VIDEOMODES = ['525i59.94NTSC', '625i50PAL', '525i59.94NTSC16:9', '625i50PAL16:9',
-                     '720p50', '720p59.94', '1080i50', '1080i59.94',
-                     '1080p23.98', '1080p24', '1080p25', '1080p29.97', '1080p50', '1080p59.94',
-                     '2160p23.98', '2160p24', '2160p25', '2160p29.97']
 LABELS_PORTS_EXTERNAL = {0: 'SDI', 1: 'HDMI', 2: 'Component', 3: 'Composite', 4: 'SVideo'}
-LABELS_PORTS_INTERNAL = {0: 'External', 1: 'Black', 2: 'Color Bars', 3: 'Color Generator', 4: 'Media Player Fill',
-                         5: 'Media Player Key', 6: 'SuperSource', 128: 'ME Output', 129: 'Auxilary', 130: 'Mask'}
-LABELS_MULTIVIEWER_LAYOUT = ['top', 'bottom', 'left', 'right']
-LABELS_AUDIO_PLUG = ['Internal', 'SDI', 'HDMI', 'Component', 'Composite', 'SVideo', 'XLR', 'AES/EBU', 'RCA']
-LABELS_AUDIOSRC = {1: 'Input 1', 2: 'Input 2', 3: 'Input 3', 4: 'Input 4', 5: 'Input 5', 6: 'Input 6', 7: 'Input 7', 8: 'Input 8', 9: 'Input 9', 10: 'Input 10', 11: 'Input 11', 12: 'Input 12', 13: 'Input 13', 14: 'Input 14', 15: 'Input 15', 16: 'Input 16', 17: 'Input 17', 18: 'Input 18', 19: 'Input 19', 20: 'Input 20', 1001: 'XLR', 1101: 'AES/EBU', 1201: 'RCA', 2001: 'MP1', 2002: 'MP2'}
-# cc
-LABELS_CC_DOMAIN = {0: 'lens', 1: 'camera', 8: 'chip'}
-LABELS_CC_LENS_FEATURE = {0: 'focus', 1: 'auto_focused', 3: 'iris', 9: 'zoom'}
-LABELS_CC_CAM_FEATURE = {1: 'gain', 2: 'white_balance', 5: 'shutter'}
-LABELS_CC_CHIP_FEATURE = {0: 'lift', 1: 'gamma', 2: 'gain', 3: 'aperture', 4: 'contrast', 5: 'luminance', 6: 'hue-saturation'}
-
-# value options
-VALUES_CC_GAIN = {512: '0db', 1024: '6db', 2048: '12db', 4096: '18db'}
-VALUES_CC_WB = {3200: '3200K', 4500: '4500K', 5000: '5000K', 5600: '5600K', 6500: '6500K', 7500: '7500K'}
-VALUES_CC_SHUTTER = {20000: '1/50', 16667: '1/60', 13333: '1/75', 11111: '1/90', 10000: '1/100', 8333: '1/120', 6667: '1/150', 5556: '1/180', 4000: '1/250', 2778: '1/360', 2000: '1/500', 1379: '1/725', 1000: '1/1000', 690: '1/1450', 500: '1/2000'}
-VALUES_AUDIO_MIX = {0: 'off', 1: 'on', 2: 'AFV'}
-
-
-class VideoSource(Enum):
-    BLACK = 0
-    INPUT_1 = 1
-    INPUT_2 = 2
-    INPUT_3 = 3
-    INPUT_4 = 4
-    INPUT_5 = 5
-    INPUT_6 = 6
-    INPUT_7 = 7
-    INPUT_8 = 8
-    INPUT_9 = 9
-    INPUT_10 = 10
-    INPUT_11 = 11
-    INPUT_12 = 12
-    INPUT_13 = 13
-    INPUT_14 = 14
-    INPUT_15 = 15
-    INPUT_16 = 16
-    INPUT_17 = 17
-    INPUT_18 = 18
-    INPUT_19 = 19
-    INPUT_20 = 20
-    COLOUR_BARS = 1000
-    COLOUR_1 = 2001
-    COLOUR_2 = 2002
-    MEDIA_PLAYER_1 = 3010
-    MEDIA_PLAYER_1_KEY = 3011
-    MEDIA_PLAYER_2 = 3020
-    MEDIA_PLAYER_2_KEY = 3021
-    KEY_1_MASK = 4010
-    KEY_2_MASK = 4020
-    KEY_3_MASK = 4030
-    KEY_4_MASK = 4040
-    DSK_1_MASK = 5010
-    DSK_2_MASK = 5020
-    SUPER_SOURCE = 6000
-    CLEAN_FEED_1 = 7001
-    CLEAN_FEED_2 = 7002
-    AUX_1 = 8001
-    AUX_2 = 8002
-    AUX_3 = 8003
-    AUX_4 = 8004
-    AUX_5 = 8005
-    AUX_6 = 8006
-    ME_1_PROGRAM = 10010
-    ME_1_PREVIEW = 10011
-    ME_2_PROGRAM = 10020
-    ME_2_PREVIEW = 10021
-
-
-class VideoMode(Enum):
-    NTSC_525I = 0
-    PAL_625I = 1
-    NTSC_525I_16_9 = 2
-    PAL_625I_16_9 = 3
-    HD_720_50 = 4
-    HD_720_59 = 5
-    HD_1080I_50 = 6
-    HD_1080I_59 = 7
-    HD_1080P_23 = 8
-    HD_1080P_24 = 9
-    HD_1080P_25 = 10
-    HD_1080P_29 = 11
-    HD_1080P_50 = 12
-    HD_1080P_59 = 13
-    HD_4K_23 = 14
-    HD_4K_24 = 15
-    HD_4K_25 = 16
-    HD_4K_29 = 17
-
-
-class DownconverterMode(Enum):
-    CENTER_CUT = 0
-    LETTERBOX = 1
-    ANAMORPHIC = 2
-
-
-class ExternalPortType(Enum):
-    INTERNAL = 0
-    SDI = 1
-    HDMI = 2
-    COMPOSITE = 3
-    COMPONENT = 4
-    SVIDEO = 5
-
-
-class PortType(Enum):
-    EXTERNAL = 0
-    BLACK = 1
-    COLOR_BARS = 2
-    COLOR_GENERATOR = 3
-    MEDIA_PLAYER_FILL = 4
-    MEDIA_PLAYER_KEY = 5
-    SUPER_SOURCE = 6
-    ME_OUTPUT = 128
-    AUXILIARY = 129
-    MASK = 130
-
-
-class MultiviewerLayout(Enum):
-    TOP = 0
-    BOTTOM = 1
-    LEFT = 2
-    RIGHT = 3
-
-
-class ClipType(Enum):
-    STILL = 1
-    CLIP = 2
-
-
-class MessageTypes(object):
-    AUX_OUTPUT_MAPPING = "avx.devices.net.atem.AuxOutputMapping"
-    TALLY = "avx.devices.net.atem.Tally"
 
 
 def convert_cstring(bs):
