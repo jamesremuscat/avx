@@ -380,6 +380,10 @@ class TestATEM(unittest.TestCase):
         }
         self.assertEqual(expected, self.atem._state['transition'])
 
+    def testRecvTMxP(self):
+        self.send_command('TMxP', [1, 25, 0])
+        self.assertEqual({1: {'mix': {'rate': 25}}}, self.atem._config['transitions'])
+
 ########
 # Tally
 ########

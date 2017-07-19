@@ -105,7 +105,7 @@ class ATEM(Device):
 
         self._system_config = {'inputs': {}, 'audio': {}}
         self._status = {}
-        self._config = {'multiviewers': {}, 'mediapool': {}}
+        self._config = {'multiviewers': {}, 'mediapool': {}, 'transitions': {}}
         self._state = {
             'program': {},
             'preview': {},
@@ -466,6 +466,10 @@ class ATEM(Device):
         current['in_transition'] = (data[1] > 0)
         current['frames_remaining'] = data[2]
         current['position'] = struct.unpack('!H', data[4:6])[0]
+
+    def _recv_TMxP(self, data):
+        meIndex = data[0]
+        self._config['transitions'].setdefault(meIndex, {}).setdefault('mix', {})['rate'] = data[1]
 
 ########
 # Input validation
