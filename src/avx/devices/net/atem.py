@@ -451,16 +451,21 @@ class ATEM(Device):
 
     def _recv_TrSS(self, data):
         meIndex = data[0]
-        self._state['transition'][meIndex] = {
-            'current': {
-                'style': TransitionStyle(data[1]),
-                'tied': parseBitmask(data[2], [4, 3, 2, 1, 0])
-            },
-            'next': {
-                'style': TransitionStyle(data[3]),
-                'tied': parseBitmask(data[4], [4, 3, 2, 1, 0])
-            }
-        }
+        current = self._state['transition'].setdefault(meIndex, {}).setdefault('current', {})
+        nextT = self._state['transition'].setdefault(meIndex, {}).setdefault('next', {})
+
+        current['style'] = TransitionStyle(data[1])
+        current['tied'] = parseBitmask(data[2], [4, 3, 2, 1, 0])
+
+        nextT['style'] = TransitionStyle(data[3])
+        nextT['tied'] = parseBitmask(data[4], [4, 3, 2, 1, 0])
+
+    def _recv_TrPs(self, data):
+        meIndex = data[0]
+        current = self._state['transition'].setdefault(meIndex, {}).setdefault('current', {})
+        current['in_transition'] = (data[1] > 0)
+        current['frames_remaining'] = data[2]
+        current['position'] = struct.unpack('!H', data[4:6])[0]
 
 ########
 # Input validation

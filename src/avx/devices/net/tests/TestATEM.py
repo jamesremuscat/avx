@@ -359,6 +359,27 @@ class TestATEM(unittest.TestCase):
         }
         self.assertEqual(expected, self.atem._state['transition'])
 
+    def testRecvTrPs(self):
+        self.send_command('TrPs', [0, 1, 24, 0, 0x15, 0x38, 0])
+        self.send_command('TrPs', [1, 0, 42, 0, 0x04, 0x72, 0])
+        expected = {
+            0: {
+                'current': {
+                    'position': 5432,
+                    'frames_remaining': 24,
+                    'in_transition': True
+                }
+            },
+            1: {
+                'current': {
+                    'position': 1138,
+                    'frames_remaining': 42,
+                    'in_transition': False
+                }
+            }
+        }
+        self.assertEqual(expected, self.atem._state['transition'])
+
 ########
 # Tally
 ########
