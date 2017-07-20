@@ -168,7 +168,7 @@ class ATEMReceiver(object):
         bank = data[3]
         still_bank = self._state['mediapool'].setdefault('stills', {}).setdefault(bank, {})
         still_bank['used'] = bool(data[4])
-        still_bank['hash'] = data[5:21].decode("utf-8")
+        still_bank['hash'] = data[5:21]
         filename_length = data[23]
         still_bank['filename'] = data[24:(24 + filename_length)].decode("utf-8")
 
