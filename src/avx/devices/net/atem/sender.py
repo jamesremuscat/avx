@@ -89,3 +89,49 @@ class ATEMSender(object):
             'CTMx',
             [me - 1, frames, 0x93, 0x07]
         )
+
+########
+# DSK
+########
+
+    @requiresInit
+    # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
+    def performDSKAuto(self, dsk):
+        if dsk <= 0 or dsk > 2:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'DDsA',
+            [dsk - 1, 0, 0, 0]
+        )
+
+    @requiresInit
+    # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
+    def setDSKRate(self, dsk, rate):
+        if dsk <= 0 or dsk > 2:
+            raise InvalidArgumentException
+        if rate <= 0 or rate > 250:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'CDsR',
+            [dsk - 1, rate, 0xAA, 0x07]
+        )
+
+    @requiresInit
+    # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
+    def setDSKKeySource(self, dsk, source):
+        if dsk <= 0 or dsk > 2:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'CDsC',
+            [dsk - 1, 0] + self._resolveInputBytes(source)
+        )
+
+    @requiresInit
+    # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
+    def setDSKFillSource(self, dsk, source):
+        if dsk <= 0 or dsk > 2:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'CDsF',
+            [dsk - 1, 0] + self._resolveInputBytes(source)
+        )

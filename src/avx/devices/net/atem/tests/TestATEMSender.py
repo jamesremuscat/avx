@@ -94,3 +94,19 @@ class TestATEMSender(BaseATEMTest):
     def testSetMixTransitionRate(self):
         self.atem.setMixTransitionRate(128)
         self.assert_sent_packet('CTMx', [0, 128, 0x93, 0x07])  # 0x93 0x07 are magic numbers...
+
+    def testPerformDSKAuto(self):
+        self.atem.performDSKAuto(1)
+        self.assert_sent_packet('DDsA', [0, 0, 0, 0])
+
+    def testSetDSKRate(self):
+        self.atem.setDSKRate(1, 200)
+        self.assert_sent_packet('CDsR', [0, 200, 0xAA, 0X07])
+
+    def testSetDSKKeySource(self):
+        self.atem.setDSKKeySource(1, VideoSource.COLOUR_BARS)
+        self.assert_sent_packet('CDsC', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value))
+
+    def testSetDSKFillSource(self):
+        self.atem.setDSKFillSource(1, VideoSource.COLOUR_BARS)
+        self.assert_sent_packet('CDsF', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value))
