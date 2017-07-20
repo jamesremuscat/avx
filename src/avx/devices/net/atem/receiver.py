@@ -119,6 +119,21 @@ class ATEMReceiver(object):
         dsk_setting['auto_transitioning'] = (data[3] != 0)
         dsk_setting['frames_remaining'] = data[4]
 
+    def _recv_DskP(self, data):
+        keyer = data[0]
+        dsk_setting = self._state['dskeyers'].setdefault(keyer, {})
+        dsk_setting['tie'] = (data[1] > 0)
+        dsk_setting['rate'] = data[2]
+        dsk_setting['premultiplied'] = (data[3] > 0)
+        dsk_setting['clip'] = struct.unpack('!H', data[4:6])[0]
+        dsk_setting['gain'] = struct.unpack('!H', data[6:8])[0]
+        dsk_setting['invert'] = (data[8] > 0)
+        dsk_setting['masked'] = (data[9] > 0)
+        dsk_setting['top'] = struct.unpack('!h', data[10:12])[0]
+        dsk_setting['bottom'] = struct.unpack('!h', data[12:14])[0]
+        dsk_setting['left'] = struct.unpack('!h', data[14:16])[0]
+        dsk_setting['right'] = struct.unpack('!h', data[16:18])[0]
+
     def _recv_AuxS(self, data):  # Aux source set
         auxIndex = data[0]
         self._state['aux'][auxIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])

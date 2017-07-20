@@ -344,6 +344,29 @@ class TestATEMReceiver(BaseATEMTest):
         self.assertEqual({1: {'mix': {'rate': 25}}}, self.atem._config['transitions'])
 
 ########
+# DSK
+########
+    def testRecvDskP(self):
+        self.send_command('DskP', [0x00, 0x00, 0x06, 0x00, 0x01, 0xf4, 0x03, 0xe8, 0x00, 0x00, 0x23, 0x28, 0xdc, 0xd8, 0xc1, 0x80, 0x3e, 0x80, 0x06, 0x00])
+        expected = {
+            0: {
+                'tie': False,
+                'rate': 6,
+                'premultiplied': False,
+                'clip': 500,
+                'gain': 1000,
+                'invert': False,
+                'masked': False,
+                'top': 9000,
+                'bottom': -9000,
+                'left': -16000,
+                'right': 16000
+            }
+        }
+
+        self.assertEqual(expected, self.atem._state['dskeyers'])
+
+########
 # Tally
 ########
 
