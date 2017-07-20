@@ -90,3 +90,7 @@ class TestATEMSender(BaseATEMTest):
         self.atem._socket.reset_mock()
         self.atem.setNextTransition(TransitionStyle.DIP, True, True, True, True, True)
         self.assert_sent_packet('CTTp', [0x03, 0, 1, 0x1F])
+
+    def testSetMixTransitionRate(self):
+        self.atem.setMixTransitionRate(128)
+        self.assert_sent_packet('CTMx', [0, 128, 0x93, 0x07])  # 0x93 0x07 are magic numbers...

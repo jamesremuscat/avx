@@ -79,3 +79,13 @@ class ATEMSender(object):
             'CTTp',
             [set_mask, me - 1, transitionStyle.value, tie_mask]
         )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setMixTransitionRate(self, frames, me=1):
+        if frames <= 0 or frames > 250:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'CTMx',
+            [me - 1, frames, 0x93, 0x07]
+        )
