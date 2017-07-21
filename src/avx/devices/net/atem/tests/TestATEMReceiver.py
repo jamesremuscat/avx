@@ -1,6 +1,7 @@
 from avx.devices.net.atem import byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
     PortType, VideoMode, VideoSource, ClipType, MessageTypes, TransitionStyle
 from avx.devices.net.atem.tests import BaseATEMTest
+from avx.devices.net.atem.utils import bytes_of
 
 
 def zeroes(count):
@@ -399,3 +400,30 @@ class TestATEMReceiver(BaseATEMTest):
         for k in expected.keys():
             self.assertEqual(expected[k], self.atem._state['tally'][k])
         self.atem.broadcast.assert_called_once_with('avx.devices.net.atem.atem.Tally', expected)
+
+    def testRecvMPrp(self):
+        macro_name = "Awesome macro"
+        macro_description = "So awesome it will blow your mind. But not your circuitry."
+        self.send_command(
+            'MPrp',
+            [
+                0,
+                42,
+                1,
+                0
+            ] +
+            bytes_of(len(macro_name)) +
+            bytes_of(len(macro_description)) +
+            map(ord, macro_name) +
+            map(ord, macro_description)
+        )
+
+        expected = {
+            42: {
+                'used': True,
+                'name': macro_name,
+                'description': macro_description
+            }
+        }
+
+        self.assertEqual(expected, self.atem._config['macros'])

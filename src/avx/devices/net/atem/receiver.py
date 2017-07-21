@@ -265,3 +265,16 @@ class ATEMReceiver(object):
         ftb_state['full_black'] = (data[1] > 0)
         ftb_state['in_transition'] = (data[2] > 0)
         ftb_state['frames_remaining'] = data[3]
+
+########
+# Macros
+########
+
+    def _recv_MPrp(self, data):
+        macro_idx = data[1]
+        macro = self._config['macros'].setdefault(macro_idx, {})
+        macro['used'] = (data[2] > 0)
+        name_len = struct.unpack('!H', data[4:6])[0]
+        desc_len = struct.unpack('!H', data[6:8])[0]
+        macro['name'] = str(data[8:8 + name_len])
+        macro['description'] = str(data[8 + name_len:8 + name_len + desc_len])

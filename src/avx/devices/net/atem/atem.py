@@ -47,7 +47,7 @@ class ATEM(Device, ATEMSender, ATEMReceiver):
 
         self._system_config = {'inputs': {}, 'audio': {}}
         self._status = {}
-        self._config = {'multiviewers': {}, 'mediapool': {}, 'transitions': {}}
+        self._config = {'macros': {}, 'multiviewers': {}, 'mediapool': {}, 'transitions': {}}
         self._state = {
             'program': {},
             'preview': {},

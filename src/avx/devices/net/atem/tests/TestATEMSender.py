@@ -1,13 +1,9 @@
 from avx.devices.net.atem.constants import SIZE_OF_HEADER, VideoSource,\
-    TransitionStyle
+    TransitionStyle, MacroAction
 from avx.devices.net.atem.tests import BaseATEMTest
-from avx.devices.net.atem.utils import byteArrayToString,\
+from avx.devices.net.atem.utils import byteArrayToString, bytes_of, \
     NotInitializedException
 from avx.devices.Device import InvalidArgumentException
-
-
-def bytes_of(val):
-    return [(val >> 8), (val & 0xFF)]
 
 
 class TestATEMSender(BaseATEMTest):
@@ -118,3 +114,38 @@ class TestATEMSender(BaseATEMTest):
     def testPerformFadeToBlack(self):
         self.atem.performFadeToBlack()
         self.assert_sent_packet('FtbA', [0, 2, 0])
+
+########
+# Macros
+########
+    def testExecuteMacro(self):
+        # First let there be a macro to begin with
+        macro_name = "Awesome macro"
+        macro_description = "So awesome it will blow your mind. But not your circuitry."
+        self.send_command(
+            'MPrp',
+            [
+                0,
+                42,
+                1,
+                0
+            ] +
+            bytes_of(len(macro_name)) +
+            bytes_of(len(macro_description)) +
+            map(ord, macro_name) +
+            map(ord, macro_description)
+        )
+
+        self.atem.executeMacro(42)
+        self.assert_sent_packet('MAct', [42, MacroAction.RUN.value, 0])
+        self.atem._socket.reset_mock()
+
+        self.atem.executeMacroByName(macro_name)
+        self.assert_sent_packet('MAct', [42, MacroAction.RUN.value, 0])
+        self.atem._socket.reset_mock()
+
+        try:
+            self.atem.executeMacro(77)
+            self.fail("Should have failed to execute a non-existent macro")
+        except InvalidArgumentException:
+            pass

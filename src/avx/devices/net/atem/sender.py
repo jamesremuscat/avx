@@ -1,4 +1,4 @@
-from .constants import VideoSource
+from .constants import MacroAction, VideoSource
 from .utils import requiresInit, assertTopology
 from avx.devices.Device import InvalidArgumentException
 
@@ -150,3 +150,24 @@ class ATEMSender(object):
             'CDsF',
             [dsk - 1, 0] + self._resolveInputBytes(source)
         )
+
+########
+# Macros
+########
+
+    @requiresInit
+    def executeMacro(self, macro_index):
+        if macro_index not in self._config['macros']:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'MAct',
+            [macro_index, MacroAction.RUN.value, 0]
+        )
+
+    @requiresInit
+    def executeMacroByName(self, macro_name):
+        for idx, macro in self._config['macros'].iteritems():
+            if macro['name'] == macro_name:
+                self.executeMacro(idx)
+                return True
+        raise InvalidArgumentException

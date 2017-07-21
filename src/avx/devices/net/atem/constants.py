@@ -133,6 +133,15 @@ class TransitionStyle(Enum):
     STING = 4
 
 
+class MacroAction(Enum):
+    RUN = 0
+    STOP = 1
+    STOP_RECORD = 2
+    INSERT_WAIT = 3
+    CONTINUE = 4
+    DELETE = 5
+
+
 class MessageTypes(object):
     AUX_OUTPUT_MAPPING = "avx.devices.net.atem.atem.AuxOutputMapping"
     TALLY = "avx.devices.net.atem.atem.Tally"

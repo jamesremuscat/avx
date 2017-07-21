@@ -8,6 +8,10 @@ def byteArrayToString(byteArray):
     return ''.join(chr(b) for b in byteArray)
 
 
+def bytes_of(val):
+    return [(val >> 8), (val & 0xFF)]
+
+
 class NotInitializedException(Exception):
     pass
 
