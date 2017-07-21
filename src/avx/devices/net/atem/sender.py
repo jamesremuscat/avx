@@ -90,6 +90,21 @@ class ATEMSender(object):
             [me - 1, frames, 0x93, 0x07]
         )
 
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setFadeToBlackRate(self, frames, me=1):
+        if frames <= 0 or frames > 250:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'FtbC',
+            [1, me - 1, frames, 0]
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def performFadeToBlack(self, me=1):
+        self._sendCommand('FtbA', [me - 1, 0x02, 0])
+
 ########
 # DSK
 ########

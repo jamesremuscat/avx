@@ -343,6 +343,14 @@ class TestATEMReceiver(BaseATEMTest):
         self.send_command('TMxP', [1, 25, 0])
         self.assertEqual({1: {'mix': {'rate': 25}}}, self.atem._config['transitions'])
 
+    def testRecvFtbP(self):
+        self.send_command('FtbP', [0, 111, 0])
+        self.assertEqual({0: {'ftb': {'rate': 111}}}, self.atem._config['transitions'])
+
+    def testRecvFtbS(self):
+        self.send_command('FtbS', [0, 0, 1, 17])
+        self.assertEqual({0: {'ftb': {'full_black': False, 'in_transition': True, 'frames_remaining': 17}}}, self.atem._state['transition'])
+
 ########
 # DSK
 ########

@@ -254,3 +254,14 @@ class ATEMReceiver(object):
     def _recv_TMxP(self, data):
         meIndex = data[0]
         self._config['transitions'].setdefault(meIndex, {}).setdefault('mix', {})['rate'] = data[1]
+
+    def _recv_FtbP(self, data):
+        meIndex = data[0]
+        self._config['transitions'].setdefault(meIndex, {}).setdefault('ftb', {})['rate'] = data[1]
+
+    def _recv_FtbS(self, data):
+        meIndex = data[0]
+        ftb_state = self._state['transition'].setdefault(meIndex, {}).setdefault('ftb', {})
+        ftb_state['full_black'] = (data[1] > 0)
+        ftb_state['in_transition'] = (data[2] > 0)
+        ftb_state['frames_remaining'] = data[3]
