@@ -106,7 +106,7 @@ class TestATEMReceiver(BaseATEMTest):
         self.maxDiff = None
 
         expected = {
-            2: {
+            VideoSource.INPUT_2: {
                 'availability': {
                     'Auxilary': True,
                     'KeySource': False,

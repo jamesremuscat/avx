@@ -70,7 +70,7 @@ class ATEMReceiver(object):
         self._config['video_mode'] = VideoMode(data[0])
 
     def _recv_InPr(self, data):
-        index = struct.unpack('!H', data[0:2])[0]
+        index = VideoSource(struct.unpack('!H', data[0:2])[0])
         self._system_config['inputs'][index] = {}
         input_setting = self._system_config['inputs'][index]
         input_setting['name_long'] = convert_cstring(data[2:22])

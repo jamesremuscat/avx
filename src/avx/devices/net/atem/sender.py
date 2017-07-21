@@ -9,11 +9,11 @@ from avx.devices.Device import InvalidArgumentException
 class ATEMSender(object):
 
     def _resolveInputBytes(self, inputID):
-        if isinstance(inputID, VideoSource):
-            inputID = inputID.value
+        if not isinstance(inputID, VideoSource):
+            inputID = VideoSource(inputID)
         if inputID not in self._system_config['inputs'].keys():
             raise InvalidArgumentException()
-        return [(inputID >> 8), (inputID & 0xFF)]
+        return [(inputID.value >> 8), (inputID.value & 0xFF)]
 
     @requiresInit
     @assertTopology('aux_busses', 'auxChannel')
