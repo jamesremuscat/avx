@@ -133,6 +133,7 @@ class TestATEMReceiver(BaseATEMTest):
         }
 
         self.assertEqual(expected, self.atem._system_config['inputs'])
+        self.assertEqual(expected, self.atem.getInputs())
 
     def testRecvMvPr(self):
         self.send_command('MvPr', [0, 2, 0])
@@ -183,6 +184,7 @@ class TestATEMReceiver(BaseATEMTest):
     def testRecvAuxS(self):
         self.send_command('AuxS', [1, 0, 0x27, 0x1A])
         self.assertEqual(VideoSource.ME_1_PROGRAM, self.atem._state['aux'][1])
+        self.assertEqual({1: VideoSource.ME_1_PROGRAM}, self.atem.getAuxState())
         self.atem.broadcast.assert_called_once_with(MessageTypes.AUX_OUTPUT_MAPPING, {1: VideoSource.ME_1_PROGRAM})
 
 ########

@@ -1,6 +1,7 @@
 from avx.devices import Device
 from .constants import CMD_ACK, CMD_ACKREQUEST, CMD_HELLOPACKET, SIZE_OF_HEADER
 from .utils import byteArrayToString
+from .getter import ATEMGetter
 from .sender import ATEMSender
 from .receiver import ATEMReceiver
 
@@ -16,7 +17,7 @@ import time
 # - https://github.com/mraerino/PyATEM
 
 
-class ATEM(Device, ATEMSender, ATEMReceiver):
+class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
 
     def __init__(self, deviceID, ipAddr, port=9910, **kwargs):
         super(ATEM, self).__init__(deviceID, **kwargs)
