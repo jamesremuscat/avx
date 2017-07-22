@@ -6,3 +6,6 @@ class ATEMGetter(object):
 
     def getAuxState(self):
         return self._state['aux']
+
+    def getTally(self):
+        return self._state['tally']
