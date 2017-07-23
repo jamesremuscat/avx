@@ -121,6 +121,16 @@ class ATEMSender(object):
 
     @requiresInit
     # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
+    def setDSKOnAir(self, dsk, onAir):
+        if dsk <= 0 or dsk > 2:
+            raise InvalidArgumentException
+        self._sendCommand(
+            'CDsL',
+            [dsk - 1, 1 if onAir else 0, 0xBE, 0x07]
+        )
+
+    @requiresInit
+    # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
     def setDSKRate(self, dsk, rate):
         if dsk <= 0 or dsk > 2:
             raise InvalidArgumentException

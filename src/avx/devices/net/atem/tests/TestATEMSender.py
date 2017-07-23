@@ -95,6 +95,10 @@ class TestATEMSender(BaseATEMTest):
         self.atem.performDSKAuto(1)
         self.assert_sent_packet('DDsA', [0, 0, 0, 0])
 
+    def testSetDSKOnAir(self):
+        self.atem.setDSKOnAir(1, True)
+        self.assert_sent_packet('CDsL', [0, 1, 0xBE, 0x07])
+
     def testSetDSKRate(self):
         self.atem.setDSKRate(1, 200)
         self.assert_sent_packet('CDsR', [0, 200, 0xAA, 0X07])
