@@ -401,7 +401,7 @@ class TestATEMReceiver(BaseATEMTest):
         self.assertEqual(expected.keys(), self.atem._state['tally'].keys())
         for k in expected.keys():
             self.assertEqual(expected[k], self.atem._state['tally'][k])
-        self.atem.broadcast.assert_called_once_with('avx.devices.net.atem.atem.Tally', expected)
+        self.atem.broadcast.assert_called_once_with('avx.devices.net.atem.Tally', expected)
 
     def testRecvMPrp(self):
         macro_name = "Awesome macro"
