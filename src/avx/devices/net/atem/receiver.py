@@ -118,6 +118,7 @@ class ATEMReceiver(object):
         dsk_setting['in_transition'] = (data[2] != 0)
         dsk_setting['auto_transitioning'] = (data[3] != 0)
         dsk_setting['frames_remaining'] = data[4]
+        self.broadcast(MessageTypes.DSK_STATE, self._state['dskeyers'])
 
     def _recv_DskP(self, data):
         keyer = data[0]

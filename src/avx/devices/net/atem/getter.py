@@ -9,3 +9,6 @@ class ATEMGetter(object):
 
     def getTally(self):
         return self._state['tally']
+
+    def getDSKState(self):
+        return self._state['dskeyers']
