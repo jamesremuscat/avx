@@ -111,6 +111,10 @@ class TestATEMSender(BaseATEMTest):
         self.atem.setDSKFillSource(1, VideoSource.COLOUR_BARS)
         self.assert_sent_packet('CDsF', [0, 0] + bytes_of(VideoSource.COLOUR_BARS.value))
 
+    def testSetDSKParams(self):
+        self.atem.setDSKParams(1, clip=250, gain=750, preMultiplied=False)
+        self.assert_sent_packet('CDsG', [0x07, 0, 0, 0, 0, 0xFA, 0x02, 0xEE, 0, 0, 0, 0])
+
     def testSetFadeToBlackRate(self):
         self.atem.setFadeToBlackRate(127)
         self.assert_sent_packet('FtbC', [1, 0, 127, 0])

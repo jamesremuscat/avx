@@ -1,5 +1,5 @@
 from .constants import MacroAction, VideoSource
-from .utils import requiresInit, assertTopology
+from .utils import requiresInit, assertTopology, bytes_of
 from avx.devices.Device import InvalidArgumentException
 
 
@@ -159,6 +159,45 @@ class ATEMSender(object):
         self._sendCommand(
             'CDsF',
             [dsk - 1, 0] + self._resolveInputBytes(source)
+        )
+
+    @requiresInit
+    # @assertTopology('dsks', 'dsk')  # FSR the ATEM 2 M/E is reporting 0 DSKs rather than 2 :(
+    def setDSKParams(self, dsk, preMultiplied=None, clip=None, gain=None):
+        if dsk <= 0 or dsk > 2:
+            raise InvalidArgumentException
+        if clip:
+            if clip < 0 or clip > 1000:
+                raise InvalidArgumentException
+        if gain:
+            if gain < 0 or gain > 1000:
+                raise InvalidArgumentException
+
+        set_mask = 0
+        if preMultiplied is not None:
+            set_mask |= 1
+        if clip is not None:
+            set_mask |= 2
+        else:
+            clip = 0
+        if gain is not None:
+            set_mask |= 4
+        else:
+            gain = 0
+
+        self._sendCommand(
+            'CDsG',
+            [
+                set_mask,
+                dsk - 1,
+                1 if preMultiplied else 0,
+                0
+            ] +
+            bytes_of(clip) +
+            bytes_of(gain) +
+            [
+                0, 0, 0, 0
+            ]
         )
 
 ########
