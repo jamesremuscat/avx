@@ -111,4 +111,4 @@ class HyperDeck(Device):
         self._store_state('transport', extra, mapping)
 
     def _recv_508(self, payload, extra):
-        self._store_state('transport', extra)
+        self._recv_208(payload, extra)

@@ -45,3 +45,12 @@ loop: false
         self.assertEqual(TransportState.PREVIEW, self.deck._state['transport']['status'])
         self.assertEqual(100, self.deck._state['transport']['speed'])
         self.assertEqual(False, self.deck._state['transport']['loop'])
+
+        self._handle_data(
+            '''508 transport info:
+status: play
+loop: true
+'''
+        )
+        self.assertEqual(TransportState.PLAYING, self.deck._state['transport']['status'])
+        self.assertEqual(True, self.deck._state['transport']['loop'])
