@@ -102,3 +102,15 @@ status: error
             }
         }
         self.assertEqual(expected, self.deck.getSlotsState())
+
+    def testRecord(self):
+        self.deck.record()
+        self.deck.socket.send.assert_called_once_with('record\r\n')
+        self.deck.socket.send.reset_mock()
+
+        self.deck.record('my clip name')
+        self.deck.socket.send.assert_called_once_with('record: name: my clip name\r\n')
+
+    def testStop(self):
+        self.deck.stop()
+        self.deck.socket.send.assert_called_once_with('stop\r\n')

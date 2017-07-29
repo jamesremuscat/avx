@@ -152,3 +152,15 @@ class HyperDeck(Device):
 
     def getSlotsState(self):
         return self._state['slots']
+
+########
+# Transport controls
+########
+    def record(self, clip_name=None):
+        if clip_name:
+            self.socket.send('record: name: {}\r\n'.format(clip_name))
+        else:
+            self.socket.send('record\r\n')
+
+    def stop(self):
+        self.socket.send('stop\r\n')
