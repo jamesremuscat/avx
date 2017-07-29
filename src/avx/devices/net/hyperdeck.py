@@ -24,7 +24,8 @@ class HyperDeck(Device):
 
     def _initialiseState(self):
         self._state = {
-            'connection': {}
+            'connection': {},
+            'transport': {}
         }
 
     def deinitialise(self):
@@ -42,7 +43,7 @@ class HyperDeck(Device):
                 # we need to check for a completed message - that is,
                 # one with an empty line at the end
                 self._data_buffer += data
-                if self._data_buffer[-4:] == "\r\n\r\n":
+                if self._data_buffer[-4:] == "\r\n\r\n" or (":" not in self._data_buffer and self._data_buffer[-2:] == "\r\n"):
                     self._handle_data(self._data_buffer)
                     self._data_buffer = ''
 
@@ -61,9 +62,18 @@ class HyperDeck(Device):
         else:
             self.log.debug("Unhandled packet type {}: {}".format(code, payload))
 
-    def _recv_500(self, payload, extra):
-        for paramline in extra:
+    def _store_state(self, key, paramlines):
+        for paramline in paramlines:
             param, value = paramline.split(": ")
-            self._state['connection'][param] = value
+            self._state[key][param] = value
+
+    def _recv_200(self, payload, extra):
+        pass  # OK
+
+    def _recv_500(self, payload, extra):
+        self._store_state('connection', extra)
         self.socket.send('transport info\r\n')
         self.socket.send('notify: transport: true\r\n')
+
+    def _recv_208(self, payload, extra):
+        self._store_state('transport', extra)
