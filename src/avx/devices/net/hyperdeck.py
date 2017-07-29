@@ -15,10 +15,17 @@ class HyperDeck(Device):
         self.socket.connect(self.remote)
         self._run_recv_thread = True
         self._data_buffer = ''
+        self._initialiseState()
+
         if not (self._recv_thread and self._recv_thread.is_alive()):
             self._recv_thread = Thread(target=self._receive)
             self._recv_thread.daemon = True
             self._recv_thread.start()
+
+    def _initialiseState(self):
+        self._state = {
+            'connection': {}
+        }
 
     def deinitialise(self):
         self._run_recv_thread = False
@@ -55,4 +62,8 @@ class HyperDeck(Device):
             self.log.debug("Unhandled packet type {}: {}".format(code, payload))
 
     def _recv_500(self, payload, extra):
-        print payload, extra
+        for paramline in extra:
+            param, value = paramline.split(": ")
+            self._state['connection'][param] = value
+        self.socket.send('transport info\r\n')
+        self.socket.send('notify: transport: true\r\n')
