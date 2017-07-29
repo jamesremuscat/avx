@@ -92,7 +92,6 @@ class HyperDeck(Device):
             payload = payload[0]
 
         handler_method_name = "_recv_{}".format(code)
-        print code, payload, extra
         if hasattr(self, handler_method_name) and callable(getattr(self, handler_method_name)):
             getattr(self, handler_method_name)(payload, extra)
         else:
