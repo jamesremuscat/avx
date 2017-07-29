@@ -1,5 +1,5 @@
 import unittest
-from avx.devices.net.hyperdeck import HyperDeck
+from avx.devices.net.hyperdeck import HyperDeck, TransportState
 from mock import MagicMock, call
 
 
@@ -41,4 +41,4 @@ loop: false\r
 '''
         )
 
-        self.assertEqual('preview', self.deck._state['transport']['status'])
+        self.assertEqual(TransportState.PREVIEW, self.deck._state['transport']['status'])

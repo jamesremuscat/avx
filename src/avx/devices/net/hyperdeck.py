@@ -1,7 +1,19 @@
 from avx.devices.Device import Device
+from enum import Enum
 from socket import socket
 from threading import Thread
 from time import sleep
+
+
+class TransportState(Enum):
+    PREVIEW = 'preview'
+    STOPPED = 'stopped'
+    PLAYING = 'play'
+    FORWARD = 'forward'
+    REWIND = 'rewind'
+    JOG = 'jog'
+    SHUTTLE = 'shuttle'
+    RECORD = 'record'
 
 
 class HyperDeck(Device):
@@ -62,10 +74,10 @@ class HyperDeck(Device):
         else:
             self.log.debug("Unhandled packet type {}: {}".format(code, payload))
 
-    def _store_state(self, key, paramlines):
+    def _store_state(self, key, paramlines, mapping={}):
         for paramline in paramlines:
             param, value = paramline.split(": ")
-            self._state[key][param] = value
+            self._state[key][param] = mapping.get(param, lambda a: a)(value)
 
     def _recv_200(self, payload, extra):
         pass  # OK
@@ -76,4 +88,10 @@ class HyperDeck(Device):
         self.socket.send('notify: transport: true\r\n')
 
     def _recv_208(self, payload, extra):
+        mapping = {
+            'status': lambda s: TransportState(s)
+        }
+        self._store_state('transport', extra, mapping)
+
+    def _recv_508(self, payload, extra):
         self._store_state('transport', extra)
