@@ -1,5 +1,5 @@
 import unittest
-from avx.devices.net.hyperdeck import HyperDeck, TransportState
+from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState
 from mock import MagicMock, call
 
 
@@ -24,7 +24,7 @@ model: Test HyperDeck
         self.assertEqual('1234', self.deck._state['connection']['protocol version'])
         self.assertEqual('Test HyperDeck', self.deck._state['connection']['model'])
         self.assertEqual(
-            [call.send('transport info\r\n'), call.send('notify: transport: true\r\n')],
+            [call.send('transport info\r\n'), call.send('slot info\r\n'), call.send('notify: transport: true slot: true\r\n')],
             self.deck.socket.method_calls
         )
 
@@ -54,3 +54,28 @@ loop: true
         )
         self.assertEqual(TransportState.PLAYING, self.deck._state['transport']['status'])
         self.assertEqual(True, self.deck._state['transport']['loop'])
+
+    def testReceiveSlotInfo(self):
+        self._handle_data(
+            '''202 slot info:
+slot id: 1
+status: mounted
+volume name: Media
+recording time: 97
+video format: 1080p25
+'''
+        )
+
+        self.assertEqual(97, self.deck._state['slots'][1]['recording time'])
+        self.assertEqual(SlotState.MOUNTED, self.deck._state['slots'][1]['status'])
+        self.assertEqual('Media', self.deck._state['slots'][1]['volume name'])
+
+        self._handle_data(
+            '''502 slot info:
+slot id: 1
+status: error
+'''
+        )
+
+        self.assertEqual(97, self.deck._state['slots'][1]['recording time'])
+        self.assertEqual(SlotState.ERROR, self.deck._state['slots'][1]['status'])

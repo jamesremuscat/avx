@@ -16,6 +16,13 @@ class TransportState(Enum):
     RECORD = 'record'
 
 
+class SlotState(Enum):
+    EMPTY = 'empty'
+    MOUNTING = 'mounting'
+    ERROR = 'error'
+    MOUNTED = 'mounted'
+
+
 def _bool(string):
     if string == "true":
         return True
@@ -50,6 +57,7 @@ class HyperDeck(Device):
     def _initialiseState(self):
         self._state = {
             'connection': {},
+            'slots': {},
             'transport': {}
         }
 
@@ -68,8 +76,10 @@ class HyperDeck(Device):
                 # we need to check for a completed message - that is,
                 # one with an empty line at the end
                 self._data_buffer += data
-                if self._data_buffer[-4:] == "\r\n\r\n" or (":" not in self._data_buffer and self._data_buffer[-2:] == "\r\n"):
-                    self._handle_data(self._data_buffer)
+                if self._data_buffer[-2:] == "\r\n":
+                    for msg in self._data_buffer.split('\r\n\r\n'):
+                        if msg != '':
+                            self._handle_data(msg)
                     self._data_buffer = ''
 
     def _handle_data(self, data):
@@ -82,23 +92,25 @@ class HyperDeck(Device):
             payload = payload[0]
 
         handler_method_name = "_recv_{}".format(code)
+        print code, payload, extra
         if hasattr(self, handler_method_name) and callable(getattr(self, handler_method_name)):
             getattr(self, handler_method_name)(payload, extra)
         else:
-            self.log.debug("Unhandled packet type {}: {}".format(code, payload))
+            self.log.debug("Unhandled packet type {}: {} <{}>".format(code, payload, extra))
 
-    def _store_state(self, key, paramlines, mapping={}):
+    def _store_state(self, store, paramlines, mapping={}):
         for paramline in paramlines:
             param, value = paramline.split(": ")
-            self._state[key][param] = mapping.get(param, lambda a: a)(value)
+            store[param] = mapping.get(param, lambda a: a)(value)
 
     def _recv_200(self, payload, extra):
         pass  # OK
 
     def _recv_500(self, payload, extra):
-        self._store_state('connection', extra)
+        self._store_state(self._state['connection'], extra)
         self.socket.send('transport info\r\n')
-        self.socket.send('notify: transport: true\r\n')
+        self.socket.send('slot info\r\n')
+        self.socket.send('notify: transport: true slot: true\r\n')
 
     def _recv_208(self, payload, extra):
         mapping = {
@@ -108,7 +120,24 @@ class HyperDeck(Device):
             'speed': _int,
             'slot id': _int
         }
-        self._store_state('transport', extra, mapping)
+        self._store_state(self._state['transport'], extra, mapping)
 
     def _recv_508(self, payload, extra):
         self._recv_208(payload, extra)
+
+    def _recv_202(self, payload, extra):
+        slot = -1
+        for e in extra:
+            if e.startswith('slot id:'):
+                slot = int(e[8:])
+
+        mapping = {
+            'recording time': _int,
+            'slot id': _int,
+            'status': SlotState
+        }
+
+        self._store_state(self._state['slots'].setdefault(slot, {}), extra, mapping)
+
+    def _recv_502(self, payload, extra):
+        self._recv_202(payload, extra)
