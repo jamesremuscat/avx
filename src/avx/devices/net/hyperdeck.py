@@ -30,6 +30,8 @@ def _bool(string):
 
 
 def _int(string):
+    if string == "none":
+        return None
     try:
         return int(string)
     except ValueError:
@@ -113,6 +115,7 @@ class HyperDeck(Device):
 
     def _recv_208(self, payload, extra):
         mapping = {
+            'clip id': _int,
             'status': TransportState,
             'loop': _bool,
             'single clip': _bool,
@@ -140,3 +143,12 @@ class HyperDeck(Device):
 
     def _recv_502(self, payload, extra):
         self._recv_202(payload, extra)
+
+########
+# Getters
+########
+    def getTransportState(self):
+        return self._state['transport']
+
+    def getSlotsState(self):
+        return self._state['slots']

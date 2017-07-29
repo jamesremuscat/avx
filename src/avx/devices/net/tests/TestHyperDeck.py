@@ -55,6 +55,18 @@ loop: true
         self.assertEqual(TransportState.PLAYING, self.deck._state['transport']['status'])
         self.assertEqual(True, self.deck._state['transport']['loop'])
 
+        expected = {
+            'status': TransportState.PLAYING,
+            'speed': 100,
+            'slot id': None,
+            'display timecode': '1:2:3',
+            'timecode': 'foo',
+            'clip id': None,
+            'video format': '1080p25',
+            'loop': True
+        }
+        self.assertEqual(expected, self.deck.getTransportState())
+
     def testReceiveSlotInfo(self):
         self._handle_data(
             '''202 slot info:
@@ -79,3 +91,14 @@ status: error
 
         self.assertEqual(97, self.deck._state['slots'][1]['recording time'])
         self.assertEqual(SlotState.ERROR, self.deck._state['slots'][1]['status'])
+
+        expected = {
+            1: {
+                'slot id': 1,
+                'status': SlotState.ERROR,
+                'volume name': 'Media',
+                'recording time': 97,
+                'video format': '1080p25'
+            }
+        }
+        self.assertEqual(expected, self.deck.getSlotsState())
