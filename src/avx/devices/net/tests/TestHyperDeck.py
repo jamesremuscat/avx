@@ -10,13 +10,14 @@ class TestHyperDeck(unittest.TestCase):
         self.deck.broadcast = MagicMock()
         self.deck._initialiseState()
 
+    def _handle_data(self, msg):
+        self.deck._handle_data(msg.replace('\n', '\r\n'))
+
     def testReceiveInit(self):
-        self.deck._handle_data(
-            '''500 connection info:\r
-protocol version: 1234\r
-model: Test HyperDeck\r
-\r
-\r
+        self._handle_data(
+            '''500 connection info:
+protocol version: 1234
+model: Test HyperDeck
 '''
         )
 
@@ -28,17 +29,19 @@ model: Test HyperDeck\r
         )
 
     def testReceiveTransportInfo(self):
-        self.deck._handle_data(
-            '''208 transport info:\r
-status: preview\r
-speed: 100\r
-slot id: none\r
-display timecode: 1:2:3\r
-timecode: foo\r
-clip id: none\r
-video format: 1080p25\r
-loop: false\r
+        self._handle_data(
+            '''208 transport info:
+status: preview
+speed: 100
+slot id: none
+display timecode: 1:2:3
+timecode: foo
+clip id: none
+video format: 1080p25
+loop: false
 '''
         )
 
         self.assertEqual(TransportState.PREVIEW, self.deck._state['transport']['status'])
+        self.assertEqual(100, self.deck._state['transport']['speed'])
+        self.assertEqual(False, self.deck._state['transport']['loop'])

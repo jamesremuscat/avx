@@ -16,6 +16,19 @@ class TransportState(Enum):
     RECORD = 'record'
 
 
+def _bool(string):
+    if string == "true":
+        return True
+    return False
+
+
+def _int(string):
+    try:
+        return int(string)
+    except ValueError:
+        return string
+
+
 class HyperDeck(Device):
     def __init__(self, deviceID, ipAddress, port=9993):
         super(HyperDeck, self).__init__(deviceID)
@@ -89,7 +102,11 @@ class HyperDeck(Device):
 
     def _recv_208(self, payload, extra):
         mapping = {
-            'status': lambda s: TransportState(s)
+            'status': TransportState,
+            'loop': _bool,
+            'single clip': _bool,
+            'speed': _int,
+            'slot id': _int
         }
         self._store_state('transport', extra, mapping)
 
