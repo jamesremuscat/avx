@@ -4,11 +4,32 @@ Created on 18 Mar 2013
 @author: jrem
 '''
 from avx.devices.serial.tests.MockSerialPort import MockSerialPort
-from avx.devices.serial.VISCACamera import VISCACamera, Aperture
+from avx.devices.serial.VISCACamera import VISCACamera, Aperture, VISCAPort
+from mock import MagicMock
 from threading import Thread
 from time import sleep
 
 import unittest
+
+
+class TestVISCAPort(unittest.TestCase):
+    def testPassThroughWrittenData(self):
+        port = MagicMock()
+        vp = VISCAPort("Cameras", port)
+
+        vp.write("AABBCCDD")
+        port.write.assert_called_once_with("AABBCCDD")
+
+    def testPassThroughReadData(self):
+        port = MagicMock()
+        vp = VISCAPort("Cameras", port)
+
+        camera = MagicMock()
+        vp.addCamera(1, camera)
+
+        vp.handleMessage([0x90, 0x50, 0xAA, 0xFF])  # This message should be forwarded
+        vp.handleMessage([0xA0, 0x40, 0xBB, 0xFF])  # This message should be swallowed
+        camera.handleMessage.assert_called_once_with([0x90, 0x50, 0xAA, 0xFF])
 
 
 class TestVISCACamera(unittest.TestCase):

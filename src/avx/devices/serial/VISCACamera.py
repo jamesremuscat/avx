@@ -28,6 +28,36 @@ def constrainPanTiltSpeed(func):
     return inner
 
 
+class VISCAPort(SerialDevice):
+    '''
+    A serial port through which one or more VISCA cameras are controlled.
+    '''
+
+    def __init__(self, deviceID, serialDevice, **kwargs):
+        super(VISCAPort, self).__init__(deviceID, serialDevice, **kwargs)
+        self._cameras = {}
+
+    def addCamera(self, cameraID, camera):
+        self._cameras[cameraID] = camera
+
+    def hasFullMessage(self, recv_buffer):
+        return len(recv_buffer) > 0 and recv_buffer[-1] == 0xFF
+
+    def handleMessage(self, msgBytes):
+        responseAddress = ((msgBytes[0] & 0xF0) >> 4) - 8
+        if responseAddress in self._cameras:
+            self._cameras[responseAddress].handleMessage(msgBytes)
+
+    def write(self, data):
+        self.port.write(data)
+
+    def open(self):
+        self.port.open()
+
+    def close(self):
+        self.port.close()
+
+
 class VISCACamera(SerialDevice):
     '''
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
@@ -37,13 +67,27 @@ class VISCACamera(SerialDevice):
     spew commands as often as we're asked to.
     '''
 
-    def __init__(self, deviceID, serialDevice, cameraID, **kwargs):
-        super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
+    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, **kwargs):
+        if viscaPort is None or controller is None:
+            super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
+            self._isSharedPort = False
+        else:
+            self.port = controller.getDevice(viscaPort)
+            self._isSharedPort = True
+            self.port.addCamera(cameraID, self)
         self.cameraID = cameraID
         self._wait_for_ack = Lock()
         self._wait_for_response = Lock()
         self._response_received = Event()
         self._last_response = None
+
+    def initialise(self):
+        if not self._isSharedPort:
+            SerialDevice.initialise(self)
+
+    def deinitialise(self):
+        if not self._isSharedPort:
+            SerialDevice.deinitialise(self)
 
     def sendVISCA(self, commandBytes):
         self._wait_for_ack.acquire()
