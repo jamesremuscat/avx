@@ -61,10 +61,6 @@ class VISCAPort(SerialDevice):
 class VISCACamera(SerialDevice):
     '''
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
-
-    Limitation: 'proper' VISCA requires waiting for an ACK/NACK from camera
-    before sending next command. We completely ignore ACKs and NACKs and just
-    spew commands as often as we're asked to.
     '''
 
     def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, **kwargs):
