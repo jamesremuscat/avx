@@ -10,6 +10,7 @@ from enum import Enum
 from threading import Lock, ThreadError, Event
 
 import logging
+from avx.devices.Device import Device
 
 
 # Pan speeds can vary from 0x01 - 0x18
@@ -69,6 +70,7 @@ class VISCACamera(SerialDevice):
             super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
             self._isSharedPort = False
         else:
+            Device.__init__(self, deviceID)
             self.port = controller.getDevice(viscaPort)
             self._isSharedPort = True
             self.port.addCamera(cameraID, self)
