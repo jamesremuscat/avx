@@ -145,8 +145,6 @@ class Controller(object):
         if self.hasDevice(device.deviceID):
             raise DuplicateDeviceIDError(device.deviceID)
         self.devices[device.deviceID] = device
-        if hasattr(device, "registerDispatcher") and callable(getattr(device, "registerDispatcher")):
-            device.registerDispatcher(self)
         device.broadcast = lambda t, b: self.broadcast(t, device.deviceID, b)
 
     def getDevice(self, deviceID):
