@@ -36,6 +36,7 @@ class VISCAPort(SerialDevice):
     def __init__(self, deviceID, serialDevice, **kwargs):
         super(VISCAPort, self).__init__(deviceID, serialDevice, **kwargs)
         self._cameras = {}
+        self.portstr = self.port.portstr
 
     def addCamera(self, cameraID, camera):
         self._cameras[cameraID] = camera

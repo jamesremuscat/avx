@@ -31,6 +31,19 @@ class TestVISCAPort(unittest.TestCase):
         vp.handleMessage([0xA0, 0x40, 0xBB, 0xFF])  # This message should be swallowed
         camera.handleMessage.assert_called_once_with([0x90, 0x50, 0xAA, 0xFF])
 
+    def testRegisterCamera(self):
+        port = MagicMock()
+        vp = VISCAPort("Cameras", port)
+        controller = MagicMock()
+        controller.getDevice.return_value = vp
+
+        camera = VISCACamera("Test", None, 1, viscaPort='Cameras', controller=controller)
+        controller.getDevice.assert_called_once_with('Cameras')
+        self.assertEqual({1: camera}, vp._cameras)
+
+        camera.moveUp()
+        port.write.assert_called_once_with('\x81\x01\x06\x01\x06\x06\x03\x01\xff')
+
 
 class TestVISCACamera(unittest.TestCase):
 
