@@ -41,3 +41,15 @@ class TestDatavideo(unittest.TestCase):
         port.write.assert_called_once_with('\x81\x01\x7E\x01\x0A\x00\x03\xFF')
         port.reset_mock()
         camera._wait_for_ack.release()
+
+    def checkPan(self, pan):
+        if pan < 1 or pan > 0x18:
+            raise InvalidArgumentException()
+
+    def checkTilt(self, tilt):
+        if tilt < 1 or tilt > 0x18:
+            raise InvalidArgumentException()
+
+    def checkZoom(self, zoom):
+        if zoom < 1 or zoom > 7:
+            raise InvalidArgumentException()

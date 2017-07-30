@@ -22,8 +22,8 @@ DEFAULT_ZOOM_SPEED = 0x06
 
 def constrainPanTiltSpeed(func):
     def inner(elf, panSpeed=DEFAULT_PAN_SPEED, tiltSpeed=DEFAULT_TILT_SPEED):
-        checkPan(panSpeed)
-        checkTilt(tiltSpeed)
+        elf.checkPan(panSpeed)
+        elf.checkTilt(tiltSpeed)
         func(elf, panSpeed, tiltSpeed)
     return inner
 
@@ -96,11 +96,11 @@ class VISCACamera(SerialDevice):
         return self.sendVISCA([0x01, 0x06, 0x01, pan, tilt, 0x03, 0x03])
 
     def zoomIn(self, speed=DEFAULT_ZOOM_SPEED):
-        checkZoom(speed)
+        self.checkZoom(speed)
         return self.sendVISCA([0x01, 0x04, 0x07, 0x20 + speed])
 
     def zoomOut(self, speed=DEFAULT_ZOOM_SPEED):
-        checkZoom(speed)
+        self.checkZoom(speed)
         return self.sendVISCA([0x01, 0x04, 0x07, 0x30 + speed])
 
     def zoomStop(self):
@@ -290,6 +290,18 @@ class VISCACamera(SerialDevice):
 
         return ret
 
+    def checkPan(self, pan):
+        if pan < 1 or pan > 0x18:
+            raise InvalidArgumentException()
+
+    def checkTilt(self, tilt):
+        if tilt < 1 or tilt > 0x16:
+            raise InvalidArgumentException()
+
+    def checkZoom(self, zoom):
+        if zoom < 2 or zoom > 7:
+            raise InvalidArgumentException()
+
 
 class Aperture(Enum):
     CLOSE = (0x00, "Closed")
@@ -364,18 +376,3 @@ class Gain(Enum):
     def __init__(self, code, label):
         self.code = code
         self.label = label
-
-
-def checkPan(pan):
-    if pan < 1 or pan > 0x18:
-        raise InvalidArgumentException()
-
-
-def checkTilt(tilt):
-    if tilt < 1 or tilt > 0x16:
-        raise InvalidArgumentException()
-
-
-def checkZoom(zoom):
-    if zoom < 2 or zoom > 7:
-        raise InvalidArgumentException()
