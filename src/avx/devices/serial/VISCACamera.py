@@ -32,6 +32,15 @@ def constrainPanTiltSpeed(func):
 class VISCAPort(SerialDevice):
     '''
     A serial port through which one or more VISCA cameras are controlled.
+
+    Note that, for backwards compatibility, in order to use a shared port,
+    a VISCACamera needs a serialDevice specified as None, and a controller,
+    in its constructor. If you're using a Controller, you only need
+    worry about the former (the controller is passed in automatically).
+
+    A controller is required as the viscaPort is passed in by device ID, and
+    looked up in the controller. (This means you should define your VISCAPort
+    first in your controller config, then any cameras attached to it.)
     '''
 
     def __init__(self, deviceID, serialDevice, **kwargs):
