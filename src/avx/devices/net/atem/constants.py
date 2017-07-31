@@ -143,6 +143,8 @@ class MacroAction(Enum):
 
 
 class MessageTypes(object):
-    AUX_OUTPUT_MAPPING = "avx.devices.net.atem.AuxOutputMapping"
-    TALLY = "avx.devices.net.atem.Tally"
-    DSK_STATE = "avx.devices.net.atem.DownstreamKeyerState"
+    _PREFIX = "avx.devices.net.atem."
+    AUX_OUTPUT_MAPPING = _PREFIX + "AuxOutputMapping"
+    TALLY = _PREFIX + "Tally"
+    DSK_STATE = _PREFIX + "DownstreamKeyerState"
+    INPUTS_CHANGED = _PREFIX + "InputsChanged"

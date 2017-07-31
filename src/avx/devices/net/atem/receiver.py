@@ -81,6 +81,7 @@ class ATEMReceiver(object):
         input_setting['availability'] = parseBitmask(data[32], ['Auxilary', 'Multiviewer', 'SuperSourceArt',
                                                                 'SuperSourceBox', 'KeySource'])
         input_setting['me_availability'] = parseBitmask(data[33], ['ME1', 'ME2'])
+        self.broadcast(MessageTypes.INPUTS_CHANGED, None)
 
     def _recv_MvPr(self, data):
         index = data[0]
