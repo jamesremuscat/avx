@@ -78,7 +78,7 @@ class ATEMReceiver(object):
         input_setting['types_available'] = parseBitmask(data[27], LABELS_PORTS_EXTERNAL)
         input_setting['port_type_external'] = ExternalPortType(data[29])
         input_setting['port_type_internal'] = PortType(data[30])
-        input_setting['availability'] = parseBitmask(data[32], ['Auxilary', 'Multiviewer', 'SuperSourceArt',
+        input_setting['availability'] = parseBitmask(data[32], ['Auxiliary', 'Multiviewer', 'SuperSourceArt',
                                                                 'SuperSourceBox', 'KeySource'])
         input_setting['me_availability'] = parseBitmask(data[33], ['ME1', 'ME2'])
         self.broadcast(MessageTypes.INPUTS_CHANGED, None)

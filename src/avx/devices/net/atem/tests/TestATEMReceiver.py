@@ -108,7 +108,7 @@ class TestATEMReceiver(BaseATEMTest):
         expected = {
             VideoSource.INPUT_2: {
                 'availability': {
-                    'Auxilary': True,
+                    'Auxiliary': True,
                     'KeySource': False,
                     'Multiviewer': True,
                     'SuperSourceArt': True,
