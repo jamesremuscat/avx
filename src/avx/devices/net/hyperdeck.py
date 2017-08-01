@@ -172,3 +172,16 @@ class HyperDeck(Device):
 
     def stop(self):
         self.socket.send('stop\r\n')
+
+    def play(self, single_clip=None, speed=None, loop=None):
+        if single_clip is None and speed is None and loop is None:
+            self.socket.send('play\r\n')
+        else:
+            cmd = 'play: '
+            if single_clip is not None:
+                cmd += 'single clip: {} '.format('true' if single_clip else 'false')
+            if speed is not None:
+                cmd += 'speed: {} '.format(speed)
+            if loop is not None:
+                cmd += 'loop: {} '.format('true' if loop else 'false')
+            self.socket.send(cmd.strip() + '\r\n')

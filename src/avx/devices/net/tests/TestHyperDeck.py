@@ -121,3 +121,12 @@ status: error
     def testStop(self):
         self.deck.stop()
         self.deck.socket.send.assert_called_once_with('stop\r\n')
+
+    def testPlay(self):
+        self.deck.play()
+        self.deck.socket.send.assert_called_once_with('play\r\n')
+        self.deck.socket.send.reset_mock()
+
+        self.deck.play(single_clip=False, speed=20, loop=True)
+        self.deck.socket.send.assert_called_once_with('play: single clip: false speed: 20 loop: true\r\n')
+        self.deck.socket.send.reset_mock()
