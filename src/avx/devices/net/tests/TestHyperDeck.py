@@ -121,6 +121,7 @@ status: error
     def testStop(self):
         self.deck.stop()
         self.deck.socket.send.assert_called_once_with('stop\r\n')
+        self.assertEqual(TransportState.STOPPED, self.deck._state['transport']['status'])
 
     def testPlay(self):
         self.deck.play()

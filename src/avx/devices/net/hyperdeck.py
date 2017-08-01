@@ -190,6 +190,7 @@ class HyperDeck(Device):
 
     def stop(self):
         self.socket.send('stop\r\n')
+        self._state['transport']['status'] = TransportState.STOPPED  # Otherwise we don't get a notification about it
 
     def play(self, single_clip=None, speed=None, loop=None):
         if single_clip is None and speed is None and loop is None:
