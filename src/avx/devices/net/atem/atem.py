@@ -39,7 +39,9 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
             self.recv_thread.daemon = True
             self.recv_thread.start()
 
-        threading.Thread(target=self._connectToSwitcher).start()
+        connect = threading.Thread(target=self._connectToSwitcher)
+        connect.daemon = True
+        connect.start()
 
     def _initialiseState(self):
         self._packetCounter = 0
