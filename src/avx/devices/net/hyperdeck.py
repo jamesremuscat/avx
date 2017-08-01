@@ -45,8 +45,8 @@ def _int(string):
 
 
 class HyperDeck(Device):
-    def __init__(self, deviceID, ipAddress, port=9993):
-        super(HyperDeck, self).__init__(deviceID)
+    def __init__(self, deviceID, ipAddress, port=9993, **kwargs):
+        super(HyperDeck, self).__init__(deviceID, *kwargs)
         self.remote = (ipAddress, port)
         self._recv_thread = None
 
