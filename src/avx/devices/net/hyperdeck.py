@@ -86,6 +86,9 @@ class HyperDeck(Device):
 
     def deinitialise(self):
         self._run_recv_thread = False
+        self._isConnected = False
+        if self.socket:
+            self.socket.close()
 
     def _receive(self):
         while self._run_recv_thread:
