@@ -1,8 +1,9 @@
 from avx.devices.Device import Device
 from enum import Enum
-from socket import socket
 from threading import Thread
 from time import sleep
+
+import socket
 
 
 class TransportState(Enum):
@@ -49,18 +50,32 @@ class HyperDeck(Device):
         super(HyperDeck, self).__init__(deviceID, *kwargs)
         self.remote = (ipAddress, port)
         self._recv_thread = None
+        self._connect_thread = None
+        self._isConnected = False
+        self.socket = socket.socket()
 
     def initialise(self):
-        self.socket = socket()
-        self.socket.connect(self.remote)
         self._run_recv_thread = True
         self._data_buffer = ''
         self._initialiseState()
 
-        if not (self._recv_thread and self._recv_thread.is_alive()):
-            self._recv_thread = Thread(target=self._receive)
-            self._recv_thread.daemon = True
-            self._recv_thread.start()
+        if not self._connect_thread and not self._isConnected:
+            self._connect_thread = Thread(target=self._connect)
+            self._connect_thread.daemon = True
+            self._connect_thread.start()
+
+    def _connect(self):
+        while not self._isConnected:
+            try:
+                self.socket.connect(self.remote)
+                if not (self._recv_thread and self._recv_thread.is_alive()):
+                    self._recv_thread = Thread(target=self._receive)
+                    self._recv_thread.daemon = True
+                    self._recv_thread.start()
+                self._isConnected = True
+            except socket.error:
+                self.log.warn("Could not connect to {}, will retry.".format(self.remote))
+                sleep(5)
 
     def _initialiseState(self):
         self._state = {
