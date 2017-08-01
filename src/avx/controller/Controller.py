@@ -132,6 +132,7 @@ class Controller(object):
             try:
                 logging.debug("Calling handleMessage on client at {}".format(uri))
                 client = Pyro4.Proxy(uri)
+                client._pyroTimeout = 1
                 result = client.handleMessage(msgType, source, data)
                 logging.debug("Client call returned " + str(result))
             except Exception:
