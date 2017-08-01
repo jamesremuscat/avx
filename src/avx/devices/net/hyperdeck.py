@@ -23,6 +23,12 @@ class SlotState(Enum):
     MOUNTED = 'mounted'
 
 
+class MessageTypes(object):
+    _PREFIX = "avx.devices.net.hyperdeck."
+    TRANSPORT_STATE_CHANGED = _PREFIX + "TransportStateChanged"
+    SLOT_STATE_CHANGED = _PREFIX + "SlotStateChanged"
+
+
 def _bool(string):
     if string == "true":
         return True
@@ -123,6 +129,7 @@ class HyperDeck(Device):
             'slot id': _int
         }
         self._store_state(self._state['transport'], extra, mapping)
+        self.broadcast(MessageTypes.TRANSPORT_STATE_CHANGED, self._state['transport'])
 
     def _recv_508(self, payload, extra):
         self._recv_208(payload, extra)
@@ -140,6 +147,7 @@ class HyperDeck(Device):
         }
 
         self._store_state(self._state['slots'].setdefault(slot, {}), extra, mapping)
+        self.broadcast(MessageTypes.SLOT_STATE_CHANGED, self._state['slots'])
 
     def _recv_502(self, payload, extra):
         self._recv_202(payload, extra)

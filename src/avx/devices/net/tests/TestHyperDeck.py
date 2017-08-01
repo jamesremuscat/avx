@@ -1,5 +1,6 @@
 import unittest
-from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState
+from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState,\
+    MessageTypes
 from mock import MagicMock, call
 
 
@@ -46,6 +47,8 @@ loop: false
         self.assertEqual(100, self.deck._state['transport']['speed'])
         self.assertEqual(False, self.deck._state['transport']['loop'])
 
+        self.deck.broadcast.reset_mock()
+
         self._handle_data(
             '''508 transport info:
 status: play
@@ -66,6 +69,7 @@ loop: true
             'loop': True
         }
         self.assertEqual(expected, self.deck.getTransportState())
+        self.deck.broadcast.assert_called_once_with(MessageTypes.TRANSPORT_STATE_CHANGED, expected)
 
     def testReceiveSlotInfo(self):
         self._handle_data(
@@ -81,6 +85,8 @@ video format: 1080p25
         self.assertEqual(97, self.deck._state['slots'][1]['recording time'])
         self.assertEqual(SlotState.MOUNTED, self.deck._state['slots'][1]['status'])
         self.assertEqual('Media', self.deck._state['slots'][1]['volume name'])
+
+        self.deck.broadcast.reset_mock()
 
         self._handle_data(
             '''502 slot info:
@@ -102,6 +108,7 @@ status: error
             }
         }
         self.assertEqual(expected, self.deck.getSlotsState())
+        self.deck.broadcast.assert_called_once_with(MessageTypes.SLOT_STATE_CHANGED, expected)
 
     def testRecord(self):
         self.deck.record()
