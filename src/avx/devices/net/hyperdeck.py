@@ -185,3 +185,12 @@ class HyperDeck(Device):
             if loop is not None:
                 cmd += 'loop: {} '.format('true' if loop else 'false')
             self.socket.send(cmd.strip() + '\r\n')
+
+    def gotoClip(self, clipID):
+        self.socket.send('goto: clip id: {}\r\n'.format(clipID))
+
+    def next(self):
+        self.gotoClip('+1')
+
+    def prev(self):
+        self.gotoClip('-1')

@@ -130,3 +130,11 @@ status: error
         self.deck.play(single_clip=False, speed=20, loop=True)
         self.deck.socket.send.assert_called_once_with('play: single clip: false speed: 20 loop: true\r\n')
         self.deck.socket.send.reset_mock()
+
+    def testNext(self):
+        self.deck.next()
+        self.deck.socket.send.assert_called_once_with('goto: clip id: +1\r\n')
+
+    def testPrev(self):
+        self.deck.prev()
+        self.deck.socket.send.assert_called_once_with('goto: clip id: -1\r\n')
