@@ -127,7 +127,7 @@ class Controller(object):
 
     def broadcast(self, msgType, source, data):
         ''' Send a message to all clients '''
-        logging.info("Broadcast: {}, {}, {}".format(msgType, source, data))
+        logging.debug("Broadcast: {}, {}, {}".format(msgType, source, data))
         for uri in list(self.clients):
             try:
                 logging.debug("Calling handleMessage on client at {}".format(uri))
