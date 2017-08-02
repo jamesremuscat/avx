@@ -19,4 +19,4 @@ class ATEMGetter(object):
     @requiresInit
     @assertTopology("mes", "me")
     def getFadeToBlackState(self, me=1):
-        return self._state['transition'][me]['ftb']
+        return self._state['transition'][me - 1]['ftb']
