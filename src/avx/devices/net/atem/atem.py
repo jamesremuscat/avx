@@ -5,7 +5,6 @@ from .getter import ATEMGetter
 from .sender import ATEMSender
 from .receiver import ATEMReceiver
 
-import logging
 import socket
 import struct
 import threading
@@ -23,7 +22,6 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         super(ATEM, self).__init__(deviceID, **kwargs)
         self.ipAddr = ipAddr
         self.port = port
-        self.log = logging.getLogger(deviceID)
         self.recv_thread = None
 
     def initialise(self):

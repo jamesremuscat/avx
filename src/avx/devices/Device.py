@@ -9,6 +9,7 @@ class Device(object):
     def __init__(self, deviceID, httpAccessible=False, **kwargs):
         self.deviceID = deviceID
         self.httpAccessible = httpAccessible
+        self.log = logging.getLogger(deviceID)
 
     def initialise(self):
         '''
