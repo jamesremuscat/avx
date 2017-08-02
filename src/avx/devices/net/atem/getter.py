@@ -1,5 +1,5 @@
 # Getters for ATEM. To be used as a mixin with main ATEM class.
-from avx.devices.net.atem.utils import assertTopology
+from avx.devices.net.atem.utils import assertTopology, requiresInit
 
 
 class ATEMGetter(object):
@@ -16,6 +16,7 @@ class ATEMGetter(object):
     def getDSKState(self):
         return self._state['dskeyers']
 
+    @requiresInit
     @assertTopology("mes", "me")
     def getFadeToBlackState(self, me=1):
         return self._state['transition'][me]['ftb']
