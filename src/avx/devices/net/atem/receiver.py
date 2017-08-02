@@ -260,6 +260,7 @@ class ATEMReceiver(object):
     def _recv_FtbP(self, data):
         meIndex = data[0]
         self._config['transitions'].setdefault(meIndex, {}).setdefault('ftb', {})['rate'] = data[1]
+        self.broadcast(MessageTypes.FTB_RATE_CHANGED, {meIndex: data[1]})
 
     def _recv_FtbS(self, data):
         meIndex = data[0]
