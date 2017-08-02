@@ -267,6 +267,7 @@ class ATEMReceiver(object):
         ftb_state['full_black'] = (data[1] > 0)
         ftb_state['in_transition'] = (data[2] > 0)
         ftb_state['frames_remaining'] = data[3]
+        self.broadcast(MessageTypes.FTB_CHANGED, {meIndex: ftb_state})
 
 ########
 # Macros

@@ -148,3 +148,4 @@ class MessageTypes(object):
     TALLY = _PREFIX + "Tally"
     DSK_STATE = _PREFIX + "DownstreamKeyerState"
     INPUTS_CHANGED = _PREFIX + "InputsChanged"
+    FTB_CHANGED = _PREFIX + "FadeToBlackChanged"
