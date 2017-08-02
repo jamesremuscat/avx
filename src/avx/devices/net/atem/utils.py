@@ -27,7 +27,7 @@ def assertTopology(topType, argKey):
             if value <= 0 or value > limit:
                 raise InvalidArgumentException
 
-            func(self, *args, **kwargs)
+            return func(self, *args, **kwargs)
         return wrapped_func
     return wrap
 
@@ -47,5 +47,5 @@ def requiresInit(func):
     def inner(self, *args, **kwargs):
         if not self._isInitialized:
             raise NotInitializedException()
-        func(self, *args, **kwargs)
+        return func(self, *args, **kwargs)
     return inner
