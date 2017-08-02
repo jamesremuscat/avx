@@ -103,7 +103,7 @@ class ATEMSender(object):
     @requiresInit
     @assertTopology('mes', 'me')
     def performFadeToBlack(self, me=1):
-        self._sendCommand('FtbA', [me - 1, 0x02, 0])
+        self._sendCommand('FtbA', [me - 1, 0xA7, 0x59, 0x08])
 
 ########
 # DSK

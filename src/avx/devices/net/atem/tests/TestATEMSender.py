@@ -121,7 +121,7 @@ class TestATEMSender(BaseATEMTest):
 
     def testPerformFadeToBlack(self):
         self.atem.performFadeToBlack()
-        self.assert_sent_packet('FtbA', [0, 2, 0])
+        self.assert_sent_packet('FtbA', [0, 0xA7, 0x59, 0x08])
 
 ########
 # Macros
