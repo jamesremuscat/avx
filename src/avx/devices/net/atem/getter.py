@@ -4,6 +4,9 @@ from avx.devices.net.atem.utils import assertTopology, requiresInit
 
 class ATEMGetter(object):
 
+    def isConnected(self):
+        return self._isInitialized
+
     def getInputs(self):
         return self._system_config['inputs']
 

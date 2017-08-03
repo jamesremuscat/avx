@@ -83,6 +83,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
 
             if remoteIP == (self.ipAddr, self.port) and self.run_receive:  # We might have deinitialised while blocked in recvfrom()
                 self._handlePacket(data)
+        self.broadcast(MessageTypes.ATEM_DISCONNECTED)
         self.log.info("No longer listening for packets from {}".format(self.deviceID))
 
     def _handlePacket(self, data):
