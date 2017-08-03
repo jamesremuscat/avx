@@ -182,6 +182,7 @@ class TestATEMReceiver(BaseATEMTest):
         self.assertEqual(expected, self.atem._state['dskeyers'][0])
 
     def testRecvAuxS(self):
+        self.atem._isInitialized = True
         self.send_command('AuxS', [1, 0, 0x27, 0x1A])
         self.assertEqual(VideoSource.ME_1_PROGRAM, self.atem._state['aux'][1])
         self.assertEqual({1: VideoSource.ME_1_PROGRAM}, self.atem.getAuxState())

@@ -13,6 +13,7 @@ class MockSerialPort(object):
 
     def __init__(self, *params):
         self.portstr = "Test"
+        self.is_open = True
         self.data = None
         self.clear()
 
