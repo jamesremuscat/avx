@@ -23,13 +23,14 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self.ipAddr = ipAddr
         self.port = port
         self.recv_thread = None
+        self.connect_thread = None
+        self._socket = None
 
     def initialise(self):
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._socket.bind(('0.0.0.0', self.port))
-
-        self._initialiseState()
+        if not self._socket:
+            self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self._socket.bind(('0.0.0.0', self.port))
 
         self.run_receive = True
         if not (self.recv_thread and self.recv_thread.is_alive()):
@@ -37,9 +38,13 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
             self.recv_thread.daemon = True
             self.recv_thread.start()
 
-        connect = threading.Thread(target=self._connectToSwitcher)
-        connect.daemon = True
-        connect.start()
+        if not self.connect_thread:
+            self._initialiseState()
+            self.connect_thread = threading.Thread(target=self._connectToSwitcher)
+            self.connect_thread.daemon = True
+            self.connect_thread.start()
+        else:
+            self.log.warn("initialise called while already trying to connect to {} at {}".format(self.deviceID, self.ipAddr))
 
     def _initialiseState(self):
         self._packetCounter = 0
@@ -69,6 +74,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
     def deinitialise(self):
         self.run_receive = False
         self._state['booted'] = False
+        self._isInitialized = False
 
     def _receivePackets(self):
         while self.run_receive:
@@ -77,6 +83,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
 
             if remoteIP == (self.ipAddr, self.port):
                 self._handlePacket(data)
+        self.log.info("No longer listening for packets from {}".format(self.deviceID))
 
     def _handlePacket(self, data):
                 header = self._parseCommandHeader(data)
