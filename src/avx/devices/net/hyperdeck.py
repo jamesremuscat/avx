@@ -90,7 +90,10 @@ class HyperDeck(Device):
         self._run_recv_thread = False
         self._isConnected = False
         if self.socket:
-            self.socket.send("quit\r\n")
+            try:
+                self.socket.send("quit\r\n")
+            except socket.error:
+                pass
             self.socket.close()
 
     def _receive(self):
