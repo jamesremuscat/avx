@@ -29,6 +29,8 @@ class SerialDevice(Device):
         self.recv_thread = None
 
     def initialise(self):
+        if not self.port.is_open:
+            self.port.open()
         self.recv_buffer = []
         self.run_receive = True
         if not (self.recv_thread and self.recv_thread.is_alive()):
@@ -88,6 +90,9 @@ class FakeSerialPort(object):
     A class that quacks like a Serial if you try and write to it, but just throws everything away.
     '''
     portstr = "FAKE"
+
+    def __init__(self):
+        self.is_open = True
 
     def write(self, stuff):
         return 0
