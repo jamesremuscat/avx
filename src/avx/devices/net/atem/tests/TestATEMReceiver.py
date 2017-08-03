@@ -170,6 +170,7 @@ class TestATEMReceiver(BaseATEMTest):
             'key': VideoSource.INPUT_2
         }
         self.assertEqual(expected, self.atem._state['dskeyers'][0])
+        self.assertEqual(expected, self.atem.getDSKState()[0])
 
     def testRecvDskS(self):
         self.send_command('DskS', [0, 0, 1, 1, 17, 0, 0, 0])
@@ -180,6 +181,7 @@ class TestATEMReceiver(BaseATEMTest):
             'frames_remaining': 17
         }
         self.assertEqual(expected, self.atem._state['dskeyers'][0])
+        self.assertEqual(expected, self.atem.getDSKState()[0])
 
     def testRecvAuxS(self):
         self.atem._isInitialized = True
@@ -348,12 +350,22 @@ class TestATEMReceiver(BaseATEMTest):
         self.assertEqual({1: {'mix': {'rate': 25}}}, self.atem._config['transitions'])
 
     def testRecvFtbP(self):
+        # Set up requirements for decorator guards
+        self.atem._isInitialized = True
+        self.send_command('_top', [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
         self.send_command('FtbP', [0, 111, 0])
         self.assertEqual({0: {'ftb': {'rate': 111}}}, self.atem._config['transitions'])
+        self.assertEqual({'rate': 111}, self.atem.getFadeToBlackProperties(1))
 
     def testRecvFtbS(self):
+        # Set up requirements for decorator guards
+        self.atem._isInitialized = True
+        self.send_command('_top', [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
         self.send_command('FtbS', [0, 0, 1, 17])
         self.assertEqual({0: {'ftb': {'full_black': False, 'in_transition': True, 'frames_remaining': 17}}}, self.atem._state['transition'])
+        self.assertEqual({'full_black': False, 'in_transition': True, 'frames_remaining': 17}, self.atem.getFadeToBlackState(1))
 
 ########
 # DSK
@@ -402,6 +414,7 @@ class TestATEMReceiver(BaseATEMTest):
         self.assertEqual(expected.keys(), self.atem._state['tally'].keys())
         for k in expected.keys():
             self.assertEqual(expected[k], self.atem._state['tally'][k])
+            self.assertEqual(expected[k], self.atem.getTally()[k])
         self.atem.broadcast.assert_called_once_with('avx.devices.net.atem.Tally', expected)
 
     def testRecvMPrp(self):
