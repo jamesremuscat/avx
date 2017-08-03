@@ -125,7 +125,7 @@ class Controller(object):
         logging.info(str(len(self.clients)) + " client(s) still connected")
         self.saveConfig()
 
-    def broadcast(self, msgType, source, data):
+    def broadcast(self, msgType, source, data=None):
         ''' Send a message to all clients '''
         logging.debug("Broadcast: {}, {}, {}".format(msgType, source, data))
         for uri in list(self.clients):
@@ -146,7 +146,7 @@ class Controller(object):
         if self.hasDevice(device.deviceID):
             raise DuplicateDeviceIDError(device.deviceID)
         self.devices[device.deviceID] = device
-        device.broadcast = lambda t, b: self.broadcast(t, device.deviceID, b)
+        device.broadcast = lambda t, b=None: self.broadcast(t, device.deviceID, b)
 
     def getDevice(self, deviceID):
         return self.devices[deviceID]
