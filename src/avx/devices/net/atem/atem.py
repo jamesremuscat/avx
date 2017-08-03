@@ -1,5 +1,5 @@
 from avx.devices import Device
-from .constants import CMD_ACK, CMD_ACKREQUEST, CMD_HELLOPACKET, SIZE_OF_HEADER
+from .constants import CMD_ACK, CMD_ACKREQUEST, CMD_HELLOPACKET, SIZE_OF_HEADER, MessageTypes
 from .utils import byteArrayToString
 from .getter import ATEMGetter
 from .sender import ATEMSender
@@ -27,10 +27,9 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self._socket = None
 
     def initialise(self):
-        if not self._socket:
-            self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self._socket.bind(('0.0.0.0', self.port))
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.bind(('0.0.0.0', self.port))
 
         self.run_receive = True
         if not (self.recv_thread and self.recv_thread.is_alive()):
@@ -38,7 +37,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
             self.recv_thread.daemon = True
             self.recv_thread.start()
 
-        if not self.connect_thread:
+        if not (self.connect_thread and self.connect_thread.is_alive()):
             self._initialiseState()
             self.connect_thread = threading.Thread(target=self._connectToSwitcher)
             self.connect_thread.daemon = True
@@ -75,13 +74,14 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self.run_receive = False
         self._state['booted'] = False
         self._isInitialized = False
+        self._socket.close()
 
     def _receivePackets(self):
         while self.run_receive:
             data, remoteIP = self._socket.recvfrom(2048)
             # self.log.debug("Received {} from {}:{}".format(data.encode('hex_codec'), *remoteIP))
 
-            if remoteIP == (self.ipAddr, self.port):
+            if remoteIP == (self.ipAddr, self.port) and self.run_receive:  # We might have deinitialised while blocked in recvfrom()
                 self._handlePacket(data)
         self.log.info("No longer listening for packets from {}".format(self.deviceID))
 
@@ -103,6 +103,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
                 self._sendDatagram(ackDatagram)
                 if not self._isInitialized:
                     self._isInitialized = True
+                    self.broadcast(MessageTypes.ATEM_CONNECTED, None)
                     self.log.info("Connection to ATEM initialised")
 
             if len(data) > SIZE_OF_HEADER + 2 and not (header['bitmask'] & CMD_HELLOPACKET):

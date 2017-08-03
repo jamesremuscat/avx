@@ -81,7 +81,8 @@ class ATEMReceiver(object):
         input_setting['availability'] = parseBitmask(data[32], ['Auxiliary', 'Multiviewer', 'SuperSourceArt',
                                                                 'SuperSourceBox', 'KeySource'])
         input_setting['me_availability'] = parseBitmask(data[33], ['ME1', 'ME2'])
-        self.broadcast(MessageTypes.INPUTS_CHANGED, None)
+        if self._isInitialized:
+            self.broadcast(MessageTypes.INPUTS_CHANGED, None)
 
     def _recv_MvPr(self, data):
         index = data[0]
@@ -119,7 +120,8 @@ class ATEMReceiver(object):
         dsk_setting['in_transition'] = (data[2] != 0)
         dsk_setting['auto_transitioning'] = (data[3] != 0)
         dsk_setting['frames_remaining'] = data[4]
-        self.broadcast(MessageTypes.DSK_STATE, self._state['dskeyers'])
+        if self._isInitialized:
+            self.broadcast(MessageTypes.DSK_STATE, self._state['dskeyers'])
 
     def _recv_DskP(self, data):
         keyer = data[0]
@@ -139,7 +141,8 @@ class ATEMReceiver(object):
     def _recv_AuxS(self, data):  # Aux source set
         auxIndex = data[0]
         self._state['aux'][auxIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])
-        self.broadcast(MessageTypes.AUX_OUTPUT_MAPPING, self._state['aux'])
+        if self._isInitialized:
+            self.broadcast(MessageTypes.AUX_OUTPUT_MAPPING, self._state['aux'])
 
     def _recv_CCdo(self, data):
         pass
@@ -260,7 +263,8 @@ class ATEMReceiver(object):
     def _recv_FtbP(self, data):
         meIndex = data[0]
         self._config['transitions'].setdefault(meIndex, {}).setdefault('ftb', {})['rate'] = data[1]
-        self.broadcast(MessageTypes.FTB_RATE_CHANGED, {meIndex: data[1]})
+        if self._isInitialized:
+            self.broadcast(MessageTypes.FTB_RATE_CHANGED, {meIndex: data[1]})
 
     def _recv_FtbS(self, data):
         meIndex = data[0]
@@ -268,7 +272,8 @@ class ATEMReceiver(object):
         ftb_state['full_black'] = (data[1] > 0)
         ftb_state['in_transition'] = (data[2] > 0)
         ftb_state['frames_remaining'] = data[3]
-        self.broadcast(MessageTypes.FTB_CHANGED, {meIndex: ftb_state})
+        if self._isInitialized:
+            self.broadcast(MessageTypes.FTB_CHANGED, {meIndex: ftb_state})
 
 ########
 # Macros

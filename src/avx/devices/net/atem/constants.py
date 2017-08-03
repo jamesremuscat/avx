@@ -144,6 +144,7 @@ class MacroAction(Enum):
 
 class MessageTypes(object):
     _PREFIX = "avx.devices.net.atem."
+    ATEM_CONNECTED = _PREFIX + "Connected"
     AUX_OUTPUT_MAPPING = _PREFIX + "AuxOutputMapping"
     TALLY = _PREFIX + "Tally"
     DSK_STATE = _PREFIX + "DownstreamKeyerState"
