@@ -52,14 +52,14 @@ class HyperDeck(Device):
         self._recv_thread = None
         self._connect_thread = None
         self._isConnected = False
-        self.socket = socket.socket()
 
     def initialise(self):
+        self.socket = socket.socket()
         self._run_recv_thread = True
         self._data_buffer = ''
         self._initialiseState()
 
-        if not self._connect_thread and not self._isConnected:
+        if not (self._connect_thread and self._connect_thread.is_alive()) and not self._isConnected:
             self._connect_thread = Thread(target=self._connect)
             self._connect_thread.daemon = True
             self._connect_thread.start()
@@ -88,6 +88,7 @@ class HyperDeck(Device):
         self._run_recv_thread = False
         self._isConnected = False
         if self.socket:
+            self.socket.send("quit\r\n")
             self.socket.close()
 
     def _receive(self):
