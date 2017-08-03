@@ -26,6 +26,8 @@ class SlotState(Enum):
 
 class MessageTypes(object):
     _PREFIX = "avx.devices.net.hyperdeck."
+    CONNECTED = _PREFIX + "Connected"
+    DISCONNECTED = _PREFIX + "Disconnected"
     TRANSPORT_STATE_CHANGED = _PREFIX + "TransportStateChanged"
     SLOT_STATE_CHANGED = _PREFIX + "SlotStateChanged"
 
@@ -174,6 +176,9 @@ class HyperDeck(Device):
 ########
 # Getters
 ########
+    def isConnected(self):
+        return self._isConnected
+
     def getTransportState(self):
         return self._state['transport']
 
