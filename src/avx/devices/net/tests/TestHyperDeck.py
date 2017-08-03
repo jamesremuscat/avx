@@ -2,6 +2,7 @@ import unittest
 from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState,\
     MessageTypes
 from mock import MagicMock, call
+from threading import Thread
 
 
 class TestHyperDeck(unittest.TestCase):
@@ -13,6 +14,32 @@ class TestHyperDeck(unittest.TestCase):
 
     def _handle_data(self, msg):
         self.deck._handle_data(msg.replace('\n', '\r\n'))
+
+    def testSocketRead(self):
+        self.deck.socket = MagicMock()
+        self.deck._run_recv_thread = True
+        self.deck._data_buffer = ''
+        self.deck._handle_data = MagicMock()
+
+        messages = [
+            '999 mock message 1:\r\nparam: value\r\n',
+            '901 mock message 2:\r\nparam2: value2\r\nparam3: value3\r\n',
+            ''
+        ]  # Check that we can deal with multiple messages in one recv() call
+
+        def do_recv(*args):
+            self.deck._run_recv_thread = False
+            return '\r\n'.join(messages)
+        self.deck.socket.recv.side_effect = do_recv
+        runner = Thread(target=self.deck._receive)
+        runner.start()
+        runner.join()
+
+        self.assertEqual(2, self.deck._handle_data.call_count)
+        self.deck._handle_data.assert_has_calls([
+            call('999 mock message 1:\r\nparam: value'),
+            call('901 mock message 2:\r\nparam2: value2\r\nparam3: value3')
+        ])
 
     def testReceiveInit(self):
         self._handle_data(
