@@ -25,6 +25,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self.recv_thread = None
         self.connect_thread = None
         self._socket = None
+        self._isInitialized = False
 
     def initialise(self):
         if not self._socket:
