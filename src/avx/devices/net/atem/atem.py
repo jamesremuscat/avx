@@ -145,9 +145,9 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
                     payload_bytes.extend(payload)  # Note: In Python2 need to ensure we have a byte array - or else it's a string
                     func(payload_bytes)
                 else:
-                    self.log.warning("Received {} but method {} is not callable".format(ptype, handler_method))
+                    self.log.debug("Received {} but method {} is not callable".format(ptype, handler_method))
             else:
-                self.log.warning("Unhandled ATEM packet type {}".format(ptype))
+                self.log.debug("Unhandled ATEM packet type {}".format(ptype))
 
     def _connectToSwitcher(self):
         while not self._isInitialized:
