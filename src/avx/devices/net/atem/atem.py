@@ -27,9 +27,10 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self._socket = None
 
     def initialise(self):
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._socket.bind(('0.0.0.0', self.port))
+        if not self._socket:
+            self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self._socket.bind(('0.0.0.0', self.port))
 
         self.run_receive = True
         if not (self.recv_thread and self.recv_thread.is_alive()):
@@ -37,7 +38,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
             self.recv_thread.daemon = True
             self.recv_thread.start()
 
-        if not (self.connect_thread and self.connect_thread.is_alive()):
+        if not (self.connect_thread and self.connect_thread.is_alive()) and not self._isInitialized:
             self._initialiseState()
             self.connect_thread = threading.Thread(target=self._connectToSwitcher)
             self.connect_thread.daemon = True
@@ -74,12 +75,15 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self.run_receive = False
         self._state['booted'] = False
         self._isInitialized = False
-        self._socket.close()
+        if self._socket:
+            self._socket.close()
+            self._socket = None
 
     def _receivePackets(self):
         while self.run_receive:
+            self.log.debug("Waiting to receive packet")
             data, remoteIP = self._socket.recvfrom(2048)
-            # self.log.debug("Received {} from {}:{}".format(data.encode('hex_codec'), *remoteIP))
+            self.log.debug("Received {} from {}:{}".format(data.encode('hex_codec'), *remoteIP))
 
             if remoteIP == (self.ipAddr, self.port) and self.run_receive:  # We might have deinitialised while blocked in recvfrom()
                 self._handlePacket(data)
