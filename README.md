@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/jamesremuscat/avx.svg?branch=master)](https://travis-ci.org/jamesremuscat/avx)
 [![Coverage Status](https://coveralls.io/repos/jamesremuscat/avx/badge.svg?branch=master&service=github)](https://coveralls.io/github/jamesremuscat/avx?branch=master)
 
-## INTRODUCTION
+## Introduction
 
 AVX is a library designed to allow control of A/V devices such as video
 switchers and PTZ cameras.
@@ -17,7 +17,7 @@ Rich client applications can be built with Qt or your windowing toolkit of
 choice, using Python and Pyro4 for communications.
 
 
-## INSTALLATION & CONFIGURATION
+## Installation & configuration
 
 The easiest method of installing is via `pip`, which will take care of all
 dependencies for you:
@@ -71,7 +71,7 @@ Everything client-side will refer to the `deviceID` string you assign
 to each device, so balance these between descriptive and concise.
 
 
-## RUNNING
+## Running
 
 You will need a Pyro4 nameserver running somewhere on your network. The 
 `runNameserver.sh` script will take care of this for you, or use the
@@ -151,6 +151,8 @@ default logger's level to `DEBUG` but leave other loggers unchanged.
 
 Currently the devices best supported include:
 
+* Blackmagic Design ATEM video switchers
+* Blackmagic Design HyperDeck Studio recorders
 * Kramer video switchers supporting Protocol 2000 over serial
   * e.g. VP-88
 * Kramer 602 (non-Protocol 2000)
@@ -158,6 +160,7 @@ Currently the devices best supported include:
 * Kramer VP70x scan converters
 * Coriogen Eclipse scan converter
 * Sony VISCA PTZ cameras
+* Datavideo PTC-150 PTZ camera
 * ETC Unison lighting controller
 * Several models of USB relay cards
 * Philips amBx ambient lighting system
@@ -176,8 +179,8 @@ broadcast to all currently-connected clients. The arguments to `broadcast`, whic
 the same as those to `handleMessage`, are:
  
  * `msgType`: string representing the type of message. Built-in message types are defined
-   in `avx.Client.MessageTypes` but client implementations are free to specify their own
-   as required.
+   in `avx.Client.MessageTypes` or device-specific classes but client implementations are
+   free to specify their own strings as required.
  * `source`: the origin of this message. When called from devices, this will be the device
    ID of the device that calls `broadcast`. Client implementations may use this field as
    required.
@@ -200,3 +203,17 @@ Built-in message types currently include:
    only describe a single output state). Nor is it guaranteed that such a message will
    automatically be sent when a switcher changes state (the Inline IN3808, for example, only
    sends its state when asked for).
+
+## Changelog
+
+### v1.1 (release date TBC)
+
+* Added support for Blackmagic Design ATEM video switchers. Functionality is partial
+  and will be expanded in future releases.
+* Added support for Blackmagic Design Hyperdeck Studio recorders. Transport functionality
+  is complete (play, record, skip etc) but configuration is not yet supported.
+* Added support for multiple VISCA cameras via one serial port. Define a VISCAPort in your
+  configuration file and specify a "viscaPort" option against each of your camera devices.
+* Added specific VISCA implementation for Datavideo PTC-150 cameras.
+* Broadcasts are now logged at the `DEBUG` level rather than the `INFO` level.
+* `broadcast()` may now be called without `data`, which defaults to `None`.
