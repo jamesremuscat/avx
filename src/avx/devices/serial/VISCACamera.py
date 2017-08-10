@@ -98,7 +98,7 @@ class VISCACamera(SerialDevice):
             SerialDevice.deinitialise(self)
 
     def sendVISCA(self, commandBytes):
-        self._wait_for_ack.acquire()
+        # self._wait_for_ack.acquire()
         return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
 
     def getVISCA(self, commandBytes):
