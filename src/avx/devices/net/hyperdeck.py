@@ -196,6 +196,7 @@ class HyperDeck(Device):
             self.socket.send('record: name: {}\r\n'.format(clip_name))
         else:
             self.socket.send('record\r\n')
+        self._state['transport']['status'] = TransportState.RECORD  # Otherwise we don't get a notification about it
 
     def stop(self):
         self.socket.send('stop\r\n')
@@ -213,6 +214,7 @@ class HyperDeck(Device):
             if loop is not None:
                 cmd += 'loop: {} '.format('true' if loop else 'false')
             self.socket.send(cmd.strip() + '\r\n')
+        self._state['transport']['status'] = TransportState.PLAYING  # Otherwise we don't get a notification about it
 
     def gotoClip(self, clipID):
         self.socket.send('goto: clip id: {}\r\n'.format(clipID))
