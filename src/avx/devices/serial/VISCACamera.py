@@ -74,7 +74,7 @@ class VISCACamera(SerialDevice):
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
     '''
 
-    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, **kwargs):
+    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
         if viscaPort is None or controller is None:
             super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
             self._isSharedPort = False
@@ -84,6 +84,7 @@ class VISCACamera(SerialDevice):
             self._isSharedPort = True
             self.port.addCamera(cameraID, self)
         self.cameraID = cameraID
+        self._do_wait_for_ack = waitForAck
         self._wait_for_ack = Lock()
         self._wait_for_response = Lock()
         self._response_received = Event()
@@ -98,7 +99,8 @@ class VISCACamera(SerialDevice):
             SerialDevice.deinitialise(self)
 
     def sendVISCA(self, commandBytes):
-        # self._wait_for_ack.acquire()
+        if self._do_wait_for_ack:
+            self._wait_for_ack.acquire()
         return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
 
     def getVISCA(self, commandBytes):
