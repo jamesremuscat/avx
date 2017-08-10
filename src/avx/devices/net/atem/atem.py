@@ -98,7 +98,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
             self._currentUid = header['uid']
             if header['bitmask'] & CMD_HELLOPACKET:
                 # print('not initialized, received HELLOPACKET, sending ACK packet')
-                self._isInitialized = False
+                # self._isInitialized = False
                 ackDatagram = self._createCommandHeader(CMD_ACK, 0, header['uid'], 0x0)
                 self._sendDatagram(ackDatagram)
 
