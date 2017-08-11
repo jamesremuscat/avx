@@ -40,13 +40,16 @@ class SerialDevice(Device):
 
     def _receive(self):
         while self.run_receive:
-            read_byte = self.port.read(1)
-            if read_byte:
-                self.recv_buffer.append(ord(read_byte))
-                if self.hasFullMessage(self.recv_buffer[:]):
-                    logging.debug("Received from {}: {}".format(self.deviceID, SerialDevice.byteArrayToString(self.recv_buffer).encode('hex_codec')))
-                    self.handleMessage(self.recv_buffer[:])
-                    self.recv_buffer = []
+            try:
+                read_byte = self.port.read(1)
+                if read_byte:
+                    self.recv_buffer.append(ord(read_byte))
+                    if self.hasFullMessage(self.recv_buffer[:]):
+                        logging.debug("Received from {}: {}".format(self.deviceID, SerialDevice.byteArrayToString(self.recv_buffer).encode('hex_codec')))
+                        self.handleMessage(self.recv_buffer[:])
+                        self.recv_buffer = []
+            except TypeError:
+                pass
 
     def hasFullMessage(self, recv_buffer):
         # Default implementation: always return True. This is almost certainly not useful to you so override this!
