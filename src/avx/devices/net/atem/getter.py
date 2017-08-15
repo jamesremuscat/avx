@@ -28,3 +28,8 @@ class ATEMGetter(object):
     @assertTopology("mes", "me")
     def getFadeToBlackProperties(self, me=1):
         return self._config['transitions'][me - 1]['ftb']
+
+    @requiresInit
+    @assertTopology("mes", "me")
+    def getMixTransitionProps(self, me=1):
+        return self._config['transitions'][me - 1]['mix']
