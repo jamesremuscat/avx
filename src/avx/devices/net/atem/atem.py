@@ -24,6 +24,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self.port = port
         self.recv_thread = None
         self.connect_thread = None
+        self._connect_thread_lock = threading.Lock()
         self._socket = None
         self._isInitialized = False
 
@@ -94,26 +95,26 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
     def _handlePacket(self, data):
         header = self._parseCommandHeader(data)
         if header:
-            self.log.debug(data.encode('hex_codec'))
+            self.log.debug(header)
             self._currentUid = header['uid']
             if header['bitmask'] & CMD_HELLOPACKET:
-                # print('not initialized, received HELLOPACKET, sending ACK packet')
-                # self._isInitialized = False
+                self.log.debug('not initialized, received HELLOPACKET, sending ACK packet')
+                self._isInitialized = False
                 ackDatagram = self._createCommandHeader(CMD_ACK, 0, header['uid'], 0x0)
-                self._sendDatagram(ackDatagram)
+                threading.Thread(target=self._sendDatagram, args=(ackDatagram,)).start()
 
             elif (header['bitmask'] & CMD_ACKREQUEST) and (self._isInitialized or len(data) == SIZE_OF_HEADER):
-                # print('initialized, received ACKREQUEST, sending ACK packet')
-                # print("Sending ACK for packageId %d" % header['packageId'])
+                self.log.debug('initialized, received ACKREQUEST, sending ACK packet')
+                self.log.info("Sending ACK for packageId %d" % header['packageId'])
                 ackDatagram = self._createCommandHeader(CMD_ACK, 0, header['uid'], header['packageId'])
-                self._sendDatagram(ackDatagram)
+                threading.Thread(target=self._sendDatagram, args=(ackDatagram,)).start()
                 if not self._isInitialized:
                     self._isInitialized = True
                     self.broadcast(MessageTypes.ATEM_CONNECTED, None)
                     self.log.info("Connection to ATEM initialised")
 
             if len(data) > SIZE_OF_HEADER + 2 and not (header['bitmask'] & CMD_HELLOPACKET):
-                self._handlePayload(data[SIZE_OF_HEADER:])
+                threading.Thread(target=self._handlePayload, args=(data[SIZE_OF_HEADER:],)).start()
 
     def _parseCommandHeader(self, datagram):
         header = {}
@@ -151,14 +152,15 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
                 self.log.debug("Unhandled ATEM packet type {}".format(ptype))
 
     def _connectToSwitcher(self):
-        while not self._isInitialized:
-            self.log.info("Attempting to connect to ATEM at {}:{}".format(self.ipAddr, self.port))
-            datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
-            datagram += struct.pack('!I', 0x01000000)
-            datagram += struct.pack('!I', 0x00)
-            self._sendDatagram(datagram)
+        with self._connect_thread_lock:
+		while not self._isInitialized:
+		    self.log.info("Attempting to connect to ATEM at {}:{}".format(self.ipAddr, self.port))
+		    datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
+		    datagram += struct.pack('!I', 0x01000000)
+		    datagram += struct.pack('!I', 0x00)
+		    self._sendDatagram(datagram)
 
-            time.sleep(5)
+		    time.sleep(5)
 
     def _createCommandHeader(self, bitmask, payloadSize, uid, ackId):
         buf = b''
