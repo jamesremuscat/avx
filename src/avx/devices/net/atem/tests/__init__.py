@@ -2,6 +2,7 @@ from avx.devices.net.atem import ATEM, SIZE_OF_HEADER, byteArrayToString
 from mock import MagicMock
 
 import struct
+import time
 import unittest
 
 
@@ -37,3 +38,4 @@ class BaseATEMTest(unittest.TestCase):
         dg += byteArrayToString(payload)
 
         self.atem._handlePacket(dg)
+        time.sleep(0.05)
