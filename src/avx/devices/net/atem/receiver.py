@@ -259,6 +259,8 @@ class ATEMReceiver(object):
     def _recv_TMxP(self, data):
         meIndex = data[0]
         self._config['transitions'].setdefault(meIndex, {}).setdefault('mix', {})['rate'] = data[1]
+        if self._isInitialized:
+            self.broadcast(MessageTypes.TRANSITION_MIX_PROPERTIES_CHANGED, {meIndex: {'rate': data[1]}})
 
     def _recv_FtbP(self, data):
         meIndex = data[0]
