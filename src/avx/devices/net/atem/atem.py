@@ -153,14 +153,14 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
 
     def _connectToSwitcher(self):
         with self._connect_thread_lock:
-		while not self._isInitialized:
-		    self.log.info("Attempting to connect to ATEM at {}:{}".format(self.ipAddr, self.port))
-		    datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
-		    datagram += struct.pack('!I', 0x01000000)
-		    datagram += struct.pack('!I', 0x00)
-		    self._sendDatagram(datagram)
+            while not self._isInitialized:
+                self.log.info("Attempting to connect to ATEM at {}:{}".format(self.ipAddr, self.port))
+                datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
+                datagram += struct.pack('!I', 0x01000000)
+                datagram += struct.pack('!I', 0x00)
+                self._sendDatagram(datagram)
 
-		    time.sleep(5)
+                time.sleep(5)
 
     def _createCommandHeader(self, bitmask, payloadSize, uid, ackId):
         buf = b''
