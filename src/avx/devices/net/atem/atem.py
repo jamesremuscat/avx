@@ -153,7 +153,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
 
     def _connectToSwitcher(self):
         with self._connect_thread_lock:
-            while not self._isInitialized:
+            while not self._isInitialized and self._state['booted']:
                 self.log.info("Attempting to connect to ATEM at {}:{}".format(self.ipAddr, self.port))
                 datagram = self._createCommandHeader(CMD_HELLOPACKET, 8, self._currentUid, 0x0)
                 datagram += struct.pack('!I', 0x01000000)
@@ -193,5 +193,8 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
         self._sendDatagram(dg)
 
     def _sendDatagram(self, datagram):
-        self.log.debug("Sending packet {} to {}:{}".format(datagram.encode('hex_codec'), self.ipAddr, self.port))
-        self._socket.sendto(datagram, (self.ipAddr, self.port))
+        if self._socket:
+            self.log.debug("Sending packet {} to {}:{}".format(datagram.encode('hex_codec'), self.ipAddr, self.port))
+            self._socket.sendto(datagram, (self.ipAddr, self.port))
+        else:
+            self.log.warn("Tried to send packet to {}:{} but socket was None".format(self.ipAddr, self.port))

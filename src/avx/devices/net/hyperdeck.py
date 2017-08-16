@@ -57,6 +57,7 @@ class HyperDeck(Device):
 
     def initialise(self):
         self.socket = socket.socket()
+        self.socket.settimeout(1)
         self._run_recv_thread = True
         self._data_buffer = ''
         self._initialiseState()
@@ -67,7 +68,7 @@ class HyperDeck(Device):
             self._connect_thread.start()
 
     def _connect(self):
-        while not self._isConnected:
+        while not self._isConnected and self._run_recv_thread:
             try:
                 self.socket.connect(self.remote)
                 if not (self._recv_thread and self._recv_thread.is_alive()):
