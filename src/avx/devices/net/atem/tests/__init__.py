@@ -38,4 +38,4 @@ class BaseATEMTest(unittest.TestCase):
         dg += byteArrayToString(payload)
 
         self.atem._handlePacket(dg)
-        time.sleep(0.05)
+        time.sleep(0.1)
