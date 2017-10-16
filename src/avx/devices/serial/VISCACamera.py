@@ -4,13 +4,14 @@ Created on 13 Nov 2012
 @author: james
 '''
 from avx.devices import InvalidArgumentException
+from avx.devices.Device import Device
 from avx.devices.serial import SerialDevice
 from avx.CameraPosition import CameraPosition
 from enum import Enum
 from threading import Lock, ThreadError, Event
 
 import logging
-from avx.devices.Device import Device
+import time
 
 
 # Pan speeds can vary from 0x01 - 0x18
@@ -101,7 +102,13 @@ class VISCACamera(SerialDevice):
     def sendVISCA(self, commandBytes):
         if self._do_wait_for_ack:
             self._wait_for_ack.acquire()
-        return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+        result = self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+        if not self._do_wait_for_ack:
+            time.sleep(0.1)
+
+        return result
 
     def getVISCA(self, commandBytes):
         with self._wait_for_response:
