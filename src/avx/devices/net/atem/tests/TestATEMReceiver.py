@@ -2,6 +2,7 @@ from avx.devices.net.atem import byteArrayToString, DownconverterMode, ExternalP
     PortType, VideoMode, VideoSource, ClipType, MessageTypes, TransitionStyle
 from avx.devices.net.atem.tests import BaseATEMTest
 from avx.devices.net.atem.utils import bytes_of
+from time import sleep
 
 
 def zeroes(count):
@@ -15,6 +16,7 @@ class TestATEMReceiver(BaseATEMTest):
 
         uid = 0xAB
         self.atem._handlePacket(byteArrayToString([0x08, 0x0c, uid, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12]))
+        sleep(0.1)
 
         self.assertTrue(self.atem._isInitialized)
         self.atem._socket.sendto.assert_called_with('\x80\x0c' + chr(uid) + '\x09\x00\x12\x00\x00\x00\x00\x00\x00', ('localhost', 1234))
