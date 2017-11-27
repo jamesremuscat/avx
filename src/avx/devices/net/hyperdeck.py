@@ -1,4 +1,4 @@
-from avx.devices.Device import Device
+from avx.devices.Device import Device, InvalidArgumentException
 from enum import Enum
 from threading import Thread
 from time import sleep
@@ -188,6 +188,21 @@ class HyperDeck(Device):
 
     def getSlotsState(self):
         return self._state['slots']
+
+
+########
+# State setters
+########
+
+    def selectSlot(self, slot_id):
+        try:
+            slot_id_int = int(slot_id)
+            if slot_id_int > 0 and slot_id_int < 2:
+                self.socket.send('slot select: slot id: {}\r\n'.format(slot_id_int))
+            else:
+                raise InvalidArgumentException('Slot {} does not exist'.format(slot_id_int))
+        except ValueError:
+            raise InvalidArgumentException('Slot {} does not exist'.format(slot_id))
 
 ########
 # Transport controls

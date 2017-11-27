@@ -3,6 +3,7 @@ from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState,\
     MessageTypes
 from mock import MagicMock, call
 from threading import Thread
+from avx.devices.Device import InvalidArgumentException
 
 
 class TestHyperDeck(unittest.TestCase):
@@ -136,6 +137,17 @@ status: error
         }
         self.assertEqual(expected, self.deck.getSlotsState())
         self.deck.broadcast.assert_called_once_with(MessageTypes.SLOT_STATE_CHANGED, expected)
+
+    def testSlotSelect(self):
+        self.deck.selectSlot(1)
+        self.deck.socket.send.assert_called_once_with('slot select: slot id: 1\r\n')
+        self.deck.socket.send.reset_mock()
+
+        try:
+            self.deck.selectSlot(0)
+            self.fail('Should have thrown exception for invalid slot')
+        except InvalidArgumentException:
+            pass
 
     def testRecord(self):
         self.deck.record()
