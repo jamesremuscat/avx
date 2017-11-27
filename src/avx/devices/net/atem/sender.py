@@ -21,6 +21,22 @@ class ATEMSender(object):
         return [(inputID.value >> 8), (inputID.value & 0xFF)]
 
     @requiresInit
+    def setMultiviewWindowSource(self, window, source, mv=1):
+        mv_count = self._system_config.get('multiviewers', 0)
+        if window < 0 or window > 9:
+            raise InvalidArgumentException('Multiview window should be in range 0-9 but got {}', window)
+        if mv <= mv_count:
+            self._sendCommand(
+                'CMvI',
+                [
+                    mv - 1,
+                    window
+                ] + self._resolveInputBytes(source)
+            )
+        else:
+            raise InvalidArgumentException('Tried to set multiview {} but we have {} available'.format(mv, mv_count))
+
+    @requiresInit
     @assertTopology('aux_busses', 'auxChannel')
     def setAuxSource(self, auxChannel, inputID):
         self._sendCommand(

@@ -23,6 +23,7 @@ class TestATEMSender(BaseATEMTest):
         BaseATEMTest.setUp(self)
         self.atem._handlePacket(byteArrayToString([0x08, 0x0c, 0xab, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12]))
         self.send_command('_top', [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        self.send_command('_MvC', [1, 0, 0, 0])  # One MVW
         self.send_command(
             'InPr',
             bytes_of(VideoSource.COLOUR_BARS.value) +
@@ -31,6 +32,20 @@ class TestATEMSender(BaseATEMTest):
             [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
         )
         self.atem._socket.reset_mock()
+
+    def testSetMultiviewerInput(self):
+        self.atem.setMultiviewWindowSource(3, VideoSource.COLOUR_BARS)
+        self.assert_sent_packet(
+            'CMvI',
+            [0, 3, 0x03, 0xE8]
+        )
+        self.atem._socket.reset_mock()
+
+        try:
+            self.atem.setMultiviewWindowSource(22, VideoSource.AUX_1)
+            self.fail("Should have thrown an exception")
+        except InvalidArgumentException:
+            pass
 
     def testSetAuxSourceWithoutInit(self):
         self.atem._isInitialized = False
