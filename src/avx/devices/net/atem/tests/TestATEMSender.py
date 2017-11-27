@@ -1,4 +1,4 @@
-from avx.devices.net.atem.constants import SIZE_OF_HEADER, VideoSource,\
+from avx.devices.net.atem.constants import SIZE_OF_HEADER, AudioSource, VideoSource,\
     TransitionStyle, MacroAction
 from avx.devices.net.atem.tests import BaseATEMTest
 from avx.devices.net.atem.utils import byteArrayToString, bytes_of, \
@@ -157,3 +157,15 @@ class TestATEMSender(BaseATEMTest):
             self.fail("Should have failed to execute a non-existent macro")
         except InvalidArgumentException:
             pass
+########
+# Audio
+########
+
+    def testResetAudioMixerPeaks(self):
+        self.atem.resetAudioMixerPeaks()  # Default = master
+        self.assert_sent_packet('RAMP', [0x4, 0, 0, 0, 0x1, 0, 0, 0])
+        self.atem._socket.reset_mock()
+
+        self.atem.resetAudioMixerPeaks(AudioSource.XLR)
+        self.assert_sent_packet('RAMP', [0x2, 0, 0x3, 0xE9, 0, 0, 0, 0])
+        self.atem._socket.reset_mock()
