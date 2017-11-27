@@ -138,6 +138,35 @@ status: error
         self.assertEqual(expected, self.deck.getSlotsState())
         self.deck.broadcast.assert_called_once_with(MessageTypes.SLOT_STATE_CHANGED, expected)
 
+    def testRequestClipListing(self):
+        self.deck.broadcastClipsList()
+        self.deck.socket.send.assert_called_once_with('disk list\r\n')
+
+    def testReceiveClipListing(self):
+        self._handle_data(
+            '''206 disk list:
+slot id: 1
+0: clip1_name clip1_fileformat clip1_videoformat 00:01:23:04
+1: clip2_name clip2_fileformat clip2_videoformat 08:08:28:06
+'''
+        )
+
+        expected = {
+            0: {
+                'name': 'clip1_name',
+                'file_format': 'clip1_fileformat',
+                'video_format': 'clip1_videoformat',
+                'duration': '00:01:23:04'
+            },
+            1: {
+                'name': 'clip2_name',
+                'file_format': 'clip2_fileformat',
+                'video_format': 'clip2_videoformat',
+                'duration': '08:08:28:06'
+            }
+        }
+        self.deck.broadcast.assert_called_once_with(MessageTypes.CLIP_LISTING, expected)
+
     def testSlotSelect(self):
         self.deck.selectSlot(1)
         self.deck.socket.send.assert_called_once_with('slot select: slot id: 1\r\n')

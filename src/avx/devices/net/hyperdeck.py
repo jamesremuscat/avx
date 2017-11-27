@@ -30,6 +30,7 @@ class MessageTypes(object):
     DISCONNECTED = _PREFIX + "Disconnected"
     TRANSPORT_STATE_CHANGED = _PREFIX + "TransportStateChanged"
     SLOT_STATE_CHANGED = _PREFIX + "SlotStateChanged"
+    CLIP_LISTING = _PREFIX + "ClipListing"
 
 
 class TransportMode(Enum):
@@ -183,6 +184,22 @@ class HyperDeck(Device):
     def _recv_502(self, payload, extra):
         self._recv_202(payload, extra)
 
+    def _recv_206(self, payload, extra):
+        listing = {}
+        cliplines = extra[1:]  # Ignore the 'clip id:' line
+        for line in cliplines:
+            idx, data = line.split(': ')
+            name, file_format, video_format, duration = data.split(' ')
+
+            listing[int(idx)] = {
+                'name': name,
+                'file_format': file_format,
+                'video_format': video_format,
+                'duration': duration
+            }
+
+        self.broadcast(MessageTypes.CLIP_LISTING, listing)
+
 ########
 # Getters
 ########
@@ -194,6 +211,13 @@ class HyperDeck(Device):
 
     def getSlotsState(self):
         return self._state['slots']
+
+    def broadcastClipsList(self):
+        '''
+        This behaves asynchronously: the list of clips will be returned via a broadcast
+        of type MessageTypes.CLIP_LISTING.
+        '''
+        self.socket.send('disk list\r\n')
 
 
 ########
