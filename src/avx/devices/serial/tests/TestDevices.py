@@ -294,6 +294,7 @@ class TestDevices(unittest.TestCase):
         ])
 
         mudsr.raiseUp()
+        sleep(0.1)
         with mudsr.lock:  # wait for sequence to complete
             upRelay.on.assert_called_once()
             upRelay.off.assert_called_once()
@@ -307,6 +308,7 @@ class TestDevices(unittest.TestCase):
         upRelay.reset_mock()
 
         mudsr.lower()
+        sleep(0.1)
         with mudsr.lock:
             upRelay.on.assert_not_called()
             upRelay.off.assert_not_called()
@@ -320,6 +322,7 @@ class TestDevices(unittest.TestCase):
         downRelay.reset_mock()
 
         mudsr.stop()
+        sleep(0.1)
         with mudsr.lock:
             upRelay.on.assert_not_called()
             upRelay.off.assert_not_called()
