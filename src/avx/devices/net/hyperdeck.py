@@ -195,13 +195,9 @@ class HyperDeck(Device):
 ########
 
     def selectSlot(self, slot_id):
-        try:
-            slot_id_int = int(slot_id)
-            if slot_id_int > 0 and slot_id_int < 2:
-                self.socket.send('slot select: slot id: {}\r\n'.format(slot_id_int))
-            else:
-                raise InvalidArgumentException('Slot {} does not exist'.format(slot_id_int))
-        except ValueError:
+        if slot_id in [1, 2]:
+            self.socket.send('slot select: slot id: {}\r\n'.format(slot_id))
+        else:
             raise InvalidArgumentException('Slot {} does not exist'.format(slot_id))
 
 ########
