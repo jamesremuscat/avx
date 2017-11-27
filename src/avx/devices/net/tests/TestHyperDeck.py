@@ -1,5 +1,5 @@
 import unittest
-from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState,\
+from avx.devices.net.hyperdeck import HyperDeck, TransportMode, TransportState, SlotState,\
     MessageTypes
 from mock import MagicMock, call
 from threading import Thread
@@ -146,6 +146,21 @@ status: error
         try:
             self.deck.selectSlot(0)
             self.fail('Should have thrown exception for invalid slot')
+        except InvalidArgumentException:
+            pass
+
+    def testSetTransportMode(self):
+        self.deck.setTransportMode(TransportMode.PLAYBACK)
+        self.deck.socket.send.assert_called_once_with('preview: enable: false\r\n')
+        self.deck.socket.send.reset_mock()
+
+        self.deck.setTransportMode(TransportMode.RECORD)
+        self.deck.socket.send.assert_called_once_with('preview: enable: true\r\n')
+        self.deck.socket.send.reset_mock()
+
+        try:
+            self.deck.setTransportMode('Record')
+            self.fail('Should have thrown exception for invalid transport mode')
         except InvalidArgumentException:
             pass
 

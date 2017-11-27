@@ -32,6 +32,12 @@ class MessageTypes(object):
     SLOT_STATE_CHANGED = _PREFIX + "SlotStateChanged"
 
 
+class TransportMode(Enum):
+    # These are the values passed to the `preview: enable:` command to switch
+    RECORD = 'true'
+    PLAYBACK = 'false'
+
+
 def _bool(string):
     if string == "true":
         return True
@@ -199,6 +205,11 @@ class HyperDeck(Device):
             self.socket.send('slot select: slot id: {}\r\n'.format(slot_id))
         else:
             raise InvalidArgumentException('Slot {} does not exist'.format(slot_id))
+
+    def setTransportMode(self, mode):
+        if not isinstance(mode, TransportMode):
+            raise InvalidArgumentException('{} is not a TransportMode'.format(mode))
+        self.socket.send('preview: enable: {}\r\n'.format(mode.value))
 
 ########
 # Transport controls
