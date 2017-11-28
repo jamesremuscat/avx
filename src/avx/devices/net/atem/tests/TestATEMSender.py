@@ -47,7 +47,7 @@ class TestATEMSender(BaseATEMTest):
             self.atem.setMultiviewerLayout(MultiviewerLayout.TOP, 7)
 
     def testSetMultiviewerInput(self):
-        self.atem.setMultiviewWindowSource(3, VideoSource.COLOUR_BARS)
+        self.atem.setMultiviewerWindowSource(3, VideoSource.COLOUR_BARS)
         self.assert_sent_packet(
             'CMvI',
             [0, 3, 0x03, 0xE8]
@@ -55,7 +55,7 @@ class TestATEMSender(BaseATEMTest):
         self.atem._socket.reset_mock()
 
         try:
-            self.atem.setMultiviewWindowSource(22, VideoSource.AUX_1)
+            self.atem.setMultiviewerWindowSource(22, VideoSource.AUX_1)
             self.fail("Should have thrown an exception")
         except InvalidArgumentException:
             pass

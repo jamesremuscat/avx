@@ -25,7 +25,7 @@ class ATEMSender(object):
     def setMultiviewerLayout(self, layout, mv=1):
         mv_count = self._system_config.get('multiviewers', 0)
         if mv > mv_count or mv <= 0:
-            raise InvalidArgumentException('Tried to set multiview {} but we have {} available'.format(mv, mv_count))
+            raise InvalidArgumentException('Tried to set multiviewer {} but we have {} available'.format(mv, mv_count))
         if not isinstance(layout, MultiviewerLayout):
             raise InvalidArgumentException('{} is not a MultiviewerLayout'.format(mv))
         self._sendCommand(
@@ -34,10 +34,10 @@ class ATEMSender(object):
         )
 
     @requiresInit
-    def setMultiviewWindowSource(self, window, source, mv=1):
+    def setMultiviewerWindowSource(self, window, source, mv=1):
         mv_count = self._system_config.get('multiviewers', 0)
         if window < 0 or window > 9:
-            raise InvalidArgumentException('Multiview window should be in range 0-9 but got {}', window)
+            raise InvalidArgumentException('Multiviewer window should be in range 0-9 but got {}', window)
         if mv <= mv_count:
             self._sendCommand(
                 'CMvI',
@@ -47,7 +47,7 @@ class ATEMSender(object):
                 ] + self._resolveInputBytes(source)
             )
         else:
-            raise InvalidArgumentException('Tried to set multiview {} but we have {} available'.format(mv, mv_count))
+            raise InvalidArgumentException('Tried to set multiviewer {} but we have {} available'.format(mv, mv_count))
 
     @requiresInit
     @assertTopology('aux_busses', 'auxChannel')
