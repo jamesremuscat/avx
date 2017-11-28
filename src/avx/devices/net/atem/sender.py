@@ -1,6 +1,7 @@
 from .constants import AudioSource, MacroAction, VideoSource
 from .utils import requiresInit, assertTopology, bytes_of
 from avx.devices.Device import InvalidArgumentException
+from avx.devices.net.atem.constants import MultiviewerLayout
 
 
 #############
@@ -19,6 +20,18 @@ class ATEMSender(object):
         if not isinstance(inputID, AudioSource):
             inputID = AudioSource(inputID)
         return [(inputID.value >> 8), (inputID.value & 0xFF)]
+
+    @requiresInit
+    def setMultiviewerLayout(self, layout, mv=1):
+        mv_count = self._system_config.get('multiviewers', 0)
+        if mv > mv_count or mv <= 0:
+            raise InvalidArgumentException('Tried to set multiview {} but we have {} available'.format(mv, mv_count))
+        if not isinstance(layout, MultiviewerLayout):
+            raise InvalidArgumentException('{} is not a MultiviewerLayout'.format(mv))
+        self._sendCommand(
+            'CMvP',
+            [0x1, mv - 1, layout.value, 0]
+        )
 
     @requiresInit
     def setMultiviewWindowSource(self, window, source, mv=1):

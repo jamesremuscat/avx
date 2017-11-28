@@ -1,5 +1,5 @@
 from avx.devices.net.atem.constants import SIZE_OF_HEADER, AudioSource, VideoSource,\
-    TransitionStyle, MacroAction
+    TransitionStyle, MacroAction, MultiviewerLayout
 from avx.devices.net.atem.tests import BaseATEMTest
 from avx.devices.net.atem.utils import byteArrayToString, bytes_of, \
     NotInitializedException
@@ -32,6 +32,19 @@ class TestATEMSender(BaseATEMTest):
             [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
         )
         self.atem._socket.reset_mock()
+
+    def testSetMultiviewerLayout(self):
+        self.atem.setMultiviewerLayout(MultiviewerLayout.BOTTOM)
+        self.assert_sent_packet(
+            'CMvP',
+            [0x1, 0x0, 0x1, 0]
+        )
+
+        with self.assertRaises(InvalidArgumentException):
+            self.atem.setMultiviewerLayout('Bottom')
+
+        with self.assertRaises(InvalidArgumentException):
+            self.atem.setMultiviewerLayout(MultiviewerLayout.TOP, 7)
 
     def testSetMultiviewerInput(self):
         self.atem.setMultiviewWindowSource(3, VideoSource.COLOUR_BARS)
