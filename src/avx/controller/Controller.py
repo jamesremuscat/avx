@@ -199,6 +199,40 @@ class Controller(object):
         return self.logHandler.entries
 
 
+class DeviceProxy(object):
+    def __init__(self, controller, deviceID):
+        self._proxy = Pyro4.Proxy(controller.proxyDevice(deviceID))
+        self._controller = controller
+        self._deviceID = deviceID
+        self._attr_cache = {}
+
+    def proxy_attribute(self, attr, name):
+        if not callable(attr):
+            return attr
+        else:
+            def proxy(*args, **kwargs):
+                try:
+                    return attr(*args, **kwargs)
+                except (Pyro4.errors.CommunicationError, Pyro4.errors.ConnectionClosedError):
+                    # These tend to happen when the controller restarts, and all our device proxies get different URIs/ports
+                    self._invalidate_cache()
+                    self._reproxy()
+                    return getattr(self, name)(*args, **kwargs)
+            return proxy
+
+    def _invalidate_cache(self):
+        self._attr_cache.clear()
+
+    def _reproxy(self):
+        self._proxy = Pyro4.Proxy(self._controller.proxyDevice(self._deviceID))
+
+    def __getattr__(self, name):
+        if name not in self._attr_cache:
+            self._attr_cache[name] = self.proxy_attribute(getattr(self._proxy, name), name)
+
+        return self._attr_cache[name]
+
+
 class ControllerProxy(object):
     def __init__(self, controller):
         self.controller = controller
@@ -207,7 +241,7 @@ class ControllerProxy(object):
         return getattr(self.controller, name)
 
     def __getitem__(self, item):
-        return Pyro4.Proxy(self.controller.proxyDevice(item))
+        return DeviceProxy(self, item)
 
 
 class ControllerLogHandler(Handler):
