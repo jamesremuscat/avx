@@ -186,7 +186,7 @@ class HyperDeck(Device):
 
     def _recv_206(self, payload, extra):
         listing = {}
-        cliplines = extra[1:]  # Ignore the 'clip id:' line
+        cliplines = extra[1:]  # Ignore the 'slot id:' line
         for line in cliplines:
             idx, data = line.split(': ')
             name, file_format, video_format, duration = data.split(' ')
