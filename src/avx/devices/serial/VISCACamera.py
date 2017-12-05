@@ -75,6 +75,11 @@ class VISCACamera(SerialDevice):
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
     '''
 
+    MAX_PAN_SPEED = 0x18
+    MAX_TILT_SPEED = 0x14
+    MIN_ZOOM_SPEED = 0x02
+    MAX_ZOOM_SPEED = 0x07
+
     def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
         if viscaPort is None or controller is None:
             super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
@@ -352,16 +357,32 @@ class VISCACamera(SerialDevice):
         return ret
 
     def checkPan(self, pan):
-        if pan < 1 or pan > 0x18:
+        if pan < 1 or pan > self.maxPanSpeed:
             raise InvalidArgumentException()
 
     def checkTilt(self, tilt):
-        if tilt < 1 or tilt > 0x16:
+        if tilt < 1 or tilt > self.maxTiltSpeed:
             raise InvalidArgumentException()
 
     def checkZoom(self, zoom):
-        if zoom < 2 or zoom > 7:
+        if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
             raise InvalidArgumentException()
+
+    @property
+    def maxPanSpeed(self):
+        return self.MAX_PAN_SPEED
+
+    @property
+    def maxTiltSpeed(self):
+        return self.MAX_TILT_SPEED
+
+    @property
+    def minZoomSpeed(self):
+        return self.MIN_ZOOM_SPEED
+
+    @property
+    def maxZoomSpeed(self):
+        return self.MAX_ZOOM_SPEED
 
 
 class Aperture(Enum):

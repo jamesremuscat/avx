@@ -7,6 +7,11 @@ class PTC150(VISCACamera):
     Datavideo PTC-150, with some variations on VISCA.
     '''
 
+    MAX_PAN_SPEED = 0x18
+    MAX_TILT_SPEED = 0x18
+    MIN_ZOOM_SPEED = 0x01
+    MAX_ZOOM_SPEED = 0x07
+
     def storePreset(self, preset):
         if preset > 0 and preset <= 50:
             self.sendVISCA([0x01, 0x04, 0x3F, 0x01, preset])
