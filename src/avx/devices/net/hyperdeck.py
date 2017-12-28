@@ -161,7 +161,8 @@ class HyperDeck(Device):
             'loop': _bool,
             'single clip': _bool,
             'speed': _int,
-            'slot id': _int
+            'slot id': _int,
+            'active slot': _int
         }
         self._store_state(self._state['transport'], extra, mapping)
         self.broadcast(MessageTypes.TRANSPORT_STATE_CHANGED, self._state['transport'])

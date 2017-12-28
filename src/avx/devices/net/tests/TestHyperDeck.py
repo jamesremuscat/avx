@@ -68,12 +68,14 @@ timecode: foo
 clip id: none
 video format: 1080p25
 loop: false
+active slot: 99
 '''
         )
 
         self.assertEqual(TransportState.PREVIEW, self.deck._state['transport']['status'])
         self.assertEqual(100, self.deck._state['transport']['speed'])
         self.assertEqual(False, self.deck._state['transport']['loop'])
+        self.assertEqual(99, self.deck._state['transport']['active slot'])
 
         self.deck.broadcast.reset_mock()
 
