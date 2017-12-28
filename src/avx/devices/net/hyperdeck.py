@@ -106,21 +106,24 @@ class HyperDeck(Device):
 
     def _receive(self):
         while self._run_recv_thread:
-            data = self.socket.recv(4096)
-            if data == '':
-                self.log.warn("Connection closed - attempting to reconnect")
-                sleep(5)
-                self.initialise()
-            else:
-                # In case the response is larger than the recv buffer
-                # we need to check for a completed message - that is,
-                # one with an empty line at the end
-                self._data_buffer += data
-                if self._data_buffer[-2:] == "\r\n":
-                    for msg in self._data_buffer.split('\r\n\r\n'):
-                        if msg != '':
-                            self._handle_data(msg)
-                    self._data_buffer = ''
+            try:
+                data = self.socket.recv(4096)
+                if data == '':
+                    self.log.warn("Connection closed - attempting to reconnect")
+                    sleep(5)
+                    self.initialise()
+                else:
+                    # In case the response is larger than the recv buffer
+                    # we need to check for a completed message - that is,
+                    # one with an empty line at the end
+                    self._data_buffer += data
+                    if self._data_buffer[-2:] == "\r\n":
+                        for msg in self._data_buffer.split('\r\n\r\n'):
+                            if msg != '':
+                                self._handle_data(msg)
+                        self._data_buffer = ''
+            except socket.timeout:
+                pass
 
     def _handle_data(self, data):
         # data packets are of form '000 payload text[:\r\nextra text]\r\n\r\n'
