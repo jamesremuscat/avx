@@ -1,8 +1,9 @@
 import unittest
-from avx.devices.net.hyperdeck import HyperDeck, TransportState, SlotState,\
+from avx.devices.net.hyperdeck import HyperDeck, TransportMode, TransportState, SlotState,\
     MessageTypes
 from mock import MagicMock, call
 from threading import Thread
+from avx.devices.Device import InvalidArgumentException
 
 
 class TestHyperDeck(unittest.TestCase):
@@ -67,12 +68,14 @@ timecode: foo
 clip id: none
 video format: 1080p25
 loop: false
+active slot: 99
 '''
         )
 
         self.assertEqual(TransportState.PREVIEW, self.deck._state['transport']['status'])
         self.assertEqual(100, self.deck._state['transport']['speed'])
         self.assertEqual(False, self.deck._state['transport']['loop'])
+        self.assertEqual(99, self.deck._state['transport']['active slot'])
 
         self.deck.broadcast.reset_mock()
 
@@ -86,6 +89,7 @@ loop: true
         self.assertEqual(True, self.deck._state['transport']['loop'])
 
         expected = {
+            'active slot': 99,
             'status': TransportState.PLAYING,
             'speed': 100,
             'slot id': None,
@@ -136,6 +140,61 @@ status: error
         }
         self.assertEqual(expected, self.deck.getSlotsState())
         self.deck.broadcast.assert_called_once_with(MessageTypes.SLOT_STATE_CHANGED, expected)
+
+    def testRequestClipListing(self):
+        self.deck.broadcastClipsList()
+        self.deck.socket.send.assert_called_once_with('disk list\r\n')
+
+    def testReceiveClipListing(self):
+        self._handle_data(
+            '''206 disk list:
+slot id: 1
+0: clip1_name clip1_fileformat clip1_videoformat 00:01:23:04
+1: clip2 name with spaces clip2_fileformat clip2_videoformat 08:08:28:06
+'''
+        )
+
+        expected = {
+            0: {
+                'name': 'clip1_name',
+                'file_format': 'clip1_fileformat',
+                'video_format': 'clip1_videoformat',
+                'duration': '00:01:23:04'
+            },
+            1: {
+                'name': 'clip2 name with spaces',
+                'file_format': 'clip2_fileformat',
+                'video_format': 'clip2_videoformat',
+                'duration': '08:08:28:06'
+            }
+        }
+        self.deck.broadcast.assert_called_once_with(MessageTypes.CLIP_LISTING, expected)
+
+    def testSlotSelect(self):
+        self.deck.selectSlot(1)
+        self.deck.socket.send.assert_called_once_with('slot select: slot id: 1\r\n')
+        self.deck.socket.send.reset_mock()
+
+        try:
+            self.deck.selectSlot(0)
+            self.fail('Should have thrown exception for invalid slot')
+        except InvalidArgumentException:
+            pass
+
+    def testSetTransportMode(self):
+        self.deck.setTransportMode(TransportMode.PLAYBACK)
+        self.deck.socket.send.assert_called_once_with('preview: enable: false\r\n')
+        self.deck.socket.send.reset_mock()
+
+        self.deck.setTransportMode(TransportMode.RECORD)
+        self.deck.socket.send.assert_called_once_with('preview: enable: true\r\n')
+        self.deck.socket.send.reset_mock()
+
+        try:
+            self.deck.setTransportMode('Record')
+            self.fail('Should have thrown exception for invalid transport mode')
+        except InvalidArgumentException:
+            pass
 
     def testRecord(self):
         self.deck.record()

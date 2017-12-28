@@ -1,4 +1,4 @@
-from avx.devices.Device import Device
+from avx.devices.Device import Device, InvalidArgumentException
 from enum import Enum
 from threading import Thread
 from time import sleep
@@ -30,6 +30,13 @@ class MessageTypes(object):
     DISCONNECTED = _PREFIX + "Disconnected"
     TRANSPORT_STATE_CHANGED = _PREFIX + "TransportStateChanged"
     SLOT_STATE_CHANGED = _PREFIX + "SlotStateChanged"
+    CLIP_LISTING = _PREFIX + "ClipListing"
+
+
+class TransportMode(Enum):
+    # These are the values passed to the `preview: enable:` command to switch
+    RECORD = 'true'
+    PLAYBACK = 'false'
 
 
 def _bool(string):
@@ -99,21 +106,24 @@ class HyperDeck(Device):
 
     def _receive(self):
         while self._run_recv_thread:
-            data = self.socket.recv(4096)
-            if data == '':
-                self.log.warn("Connection closed - attempting to reconnect")
-                sleep(5)
-                self.initialise()
-            else:
-                # In case the response is larger than the recv buffer
-                # we need to check for a completed message - that is,
-                # one with an empty line at the end
-                self._data_buffer += data
-                if self._data_buffer[-2:] == "\r\n":
-                    for msg in self._data_buffer.split('\r\n\r\n'):
-                        if msg != '':
-                            self._handle_data(msg)
-                    self._data_buffer = ''
+            try:
+                data = self.socket.recv(4096)
+                if data == '':
+                    self.log.warn("Connection closed - attempting to reconnect")
+                    sleep(5)
+                    self.initialise()
+                else:
+                    # In case the response is larger than the recv buffer
+                    # we need to check for a completed message - that is,
+                    # one with an empty line at the end
+                    self._data_buffer += data
+                    if self._data_buffer[-2:] == "\r\n":
+                        for msg in self._data_buffer.split('\r\n\r\n'):
+                            if msg != '':
+                                self._handle_data(msg)
+                        self._data_buffer = ''
+            except socket.timeout:
+                pass
 
     def _handle_data(self, data):
         # data packets are of form '000 payload text[:\r\nextra text]\r\n\r\n'
@@ -151,7 +161,8 @@ class HyperDeck(Device):
             'loop': _bool,
             'single clip': _bool,
             'speed': _int,
-            'slot id': _int
+            'slot id': _int,
+            'active slot': _int
         }
         self._store_state(self._state['transport'], extra, mapping)
         self.broadcast(MessageTypes.TRANSPORT_STATE_CHANGED, self._state['transport'])
@@ -177,6 +188,26 @@ class HyperDeck(Device):
     def _recv_502(self, payload, extra):
         self._recv_202(payload, extra)
 
+    def _recv_206(self, payload, extra):
+        listing = {}
+        cliplines = extra[1:]  # Ignore the 'slot id:' line
+        for line in cliplines:
+            idx, data = line.split(': ')
+            parts = data.split(' ')
+            duration = parts.pop()
+            video_format = parts.pop()
+            file_format = parts.pop()
+            name = ' '.join(parts)
+
+            listing[int(idx)] = {
+                'name': name,
+                'file_format': file_format,
+                'video_format': video_format,
+                'duration': duration
+            }
+
+        self.broadcast(MessageTypes.CLIP_LISTING, listing)
+
 ########
 # Getters
 ########
@@ -188,6 +219,29 @@ class HyperDeck(Device):
 
     def getSlotsState(self):
         return self._state['slots']
+
+    def broadcastClipsList(self):
+        '''
+        This behaves asynchronously: the list of clips will be returned via a broadcast
+        of type MessageTypes.CLIP_LISTING.
+        '''
+        self.socket.send('disk list\r\n')
+
+
+########
+# State setters
+########
+
+    def selectSlot(self, slot_id):
+        if slot_id in [1, 2]:
+            self.socket.send('slot select: slot id: {}\r\n'.format(slot_id))
+        else:
+            raise InvalidArgumentException('Slot {} does not exist'.format(slot_id))
+
+    def setTransportMode(self, mode):
+        if not isinstance(mode, TransportMode):
+            raise InvalidArgumentException('{} is not a TransportMode'.format(mode))
+        self.socket.send('preview: enable: {}\r\n'.format(mode.value))
 
 ########
 # Transport controls

@@ -4,13 +4,14 @@ Created on 13 Nov 2012
 @author: james
 '''
 from avx.devices import InvalidArgumentException
+from avx.devices.Device import Device
 from avx.devices.serial import SerialDevice
 from avx.CameraPosition import CameraPosition
 from enum import Enum
 from threading import Lock, ThreadError, Event
 
 import logging
-from avx.devices.Device import Device
+import time
 
 
 # Pan speeds can vary from 0x01 - 0x18
@@ -74,6 +75,11 @@ class VISCACamera(SerialDevice):
     A camera controlled by the Sony VISCA protocol e.g. Sony D31.
     '''
 
+    MAX_PAN_SPEED = 0x18
+    MAX_TILT_SPEED = 0x14
+    MIN_ZOOM_SPEED = 0x02
+    MAX_ZOOM_SPEED = 0x07
+
     def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
         if viscaPort is None or controller is None:
             super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
@@ -101,7 +107,13 @@ class VISCACamera(SerialDevice):
     def sendVISCA(self, commandBytes):
         if self._do_wait_for_ack:
             self._wait_for_ack.acquire()
-        return self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+        result = self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+        if not self._do_wait_for_ack:
+            time.sleep(0.1)
+
+        return result
 
     def getVISCA(self, commandBytes):
         with self._wait_for_response:
@@ -345,16 +357,32 @@ class VISCACamera(SerialDevice):
         return ret
 
     def checkPan(self, pan):
-        if pan < 1 or pan > 0x18:
+        if pan < 1 or pan > self.maxPanSpeed:
             raise InvalidArgumentException()
 
     def checkTilt(self, tilt):
-        if tilt < 1 or tilt > 0x16:
+        if tilt < 1 or tilt > self.maxTiltSpeed:
             raise InvalidArgumentException()
 
     def checkZoom(self, zoom):
-        if zoom < 2 or zoom > 7:
+        if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
             raise InvalidArgumentException()
+
+    @property
+    def maxPanSpeed(self):
+        return self.MAX_PAN_SPEED
+
+    @property
+    def maxTiltSpeed(self):
+        return self.MAX_TILT_SPEED
+
+    @property
+    def minZoomSpeed(self):
+        return self.MIN_ZOOM_SPEED
+
+    @property
+    def maxZoomSpeed(self):
+        return self.MAX_ZOOM_SPEED
 
 
 class Aperture(Enum):

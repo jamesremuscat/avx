@@ -104,8 +104,7 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
                 threading.Thread(target=self._sendDatagram, args=(ackDatagram,)).start()
 
             elif (header['bitmask'] & CMD_ACKREQUEST) and (self._isInitialized or len(data) == SIZE_OF_HEADER):
-                self.log.debug('initialized, received ACKREQUEST, sending ACK packet')
-                self.log.info("Sending ACK for packageId %d" % header['packageId'])
+                self.log.debug('initialized, received ACKREQUEST, sending ACK packet for packageId {}%d'.format(header['packageId']))
                 ackDatagram = self._createCommandHeader(CMD_ACK, 0, header['uid'], header['packageId'])
                 threading.Thread(target=self._sendDatagram, args=(ackDatagram,)).start()
                 if not self._isInitialized:

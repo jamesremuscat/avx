@@ -1,5 +1,5 @@
-from avx.devices.net.atem.constants import SIZE_OF_HEADER, VideoSource,\
-    TransitionStyle, MacroAction
+from avx.devices.net.atem.constants import SIZE_OF_HEADER, AudioSource, VideoSource,\
+    TransitionStyle, MacroAction, MultiviewerLayout
 from avx.devices.net.atem.tests import BaseATEMTest
 from avx.devices.net.atem.utils import byteArrayToString, bytes_of, \
     NotInitializedException
@@ -23,6 +23,7 @@ class TestATEMSender(BaseATEMTest):
         BaseATEMTest.setUp(self)
         self.atem._handlePacket(byteArrayToString([0x08, 0x0c, 0xab, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12]))
         self.send_command('_top', [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        self.send_command('_MvC', [1, 0, 0, 0])  # One MVW
         self.send_command(
             'InPr',
             bytes_of(VideoSource.COLOUR_BARS.value) +
@@ -31,6 +32,33 @@ class TestATEMSender(BaseATEMTest):
             [0, 0x0F, 0, 1, 2, 0, 0x1E, 0x02, 0, 0]
         )
         self.atem._socket.reset_mock()
+
+    def testSetMultiviewerLayout(self):
+        self.atem.setMultiviewerLayout(MultiviewerLayout.BOTTOM)
+        self.assert_sent_packet(
+            'CMvP',
+            [0x1, 0x0, 0x1, 0]
+        )
+
+        with self.assertRaises(InvalidArgumentException):
+            self.atem.setMultiviewerLayout('Bottom')
+
+        with self.assertRaises(InvalidArgumentException):
+            self.atem.setMultiviewerLayout(MultiviewerLayout.TOP, 7)
+
+    def testSetMultiviewerInput(self):
+        self.atem.setMultiviewerWindowSource(3, VideoSource.COLOUR_BARS)
+        self.assert_sent_packet(
+            'CMvI',
+            [0, 3, 0x03, 0xE8]
+        )
+        self.atem._socket.reset_mock()
+
+        try:
+            self.atem.setMultiviewerWindowSource(22, VideoSource.AUX_1)
+            self.fail("Should have thrown an exception")
+        except InvalidArgumentException:
+            pass
 
     def testSetAuxSourceWithoutInit(self):
         self.atem._isInitialized = False
@@ -157,3 +185,15 @@ class TestATEMSender(BaseATEMTest):
             self.fail("Should have failed to execute a non-existent macro")
         except InvalidArgumentException:
             pass
+########
+# Audio
+########
+
+    def testResetAudioMixerPeaks(self):
+        self.atem.resetAudioMixerPeaks()  # Default = master
+        self.assert_sent_packet('RAMP', [0x4, 0, 0, 0, 0x1, 0, 0, 0])
+        self.atem._socket.reset_mock()
+
+        self.atem.resetAudioMixerPeaks(AudioSource.XLR)
+        self.assert_sent_packet('RAMP', [0x2, 0, 0x3, 0xE9, 0, 0, 0, 0])
+        self.atem._socket.reset_mock()

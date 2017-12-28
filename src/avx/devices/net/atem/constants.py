@@ -64,6 +64,34 @@ class VideoSource(Enum):
     ME_2_PREVIEW = 10021
 
 
+class AudioSource(Enum):
+    INPUT_1 = 1
+    INPUT_2 = 2
+    INPUT_3 = 3
+    INPUT_4 = 4
+    INPUT_5 = 5
+    INPUT_6 = 6
+    INPUT_7 = 7
+    INPUT_8 = 8
+    INPUT_9 = 9
+    INPUT_10 = 10
+    INPUT_11 = 11
+    INPUT_12 = 12
+    INPUT_13 = 13
+    INPUT_14 = 14
+    INPUT_15 = 15
+    INPUT_16 = 16
+    INPUT_17 = 17
+    INPUT_18 = 18
+    INPUT_19 = 19
+    INPUT_20 = 20
+    XLR = 1001
+    AES_EBU = 1101
+    RCA = 1201
+    MEDIA_PLAYER_1 = 2001
+    MEDIA_PLAYER_2 = 2002
+
+
 class VideoMode(Enum):
     NTSC_525I = 0
     PAL_625I = 1
