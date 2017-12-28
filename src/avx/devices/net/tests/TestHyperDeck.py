@@ -147,7 +147,7 @@ status: error
             '''206 disk list:
 slot id: 1
 0: clip1_name clip1_fileformat clip1_videoformat 00:01:23:04
-1: clip2_name clip2_fileformat clip2_videoformat 08:08:28:06
+1: clip2 name with spaces clip2_fileformat clip2_videoformat 08:08:28:06
 '''
         )
 
@@ -159,7 +159,7 @@ slot id: 1
                 'duration': '00:01:23:04'
             },
             1: {
-                'name': 'clip2_name',
+                'name': 'clip2 name with spaces',
                 'file_format': 'clip2_fileformat',
                 'video_format': 'clip2_videoformat',
                 'duration': '08:08:28:06'

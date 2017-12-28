@@ -189,7 +189,11 @@ class HyperDeck(Device):
         cliplines = extra[1:]  # Ignore the 'slot id:' line
         for line in cliplines:
             idx, data = line.split(': ')
-            name, file_format, video_format, duration = data.split(' ')
+            parts = data.split(' ')
+            duration = parts.pop()
+            video_format = parts.pop()
+            file_format = parts.pop()
+            name = ' '.join(parts)
 
             listing[int(idx)] = {
                 'name': name,
