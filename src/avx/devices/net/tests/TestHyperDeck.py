@@ -89,6 +89,7 @@ loop: true
         self.assertEqual(True, self.deck._state['transport']['loop'])
 
         expected = {
+            'active slot': 99,
             'status': TransportState.PLAYING,
             'speed': 100,
             'slot id': None,
