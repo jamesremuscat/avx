@@ -57,6 +57,7 @@ class TCPDevice(Device):
 
     def send(self, data):
         if self.socket:
+            print "Sending..."
             self.socket.send(data)
         else:
             self.log.warn("Tried to send data without a socket: {}".format(data))
