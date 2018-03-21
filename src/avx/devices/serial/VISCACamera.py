@@ -70,60 +70,39 @@ class VISCAPort(SerialDevice):
         self.port.close()
 
 
-class VISCACamera(SerialDevice):
-    '''
-    A camera controlled by the Sony VISCA protocol e.g. Sony D31.
-    '''
-
+class VISCACommandsMixin(object):
     MAX_PAN_SPEED = 0x18
     MAX_TILT_SPEED = 0x14
     MIN_ZOOM_SPEED = 0x02
     MAX_ZOOM_SPEED = 0x07
 
-    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
-        if viscaPort is None or controller is None:
-            super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
-            self._isSharedPort = False
-        else:
-            Device.__init__(self, deviceID)
-            self.port = controller.getDevice(viscaPort)
-            self._isSharedPort = True
-            self.port.addCamera(cameraID, self)
-        self.cameraID = cameraID
-        self._do_wait_for_ack = waitForAck
-        self._wait_for_ack = Lock()
-        self._wait_for_response = Lock()
-        self._response_received = Event()
-        self._last_response = None
+    def checkPan(self, pan):
+        if pan < 1 or pan > self.maxPanSpeed:
+            raise InvalidArgumentException()
 
-    def initialise(self):
-        if not self._isSharedPort:
-            SerialDevice.initialise(self)
+    def checkTilt(self, tilt):
+        if tilt < 1 or tilt > self.maxTiltSpeed:
+            raise InvalidArgumentException()
 
-    def deinitialise(self):
-        if not self._isSharedPort:
-            SerialDevice.deinitialise(self)
+    def checkZoom(self, zoom):
+        if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
+            raise InvalidArgumentException()
 
-    def sendVISCA(self, commandBytes):
-        if self._do_wait_for_ack:
-            self._wait_for_ack.acquire()
+    @property
+    def maxPanSpeed(self):
+        return self.MAX_PAN_SPEED
 
-        result = self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+    @property
+    def maxTiltSpeed(self):
+        return self.MAX_TILT_SPEED
 
-        if not self._do_wait_for_ack:
-            time.sleep(0.1)
+    @property
+    def minZoomSpeed(self):
+        return self.MIN_ZOOM_SPEED
 
-        return result
-
-    def getVISCA(self, commandBytes):
-        with self._wait_for_response:
-            self.sendVISCA(commandBytes)
-            logging.debug("Waiting for response.")
-            self._response_received.wait()
-            logging.debug("Received response")
-            response = self._last_response
-            self._response_received.clear()
-            return response
+    @property
+    def maxZoomSpeed(self):
+        return self.MAX_ZOOM_SPEED
 
     @constrainPanTiltSpeed
     def moveUp(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
@@ -276,6 +255,57 @@ class VISCACamera(SerialDevice):
                         (h & 0x00F0) >> 4,
                         (h & 0x000F)])
 
+
+class VISCACamera(SerialDevice, VISCACommandsMixin):
+    '''
+    A camera controlled by the Sony VISCA protocol e.g. Sony D31.
+    '''
+
+    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
+        if viscaPort is None or controller is None:
+            super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
+            self._isSharedPort = False
+        else:
+            Device.__init__(self, deviceID)
+            self.port = controller.getDevice(viscaPort)
+            self._isSharedPort = True
+            self.port.addCamera(cameraID, self)
+        self.cameraID = cameraID
+        self._do_wait_for_ack = waitForAck
+        self._wait_for_ack = Lock()
+        self._wait_for_response = Lock()
+        self._response_received = Event()
+        self._last_response = None
+
+    def initialise(self):
+        if not self._isSharedPort:
+            SerialDevice.initialise(self)
+
+    def deinitialise(self):
+        if not self._isSharedPort:
+            SerialDevice.deinitialise(self)
+
+    def sendVISCA(self, commandBytes):
+        if self._do_wait_for_ack:
+            self._wait_for_ack.acquire()
+
+        result = self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+        if not self._do_wait_for_ack:
+            time.sleep(0.1)
+
+        return result
+
+    def getVISCA(self, commandBytes):
+        with self._wait_for_response:
+            self.sendVISCA(commandBytes)
+            logging.debug("Waiting for response.")
+            self._response_received.wait()
+            logging.debug("Received response")
+            response = self._last_response
+            self._response_received.clear()
+            return response
+
     def hasFullMessage(self, recv_buffer):
         return len(recv_buffer) > 0 and recv_buffer[-1] == 0xFF
 
@@ -355,34 +385,6 @@ class VISCACamera(SerialDevice):
         ret += self.sendVISCA(setZ)
 
         return ret
-
-    def checkPan(self, pan):
-        if pan < 1 or pan > self.maxPanSpeed:
-            raise InvalidArgumentException()
-
-    def checkTilt(self, tilt):
-        if tilt < 1 or tilt > self.maxTiltSpeed:
-            raise InvalidArgumentException()
-
-    def checkZoom(self, zoom):
-        if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
-            raise InvalidArgumentException()
-
-    @property
-    def maxPanSpeed(self):
-        return self.MAX_PAN_SPEED
-
-    @property
-    def maxTiltSpeed(self):
-        return self.MAX_TILT_SPEED
-
-    @property
-    def minZoomSpeed(self):
-        return self.MIN_ZOOM_SPEED
-
-    @property
-    def maxZoomSpeed(self):
-        return self.MAX_ZOOM_SPEED
 
 
 class Aperture(Enum):
