@@ -79,19 +79,19 @@ class VISCACommandsMixin(object):
 
     def checkPan(self, pan):
         if pan < 1 or pan > self.maxPanSpeed:
-            raise InvalidArgumentException()
+            raise InvalidArgumentException("Pan speed {} out of range: 1-{}".format(pan, self.maxPanSpeed))
 
     def checkTilt(self, tilt):
         if tilt < 1 or tilt > self.maxTiltSpeed:
-            raise InvalidArgumentException()
+            raise InvalidArgumentException("Tilt speed {} out of range: 1-{}".format(tilt, self.maxTiltSpeed))
 
     def checkZoom(self, zoom):
         if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
-            raise InvalidArgumentException()
+            raise InvalidArgumentException("Zoom speed {} out of range: {}-{}".format(zoom, self.minZoomSpeed, self.maxZoomSpeed))
 
     def checkPreset(self, preset_idx):
         if preset_idx < 0 or preset_idx >= self.maxPresets:
-            raise InvalidArgumentException()
+            raise InvalidArgumentException("Preset {} out of range: 0-{}".format(preset_idx, self.maxPresets - 1))
 
     @property
     def maxPanSpeed(self):
