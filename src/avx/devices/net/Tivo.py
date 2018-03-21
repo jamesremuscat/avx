@@ -1,8 +1,7 @@
-from avx.devices import Device
-from socket import socket
+from avx.devices.net import TCPDevice
 
 
-class Tivo(Device):
+class Tivo(TCPDevice):
     '''
     A networked TiVo device. Developed against Virgin Media UK's TiVo boxes.
     '''
@@ -10,19 +9,7 @@ class Tivo(Device):
     socket = None
 
     def __init__(self, deviceID, ipAddress, port=31339, **kwargs):
-        super(Tivo, self).__init__(deviceID, **kwargs)
-        self.ipAddress = ipAddress
-        self.port = port
-
-    def initialise(self):
-        self.socket = socket()
-        self.socket.settimeout(5)
-        self.socket.connect((self.ipAddress, self.port))
-
-    def send(self, message):
-        if not self.socket:
-            self.initialise()
-        self.socket.sendall(message)
+        super(Tivo, self).__init__(deviceID, ipAddress, port, **kwargs)
 
     def sendIRCode(self, ircode):
         self.send('IRCODE %s\r' % ircode)

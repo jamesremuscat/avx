@@ -1,7 +1,6 @@
-from avx.devices.Device import Device, InvalidArgumentException
+from avx.devices.Device import InvalidArgumentException
+from avx.devices.net import TCPDevice
 from enum import Enum
-from threading import Thread
-from time import sleep
 
 import socket
 
@@ -54,38 +53,13 @@ def _int(string):
         return string
 
 
-class HyperDeck(Device):
+class HyperDeck(TCPDevice):
     def __init__(self, deviceID, ipAddress, port=9993, **kwargs):
-        super(HyperDeck, self).__init__(deviceID, *kwargs)
-        self.remote = (ipAddress, port)
-        self._recv_thread = None
-        self._connect_thread = None
-        self._isConnected = False
+        super(HyperDeck, self).__init__(deviceID, ipAddress, port, *kwargs)
 
     def initialise(self):
-        self.socket = socket.socket()
-        self.socket.settimeout(1)
-        self._run_recv_thread = True
         self._data_buffer = ''
         self._initialiseState()
-
-        if not (self._connect_thread and self._connect_thread.is_alive()) and not self._isConnected:
-            self._connect_thread = Thread(target=self._connect)
-            self._connect_thread.daemon = True
-            self._connect_thread.start()
-
-    def _connect(self):
-        while not self._isConnected and self._run_recv_thread:
-            try:
-                self.socket.connect(self.remote)
-                if not (self._recv_thread and self._recv_thread.is_alive()):
-                    self._recv_thread = Thread(target=self._receive)
-                    self._recv_thread.daemon = True
-                    self._recv_thread.start()
-                self._isConnected = True
-            except socket.error:
-                self.log.warn("Could not connect to {}, will retry.".format(self.remote))
-                sleep(5)
 
     def _initialiseState(self):
         self._state = {
@@ -95,35 +69,23 @@ class HyperDeck(Device):
         }
 
     def deinitialise(self):
-        self._run_recv_thread = False
-        self._isConnected = False
         if self.socket:
             try:
-                self.socket.send("quit\r\n")
+                self.send("quit\r\n")
             except socket.error:
                 pass
-            self.socket.close()
+        super(HyperDeck, self).deinitialise()
 
-    def _receive(self):
-        while self._run_recv_thread:
-            try:
-                data = self.socket.recv(4096)
-                if data == '':
-                    self.log.warn("Connection closed - attempting to reconnect")
-                    sleep(5)
-                    self.initialise()
-                else:
-                    # In case the response is larger than the recv buffer
-                    # we need to check for a completed message - that is,
-                    # one with an empty line at the end
-                    self._data_buffer += data
-                    if self._data_buffer[-2:] == "\r\n":
-                        for msg in self._data_buffer.split('\r\n\r\n'):
-                            if msg != '':
-                                self._handle_data(msg)
-                        self._data_buffer = ''
-            except socket.timeout:
-                pass
+    def on_receive(self, data):
+        # In case the response is larger than the recv buffer
+        # we need to check for a completed message - that is,
+        # one with an empty line at the end
+        self._data_buffer += data
+        if self._data_buffer[-2:] == "\r\n":
+            for msg in self._data_buffer.split('\r\n\r\n'):
+                if msg != '':
+                    self._handle_data(msg)
+            self._data_buffer = ''
 
     def _handle_data(self, data):
         # data packets are of form '000 payload text[:\r\nextra text]\r\n\r\n'
@@ -150,9 +112,9 @@ class HyperDeck(Device):
 
     def _recv_500(self, payload, extra):
         self._store_state(self._state['connection'], extra)
-        self.socket.send('transport info\r\n')
-        self.socket.send('slot info\r\n')
-        self.socket.send('notify: transport: true slot: true\r\n')
+        self.send('transport info\r\n')
+        self.send('slot info\r\n')
+        self.send('notify: transport: true slot: true\r\n')
 
     def _recv_208(self, payload, extra):
         mapping = {
@@ -225,7 +187,7 @@ class HyperDeck(Device):
         This behaves asynchronously: the list of clips will be returned via a broadcast
         of type MessageTypes.CLIP_LISTING.
         '''
-        self.socket.send('disk list\r\n')
+        self.send('disk list\r\n')
 
 
 ########
@@ -234,32 +196,32 @@ class HyperDeck(Device):
 
     def selectSlot(self, slot_id):
         if slot_id in [1, 2]:
-            self.socket.send('slot select: slot id: {}\r\n'.format(slot_id))
+            self.send('slot select: slot id: {}\r\n'.format(slot_id))
         else:
             raise InvalidArgumentException('Slot {} does not exist'.format(slot_id))
 
     def setTransportMode(self, mode):
         if not isinstance(mode, TransportMode):
             raise InvalidArgumentException('{} is not a TransportMode'.format(mode))
-        self.socket.send('preview: enable: {}\r\n'.format(mode.value))
+        self.send('preview: enable: {}\r\n'.format(mode.value))
 
 ########
 # Transport controls
 ########
     def record(self, clip_name=None):
         if clip_name:
-            self.socket.send('record: name: {}\r\n'.format(clip_name))
+            self.send('record: name: {}\r\n'.format(clip_name))
         else:
-            self.socket.send('record\r\n')
+            self.send('record\r\n')
         self._state['transport']['status'] = TransportState.RECORD  # Otherwise we don't get a notification about it
 
     def stop(self):
-        self.socket.send('stop\r\n')
+        self.send('stop\r\n')
         self._state['transport']['status'] = TransportState.STOPPED  # Otherwise we don't get a notification about it
 
     def play(self, single_clip=None, speed=None, loop=None):
         if single_clip is None and speed is None and loop is None:
-            self.socket.send('play\r\n')
+            self.send('play\r\n')
         else:
             cmd = 'play: '
             if single_clip is not None:
@@ -268,11 +230,11 @@ class HyperDeck(Device):
                 cmd += 'speed: {} '.format(speed)
             if loop is not None:
                 cmd += 'loop: {} '.format('true' if loop else 'false')
-            self.socket.send(cmd.strip() + '\r\n')
+            self.send(cmd.strip() + '\r\n')
         self._state['transport']['status'] = TransportState.PLAYING  # Otherwise we don't get a notification about it
 
     def gotoClip(self, clipID):
-        self.socket.send('goto: clip id: {}\r\n'.format(clipID))
+        self.send('goto: clip id: {}\r\n'.format(clipID))
 
     def next(self):
         self.gotoClip('+1')
