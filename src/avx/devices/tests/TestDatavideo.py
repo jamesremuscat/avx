@@ -11,8 +11,8 @@ class TestDatavideo(unittest.TestCase):
         camera = PTC150("Test", port, 1)
 
         try:
-            camera.storePreset(0)
-            self.fail("Preset 0 should be out of range")
+            camera.storePreset(-1)
+            self.fail("Preset -1 should be out of range")
         except InvalidArgumentException:
             pass
 
