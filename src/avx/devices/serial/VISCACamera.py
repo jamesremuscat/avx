@@ -75,6 +75,7 @@ class VISCACommandsMixin(object):
     MAX_TILT_SPEED = 0x14
     MIN_ZOOM_SPEED = 0x02
     MAX_ZOOM_SPEED = 0x07
+    MAX_PRESETS = 6
 
     def checkPan(self, pan):
         if pan < 1 or pan > self.maxPanSpeed:
@@ -86,6 +87,10 @@ class VISCACommandsMixin(object):
 
     def checkZoom(self, zoom):
         if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
+            raise InvalidArgumentException()
+
+    def checkPreset(self, preset_idx):
+        if preset_idx < 0 or preset_idx >= self.maxPresets:
             raise InvalidArgumentException()
 
     @property
@@ -103,6 +108,10 @@ class VISCACommandsMixin(object):
     @property
     def maxZoomSpeed(self):
         return self.MAX_ZOOM_SPEED
+
+    @property
+    def maxPresets(self):
+        return self.MAX_PRESETS
 
     @constrainPanTiltSpeed
     def moveUp(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
@@ -186,13 +195,11 @@ class VISCACommandsMixin(object):
         return self.sendVISCA([0x01, 0x04, 0x33, 0x03])
 
     def storePreset(self, preset):
-        if preset < 0 or preset > 5:
-            return -1
+        self.checkPreset(preset)
         self.sendVISCA([0x01, 0x04, 0x3F, 0x01, preset])
 
     def recallPreset(self, preset):
-        if preset < 0 or preset > 5:
-            return -1
+        self.checkPreset(preset)
         self.sendVISCA([0x01, 0x04, 0x3F, 0x02, preset])
 
     def whiteBalanceAuto(self):
