@@ -1,4 +1,4 @@
-from avx.devices.datavideo import PTC150
+from avx.devices.datavideo import PTC150, PTC150_DVIP
 from avx.devices.Device import InvalidArgumentException
 from mock import MagicMock
 
@@ -42,14 +42,11 @@ class TestDatavideo(unittest.TestCase):
         port.reset_mock()
         camera._wait_for_ack.release()
 
-    def checkPan(self, pan):
-        if pan < 1 or pan > 0x18:
-            raise InvalidArgumentException()
+    def testPTC150_DVIP(self):
+        socket = MagicMock()
+        camera = PTC150_DVIP("Test", "127.0.0.1")
+        camera.socket = socket
 
-    def checkTilt(self, tilt):
-        if tilt < 1 or tilt > 0x18:
-            raise InvalidArgumentException()
-
-    def checkZoom(self, zoom):
-        if zoom < 1 or zoom > 7:
-            raise InvalidArgumentException()
+        camera.tallyGreen()
+        socket.send.assert_called_once_with('\x00\x0B\x81\x01\x7E\x01\x0A\x00\x00\x02\xFF')
+        socket.reset_mock()

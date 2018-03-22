@@ -12,6 +12,7 @@ class TCPDevice(Device):
         self._recv_thread = None
         self._connect_thread = None
         self._isConnected = False
+        self.socket = None
 
     def initialise(self):
         self.socket = socket.socket()
