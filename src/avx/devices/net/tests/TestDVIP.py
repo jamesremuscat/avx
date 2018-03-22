@@ -12,7 +12,7 @@ import unittest
 
 class TestDVIPCamera(unittest.TestCase):
     def setUp(self):
-        self.dvip = DVIPCamera("test", 1, "127.0.0.1")
+        self.dvip = DVIPCamera("test", "127.0.0.1")
         self.dvip.socket = MagicMock()
 
     def testPacketHeaders(self):

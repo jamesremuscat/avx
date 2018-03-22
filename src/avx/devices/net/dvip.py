@@ -9,12 +9,11 @@ from avx.devices.serial.VISCACamera import VISCACommandsMixin
 
 
 class DVIPCamera(TCPDevice, VISCACommandsMixin):
-    def __init__(self, deviceID, cameraID, ipAddress, port=5002, **kwargs):
+    def __init__(self, deviceID, ipAddress, port=5002, **kwargs):
         super(DVIPCamera, self).__init__(deviceID, ipAddress, port, **kwargs)
-        self._cameraID = cameraID
 
     def sendVISCA(self, data):
-        data_bytes = [0x80 + self._cameraID] + data + [0xFF]
+        data_bytes = [0x81] + data + [0xFF]
         length = len(data_bytes) + 2
 
         self.send(
