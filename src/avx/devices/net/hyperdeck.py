@@ -55,7 +55,7 @@ def _int(string):
 
 class HyperDeck(TCPDevice):
     def __init__(self, deviceID, ipAddress, port=9993, **kwargs):
-        super(HyperDeck, self).__init__(deviceID, ipAddress, port, *kwargs)
+        super(HyperDeck, self).__init__(deviceID, ipAddress, port, **kwargs)
 
     def initialise(self):
         self._data_buffer = ''
