@@ -230,7 +230,7 @@ class VISCACommandsMixin(object):
         self.sendVISCA([0x01, 0x04, 0x39, 0x03])
 
     def setAperture(self, aperture):
-        if isinstance(aperture, Aperture):
+        if isinstance(aperture, CameraSettingEnum):
             av = aperture.code
         else:
             av = aperture
@@ -241,7 +241,7 @@ class VISCACommandsMixin(object):
                         (av & 0x000F)])
 
     def setShutter(self, shutter):
-        if isinstance(shutter, Shutter):
+        if isinstance(shutter, CameraSettingEnum):
             tv = shutter.code
         else:
             tv = shutter
@@ -252,7 +252,7 @@ class VISCACommandsMixin(object):
                         (tv & 0x000F)])
 
     def setGain(self, gain):
-        if isinstance(gain, Gain):
+        if isinstance(gain, CameraSettingEnum):
             h = gain.code
         else:
             h = gain
@@ -394,7 +394,13 @@ class VISCACamera(SerialDevice, VISCACommandsMixin):
         return ret
 
 
-class Aperture(Enum):
+class CameraSettingEnum(Enum):
+    def __init__(self, code, label):
+        self.code = code
+        self.label = label
+
+
+class Aperture(CameraSettingEnum):
     CLOSE = (0x00, "Closed")
     F28 = (0x01, "F28")
     F22 = (0x02, "F22")
@@ -414,12 +420,8 @@ class Aperture(Enum):
     F2 = (0x10, "F2")
     F1_8 = (0x11, "F1.8")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
-
-class Shutter(Enum):
+class Shutter(CameraSettingEnum):
     T50 = (0x00, "1/50s")
     T60 = (0x01, "1/60s")
     T75 = (0x02, "1/75s")
@@ -449,12 +451,8 @@ class Shutter(Enum):
     T6000 = (0x1A, "1/6000s")
     T10000 = (0x1B, "1/10000s")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
-
-class Gain(Enum):
+class Gain(CameraSettingEnum):
     G_MINUS_3 = (0x00, "-3")
     G_0 = (0x01, "0")
     G_3 = (0x02, "3")
@@ -463,7 +461,3 @@ class Gain(Enum):
     G_12 = (0x05, "12")
     G_15 = (0x06, "15")
     G_18 = (0x07, "18")
-
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label

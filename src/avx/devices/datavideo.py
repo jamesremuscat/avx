@@ -1,5 +1,5 @@
 from avx.devices.net.dvip import DVIPCamera
-from avx.devices.serial.VISCACamera import VISCACamera
+from avx.devices.serial.VISCACamera import CameraSettingEnum, VISCACamera
 from enum import Enum
 
 
@@ -51,7 +51,7 @@ class PTC150_DVIP(_PTC150Base, DVIPCamera):
         self._tally(False, False)
 
 
-class Aperture(Enum):
+class Aperture(CameraSettingEnum):
     CLOSE = (0x00, "Closed")
     F14 = (0x05, "F14")
     F11 = (0x06, "F11")
@@ -67,12 +67,8 @@ class Aperture(Enum):
     F2 = (0x10, "F2")
     F1_6 = (0x11, "F1.6")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
-
-class Shutter(Enum):
+class Shutter(CameraSettingEnum):
     T1 = (0x00, "1s")
     T2 = (0x01, "1/2s")
     T3 = (0x02, "1/3s")
@@ -96,12 +92,8 @@ class Shutter(Enum):
     T6000 = (0x14, "1/6000s")
     T10000 = (0x15, "1/10000s")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
-
-class Gain(Enum):
+class Gain(CameraSettingEnum):
     G_0 = (0x01, "0")
     G_2 = (0x02, "2")
     G_4 = (0x03, "4")
@@ -118,9 +110,6 @@ class Gain(Enum):
     G_26 = (0x0E, "26")
     G_28 = (0x0F, "28")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
 __all__ = [
     PTC150,
