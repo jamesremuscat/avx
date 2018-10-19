@@ -12,11 +12,11 @@ from threading import Event, Lock, ThreadError
 def _split_response(response_bytes):
     packets = []
 
-    remaining = response_bytes[2:]
+    remaining = map(ord, response_bytes[2:])
     while True:
         try:
             idx = remaining.index(0xFF)
-            packet, remaining = remaining[0:idx + 1], remaining[idx + 1]
+            packet, remaining = remaining[0:idx + 1], remaining[idx + 1:]
             packets.append(packet)
         except ValueError:
             return packets
@@ -35,7 +35,7 @@ class DVIPCamera(TCPDevice, VISCACommandsMixin):
         packets = _split_response(data)
         for packet in packets:
             response_type = (packet[1] & 0x70) >> 4
-            if response_type in [4, 6]:  # 4 = ack, 6 = nack
+            if response_type in [4, 5, 6]:  # 4 = ack, 5 = response, 6 = nack
                 try:
                     self._ack.set()
                 except ThreadError:
