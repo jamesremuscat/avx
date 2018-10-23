@@ -80,7 +80,7 @@ class TestVISCACamera(unittest.TestCase):
 
         def run(func, arg, myBytes):
             Thread(target=func, args=[arg]).start()
-            sleep(0.2)
+            sleep(0.5)
             cam.handleMessage([0, 0x40, 0xFF])
             self.assertBytesEqual(myBytes, port.bytes)
             port.clear()
@@ -95,7 +95,7 @@ class TestVISCACamera(unittest.TestCase):
 
         def run(func, myBytes):
             Thread(target=func).start()
-            sleep(0.2)
+            sleep(0.5)
             cam.handleMessage([0, 0x40, 0xFF])
             self.assertBytesEqual(myBytes, port.bytes)
             port.clear()
@@ -116,9 +116,9 @@ class TestVISCACamera(unittest.TestCase):
 
         def run(func, myBytes):
             Thread(target=func).start()
-            sleep(0.2)
+            sleep(0.5)
             cam.handleMessage([0, 0x40, 0xFF])
-            sleep(0.2)
+            sleep(0.5)
             cam.handleMessage([0, 0x40, 0xFF])
             self.assertBytesEqual(myBytes, port.bytes)
             port.clear()
