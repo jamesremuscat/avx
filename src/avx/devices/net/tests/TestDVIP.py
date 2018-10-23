@@ -8,6 +8,7 @@ from avx.devices.serial.SerialDevice import SerialDevice
 from mock import MagicMock
 from threading import Timer
 
+import time
 import unittest
 
 
@@ -73,6 +74,45 @@ class TestDVIPCamera(unittest.TestCase):
         response = self.dvip.getVISCA([0, 1, 2, 3])
         self.dvip.socket.send.assert_called_once_with("\x00\x08\x81\x00\x01\x02\x03\xFF")
         self.assertEqual(response_bytes, response)
+
+        # Check it works a second time...
+
+        response_bytes[3] = 0xBB
+        Timer(0.2, recv).start()
+        response = self.dvip.getVISCA([0, 1, 2, 3])
+        self.assertEqual(response_bytes, response)
+
+    def testBlocksOnAck(self):
+        self.dvip.ACK_TIMEOUT = 2
+
+        def ack():
+            self.dvip.on_receive(
+                SerialDevice.byteArrayToString([
+                    0x01, 0x02,
+                    0x03, 0x41, 0x00, 0xFF
+                ])
+            )
+
+        Timer(1, ack).start()
+
+        time_start = time.time()
+        self.dvip.moveDown()
+        time_end = time.time()
+        time_diff = time_end - time_start
+
+        self.assertGreaterEqual(time_diff, 1)
+        self.assertLess(time_diff, 2)
+
+        # Checking two acks makes sure we've correctly cleared the first one.
+
+        Timer(5, ack).start()
+        time_start = time.time()
+        self.dvip.stop()
+        time_end = time.time()
+
+        time_diff = time_end - time_start
+        self.assertGreaterEqual(time_diff, 2)
+        self.assertLess(time_diff, 5)
 
 
 class TestSplitReceivedPackets(unittest.TestCase):

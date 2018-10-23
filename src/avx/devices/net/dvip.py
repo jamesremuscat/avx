@@ -23,6 +23,9 @@ def _split_response(response_bytes):
 
 
 class DVIPCamera(TCPDevice, VISCACommandsMixin):
+
+    ACK_TIMEOUT = 0.25  # If we don't get an ack in this time, we're probably not getting one.
+
     def __init__(self, deviceID, ipAddress, port=5002, **kwargs):
         super(DVIPCamera, self).__init__(deviceID, ipAddress, port, **kwargs)
         self._ack = Event()
@@ -45,6 +48,7 @@ class DVIPCamera(TCPDevice, VISCACommandsMixin):
                 self._response_received.set()
 
     def sendVISCA(self, data):
+        self._ack.clear()
         data_bytes = [0x81] + data + [0xFF]
         length = len(data_bytes) + 2
 
@@ -54,7 +58,7 @@ class DVIPCamera(TCPDevice, VISCACommandsMixin):
                 length & 0xFF
             ] + data_bytes)
         )
-        self._ack.wait(0.25)  # If we don't get an ack in this time, we're probably not getting one.
+        self._ack.wait(self.ACK_TIMEOUT)
 
     def getVISCA(self, commandBytes):
         with self._await_response:
