@@ -6,6 +6,7 @@ Created on 21 Mar 2018
 from avx.devices.net.dvip import DVIPCamera, _split_response
 from avx.devices.serial.SerialDevice import SerialDevice
 from mock import MagicMock
+from threading import Timer
 
 import unittest
 
@@ -35,6 +36,43 @@ class TestDVIPCamera(unittest.TestCase):
         run(self.dvip.stop, [0x00, 0x0B, 0x81, 0x01, 0x06, 0x01, 0x06, 0x06, 0x03, 0x03, 0xFF])
         run(self.dvip.zoomOut, [0x00, 0x08, 0x81, 0x01, 0x04, 0x07, 0x36, 0xFF])
         run(lambda: self.dvip.storePreset(3), [0x00, 0x09, 0x81, 0x01, 0x04, 0x3F, 0x01, 0x03, 0xFF])
+
+    def testOnReceive(self):
+        self.dvip._ack = MagicMock()
+        self.dvip._response_received = MagicMock()
+
+        response_bytes = [0x03, 0x51, 0x06, 0x07, 0xFF]
+        self.dvip.on_receive(
+            SerialDevice.byteArrayToString(
+                [
+                    0x01, 0x02,  # Header
+                    0x03, 0x41, 0x05, 0xFF  # Ack
+                ] + response_bytes
+            )
+        )
+
+        self.assertEqual(2, self.dvip._ack.set.call_count)
+        self.dvip._response_received.set.assert_called_once()
+        self.assertEqual(
+            response_bytes,
+            self.dvip._last_response
+        )
+
+    def testGetVISCA(self):
+        response_bytes = [0x04, 0x51, 0xAB, 0xBA, 0xFF]
+
+        def recv():
+            self.dvip.on_receive(
+                SerialDevice.byteArrayToString([
+                    0x01, 0x02,
+                    0x03, 0x41, 0x00, 0xFF
+                ] + response_bytes)
+            )
+
+        Timer(0.2, recv).start()
+        response = self.dvip.getVISCA([0, 1, 2, 3])
+        self.dvip.socket.send.assert_called_once_with("\x00\x08\x81\x00\x01\x02\x03\xFF")
+        self.assertEqual(response_bytes, response)
 
 
 class TestSplitReceivedPackets(unittest.TestCase):
