@@ -70,60 +70,48 @@ class VISCAPort(SerialDevice):
         self.port.close()
 
 
-class VISCACamera(SerialDevice):
-    '''
-    A camera controlled by the Sony VISCA protocol e.g. Sony D31.
-    '''
-
+class VISCACommandsMixin(object):
     MAX_PAN_SPEED = 0x18
     MAX_TILT_SPEED = 0x14
     MIN_ZOOM_SPEED = 0x02
     MAX_ZOOM_SPEED = 0x07
+    MAX_PRESETS = 6
 
-    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
-        if viscaPort is None or controller is None:
-            super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
-            self._isSharedPort = False
-        else:
-            Device.__init__(self, deviceID)
-            self.port = controller.getDevice(viscaPort)
-            self._isSharedPort = True
-            self.port.addCamera(cameraID, self)
-        self.cameraID = cameraID
-        self._do_wait_for_ack = waitForAck
-        self._wait_for_ack = Lock()
-        self._wait_for_response = Lock()
-        self._response_received = Event()
-        self._last_response = None
+    def checkPan(self, pan):
+        if pan < 1 or pan > self.maxPanSpeed:
+            raise InvalidArgumentException("Pan speed {} out of range: 1-{}".format(pan, self.maxPanSpeed))
 
-    def initialise(self):
-        if not self._isSharedPort:
-            SerialDevice.initialise(self)
+    def checkTilt(self, tilt):
+        if tilt < 1 or tilt > self.maxTiltSpeed:
+            raise InvalidArgumentException("Tilt speed {} out of range: 1-{}".format(tilt, self.maxTiltSpeed))
 
-    def deinitialise(self):
-        if not self._isSharedPort:
-            SerialDevice.deinitialise(self)
+    def checkZoom(self, zoom):
+        if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
+            raise InvalidArgumentException("Zoom speed {} out of range: {}-{}".format(zoom, self.minZoomSpeed, self.maxZoomSpeed))
 
-    def sendVISCA(self, commandBytes):
-        if self._do_wait_for_ack:
-            self._wait_for_ack.acquire()
+    def checkPreset(self, preset_idx):
+        if preset_idx < 0 or preset_idx >= self.maxPresets:
+            raise InvalidArgumentException("Preset {} out of range: 0-{}".format(preset_idx, self.maxPresets - 1))
 
-        result = self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+    @property
+    def maxPanSpeed(self):
+        return self.MAX_PAN_SPEED
 
-        if not self._do_wait_for_ack:
-            time.sleep(0.1)
+    @property
+    def maxTiltSpeed(self):
+        return self.MAX_TILT_SPEED
 
-        return result
+    @property
+    def minZoomSpeed(self):
+        return self.MIN_ZOOM_SPEED
 
-    def getVISCA(self, commandBytes):
-        with self._wait_for_response:
-            self.sendVISCA(commandBytes)
-            logging.debug("Waiting for response.")
-            self._response_received.wait()
-            logging.debug("Received response")
-            response = self._last_response
-            self._response_received.clear()
-            return response
+    @property
+    def maxZoomSpeed(self):
+        return self.MAX_ZOOM_SPEED
+
+    @property
+    def maxPresets(self):
+        return self.MAX_PRESETS
 
     @constrainPanTiltSpeed
     def moveUp(self, pan=DEFAULT_PAN_SPEED, tilt=DEFAULT_TILT_SPEED):
@@ -207,13 +195,11 @@ class VISCACamera(SerialDevice):
         return self.sendVISCA([0x01, 0x04, 0x33, 0x03])
 
     def storePreset(self, preset):
-        if preset < 0 or preset > 5:
-            return -1
+        self.checkPreset(preset)
         self.sendVISCA([0x01, 0x04, 0x3F, 0x01, preset])
 
     def recallPreset(self, preset):
-        if preset < 0 or preset > 5:
-            return -1
+        self.checkPreset(preset)
         self.sendVISCA([0x01, 0x04, 0x3F, 0x02, preset])
 
     def whiteBalanceAuto(self):
@@ -244,7 +230,7 @@ class VISCACamera(SerialDevice):
         self.sendVISCA([0x01, 0x04, 0x39, 0x03])
 
     def setAperture(self, aperture):
-        if isinstance(aperture, Aperture):
+        if isinstance(aperture, CameraSettingEnum):
             av = aperture.code
         else:
             av = aperture
@@ -255,7 +241,7 @@ class VISCACamera(SerialDevice):
                         (av & 0x000F)])
 
     def setShutter(self, shutter):
-        if isinstance(shutter, Shutter):
+        if isinstance(shutter, CameraSettingEnum):
             tv = shutter.code
         else:
             tv = shutter
@@ -266,7 +252,7 @@ class VISCACamera(SerialDevice):
                         (tv & 0x000F)])
 
     def setGain(self, gain):
-        if isinstance(gain, Gain):
+        if isinstance(gain, CameraSettingEnum):
             h = gain.code
         else:
             h = gain
@@ -275,6 +261,57 @@ class VISCACamera(SerialDevice):
                         (h & 0x0F00) >> 8,
                         (h & 0x00F0) >> 4,
                         (h & 0x000F)])
+
+
+class VISCACamera(SerialDevice, VISCACommandsMixin):
+    '''
+    A camera controlled by the Sony VISCA protocol e.g. Sony D31.
+    '''
+
+    def __init__(self, deviceID, serialDevice, cameraID, controller=None, viscaPort=None, waitForAck=True, **kwargs):
+        if viscaPort is None or controller is None:
+            super(VISCACamera, self).__init__(deviceID, serialDevice, **kwargs)
+            self._isSharedPort = False
+        else:
+            Device.__init__(self, deviceID)
+            self.port = controller.getDevice(viscaPort)
+            self._isSharedPort = True
+            self.port.addCamera(cameraID, self)
+        self.cameraID = cameraID
+        self._do_wait_for_ack = waitForAck
+        self._wait_for_ack = Lock()
+        self._wait_for_response = Lock()
+        self._response_received = Event()
+        self._last_response = None
+
+    def initialise(self):
+        if not self._isSharedPort:
+            SerialDevice.initialise(self)
+
+    def deinitialise(self):
+        if not self._isSharedPort:
+            SerialDevice.deinitialise(self)
+
+    def sendVISCA(self, commandBytes):
+        if self._do_wait_for_ack:
+            self._wait_for_ack.acquire()
+
+        result = self.sendCommand(SerialDevice.byteArrayToString([0x80 + self.cameraID] + commandBytes + [0xFF]))
+
+        if not self._do_wait_for_ack:
+            time.sleep(0.1)
+
+        return result
+
+    def getVISCA(self, commandBytes):
+        with self._wait_for_response:
+            self.sendVISCA(commandBytes)
+            logging.debug("Waiting for response.")
+            self._response_received.wait()
+            logging.debug("Received response")
+            response = self._last_response
+            self._response_received.clear()
+            return response
 
     def hasFullMessage(self, recv_buffer):
         return len(recv_buffer) > 0 and recv_buffer[-1] == 0xFF
@@ -356,36 +393,14 @@ class VISCACamera(SerialDevice):
 
         return ret
 
-    def checkPan(self, pan):
-        if pan < 1 or pan > self.maxPanSpeed:
-            raise InvalidArgumentException()
 
-    def checkTilt(self, tilt):
-        if tilt < 1 or tilt > self.maxTiltSpeed:
-            raise InvalidArgumentException()
-
-    def checkZoom(self, zoom):
-        if zoom < self.minZoomSpeed or zoom > self.maxZoomSpeed:
-            raise InvalidArgumentException()
-
-    @property
-    def maxPanSpeed(self):
-        return self.MAX_PAN_SPEED
-
-    @property
-    def maxTiltSpeed(self):
-        return self.MAX_TILT_SPEED
-
-    @property
-    def minZoomSpeed(self):
-        return self.MIN_ZOOM_SPEED
-
-    @property
-    def maxZoomSpeed(self):
-        return self.MAX_ZOOM_SPEED
+class CameraSettingEnum(Enum):
+    def __init__(self, code, label):
+        self.code = code
+        self.label = label
 
 
-class Aperture(Enum):
+class Aperture(CameraSettingEnum):
     CLOSE = (0x00, "Closed")
     F28 = (0x01, "F28")
     F22 = (0x02, "F22")
@@ -405,12 +420,8 @@ class Aperture(Enum):
     F2 = (0x10, "F2")
     F1_8 = (0x11, "F1.8")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
-
-class Shutter(Enum):
+class Shutter(CameraSettingEnum):
     T50 = (0x00, "1/50s")
     T60 = (0x01, "1/60s")
     T75 = (0x02, "1/75s")
@@ -440,12 +451,8 @@ class Shutter(Enum):
     T6000 = (0x1A, "1/6000s")
     T10000 = (0x1B, "1/10000s")
 
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
 
-
-class Gain(Enum):
+class Gain(CameraSettingEnum):
     G_MINUS_3 = (0x00, "-3")
     G_0 = (0x01, "0")
     G_3 = (0x02, "3")
@@ -454,7 +461,3 @@ class Gain(Enum):
     G_12 = (0x05, "12")
     G_15 = (0x06, "15")
     G_18 = (0x07, "18")
-
-    def __init__(self, code, label):
-        self.code = code
-        self.label = label
