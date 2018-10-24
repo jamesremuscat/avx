@@ -124,7 +124,3 @@ class TestVISCACamera(unittest.TestCase):
         self.assertEqual(len(expected), len(actual))
         for i in range(len(expected)):
             self.assertEqual(chr(expected[i]), actual[i], "Byte " + str(i) + ", expected " + str(expected[i]) + " but received " + str(ord(actual[i])))
-
-
-if __name__ == "__main__":
-    unittest.main()
