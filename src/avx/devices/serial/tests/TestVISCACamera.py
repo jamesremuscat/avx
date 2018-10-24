@@ -6,7 +6,7 @@ Created on 18 Mar 2013
 from avx.devices.serial.tests.MockSerialPort import MockSerialPort
 from avx.devices.serial.VISCACamera import VISCACamera, Aperture, VISCAPort
 from mock import MagicMock
-from threading import Thread
+from threading import Timer
 from time import sleep
 
 import unittest
@@ -45,6 +45,9 @@ class TestVISCAPort(unittest.TestCase):
         port.write.assert_called_once_with('\x81\x01\x06\x01\x06\x06\x03\x01\xff')
 
 
+ACK_MESSAGE = [0, 0x40, 0xFF]
+
+
 class TestVISCACamera(unittest.TestCase):
 
     def testGetPosition(self):
@@ -52,22 +55,9 @@ class TestVISCACamera(unittest.TestCase):
 
         cam = VISCACamera("Test Camera", port, 1)
 
-        result = []
-
-        def getPos(result):
-            result.append(cam.getPosition())
-
-        t = Thread(target=getPos, args=[result])
-        t.start()
-
-        cam.handleMessage([0x10, 0x50, 0x01, 0x02, 0x03, 0x04, 0x0A, 0x0B, 0x0C, 0x0D, 0xFF])
-        sleep(0.5)
-        cam.handleMessage([0x10, 0x50, 0x05, 0x06, 0x07, 0x08, 0xFF])
-
-        t.join()
-
-        self.assertTrue(len(result) == 1)
-        pos = result[0]
+        Timer(0.2, lambda: cam.handleMessage([0x10, 0x50, 0x01, 0x02, 0x03, 0x04, 0x0A, 0x0B, 0x0C, 0x0D, 0xFF])).start()
+        Timer(0.4, lambda: cam.handleMessage([0x10, 0x50, 0x05, 0x06, 0x07, 0x08, 0xFF])).start()
+        pos = cam.getPosition()
 
         self.assertEqual(pos.pan, 0x1234)
         self.assertEqual(pos.tilt, 0xABCD)
@@ -79,9 +69,8 @@ class TestVISCACamera(unittest.TestCase):
         cam = VISCACamera("Test Camera", port, 1)
 
         def run(func, arg, myBytes):
-            Thread(target=func, args=[arg]).start()
-            sleep(0.5)
-            cam.handleMessage([0, 0x40, 0xFF])
+            Timer(0.2, lambda: cam.handleMessage(ACK_MESSAGE)).start()
+            func(arg)
             self.assertBytesEqual(myBytes, port.bytes)
             port.clear()
 
@@ -94,9 +83,8 @@ class TestVISCACamera(unittest.TestCase):
         cam = VISCACamera("Test Camera", port, 1)
 
         def run(func, myBytes):
-            Thread(target=func).start()
-            sleep(0.5)
-            cam.handleMessage([0, 0x40, 0xFF])
+            Timer(0.2, lambda: cam.handleMessage(ACK_MESSAGE)).start()
+            func()
             self.assertBytesEqual(myBytes, port.bytes)
             port.clear()
 
@@ -115,11 +103,9 @@ class TestVISCACamera(unittest.TestCase):
         cam = VISCACamera("Test Camera", port, 1)
 
         def run(func, myBytes):
-            Thread(target=func).start()
-            sleep(0.5)
-            cam.handleMessage([0, 0x40, 0xFF])
-            sleep(0.5)
-            cam.handleMessage([0, 0x40, 0xFF])
+            Timer(0.2, lambda: cam.handleMessage(ACK_MESSAGE)).start()
+            Timer(0.4, lambda: cam.handleMessage(ACK_MESSAGE)).start()
+            func()
             self.assertBytesEqual(myBytes, port.bytes)
             port.clear()
 
