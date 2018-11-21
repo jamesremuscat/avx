@@ -15,7 +15,8 @@ class TestSequencer(unittest.TestCase):
     def performSequenceTest(self, *events):
         self.sequencer.sequence(*events)
         self.sequencer.start()
-        sleep(len(events) + 1)
+        while not self.sequencer.queue.empty():
+            sleep(1)
 
     def testSimpleEvent(self):
         m = MagicMock()
