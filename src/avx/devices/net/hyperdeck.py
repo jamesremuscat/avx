@@ -58,6 +58,7 @@ class HyperDeck(TCPDevice):
         super(HyperDeck, self).__init__(deviceID, ipAddress, port, **kwargs)
 
     def initialise(self):
+        super(HyperDeck, self).initialise()
         self._data_buffer = ''
         self._initialiseState()
 
