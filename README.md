@@ -45,7 +45,7 @@ may look like:
   "devices" : [
     {
       "deviceID" : "Main",
-      "class" : "avx.devices.KramerVP88.KramerVP88",
+      "class" : "avx.devices.serial.KramerVP88.KramerVP88",
       "options" : {
         "serialDevice" : "/dev/usb-ports/1-1.3.3:1.0",
         "machineNumber" : 1
