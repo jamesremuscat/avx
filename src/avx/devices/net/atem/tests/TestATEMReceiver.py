@@ -305,21 +305,21 @@ class TestATEMReceiver(BaseATEMTest):
                 'current': {
                     'style': TransitionStyle.WIPE,
                     'tied': {
-                        0: True,
-                        1: True,
-                        2: False,
-                        3: False,
-                        4: False
+                        'bkgd': True,
+                        'key1': True,
+                        'key2': False,
+                        'key3': False,
+                        'key4': False
                     }
                 },
                 'next': {
                     'style': TransitionStyle.STING,
                     'tied': {
-                        0: True,
-                        1: False,
-                        2: True,
-                        3: False,
-                        4: False
+                        'bkgd': True,
+                        'key1': False,
+                        'key2': True,
+                        'key3': False,
+                        'key4': False
                     }
                 }
             }

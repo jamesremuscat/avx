@@ -96,11 +96,12 @@ class ATEMReceiver(object):
     def _recv_PrgI(self, data):
         meIndex = data[0]
         self._state['program'][meIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])
-        # TODO self.pgmInputHandler(self)
+        self._broadcast_full_tally()
 
     def _recv_PrvI(self, data):
         meIndex = data[0]
         self._state['preview'][meIndex] = VideoSource(struct.unpack('!H', data[2:4])[0])
+        self._broadcast_full_tally()
 
     def _recv_KeOn(self, data):
         meIndex = data[0]
@@ -112,6 +113,7 @@ class ATEMReceiver(object):
         keyer_setting = self._state['dskeyers'].setdefault(keyer, {})
         keyer_setting['fill'] = VideoSource(struct.unpack('!H', data[2:4])[0])
         keyer_setting['key'] = VideoSource(struct.unpack('!H', data[4:6])[0])
+        self._broadcast_full_tally()
 
     def _recv_DskS(self, data):
         keyer = data[0]
@@ -122,6 +124,7 @@ class ATEMReceiver(object):
         dsk_setting['frames_remaining'] = data[4]
         if self._isInitialized:
             self.broadcast(MessageTypes.DSK_STATE, self._state['dskeyers'])
+            self._broadcast_full_tally()
 
     def _recv_DskP(self, data):
         keyer = data[0]
@@ -244,10 +247,10 @@ class ATEMReceiver(object):
         nextT = self._state['transition'].setdefault(meIndex, {}).setdefault('next', {})
 
         current['style'] = TransitionStyle(data[1])
-        current['tied'] = parseBitmask(data[2], [4, 3, 2, 1, 0])
+        current['tied'] = parseBitmask(data[2], ['key4', 'key3', 'key2', 'key1', 'bkgd'])
 
         nextT['style'] = TransitionStyle(data[3])
-        nextT['tied'] = parseBitmask(data[4], [4, 3, 2, 1, 0])
+        nextT['tied'] = parseBitmask(data[4], ['key4', 'key3', 'key2', 'key1', 'bkgd'])
 
     def _recv_TrPs(self, data):
         meIndex = data[0]
@@ -289,3 +292,63 @@ class ATEMReceiver(object):
         desc_len = struct.unpack('!H', data[6:8])[0]
         macro['name'] = str(data[8:8 + name_len])
         macro['description'] = str(data[8 + name_len:8 + name_len + desc_len])
+
+#######
+# Synthetic tally
+#######
+
+# ATEM only provides tally information for M/E 1. In order to generate tally
+# information for M/E 2 independently, we need to inspect the switcher state.
+
+    def _generate_synthetic_tally(self):
+        tally = {}
+
+        for me_index in range(self._config['topology'].get('mes', 0)):
+            this_me = {'prv': [], 'pgm': []}
+
+            # These are the easy ones: program/preview for each M/E
+            this_me['prv'].append(self._state['preview'][me_index])
+            this_me['pgm'].append(self._state['program'][me_index])
+
+            # We also need to consider the upstream keyers...
+            # But we don't store information on those right now :(
+
+            # ... and transitions
+            current_transition = self._state['transition'].get(me_index, {}).get('current', {})
+            if current_transition.get('in_transition', False):
+                target = 'pgm'
+            else:
+                target = 'pvw'
+
+            tie = current_transition.get('tied', {})
+            if tie['bkgd']:
+                this_me[target].append(self._state['preview'][me_index])
+            if tie['key1']:
+                # TODO store info on USKs to populate this
+                pass
+            if tie['key2']:
+                # TODO store info on USKs to populate this
+                pass
+            if tie['key3']:
+                # TODO store info on USKs to populate this
+                pass
+            if tie['key4']:
+                # TODO store info on USKs to populate this
+                pass
+
+            tally[me_index] = this_me
+
+        # DSKs always appear on M/E 1
+        for dsk in self._state['dskeyers'].itervalues():
+            if dsk.get('in_transition', False) or dsk.get('on_air', False):
+                tally[0]['pgm'].append(dsk['key'])
+                tally[0]['pgm'].append(dsk['fill'])
+
+        return tally
+
+    def _broadcast_full_tally(self):
+        if self._isInitialized:
+            self.broadcast(
+                MessageTypes.FULL_TALLY,
+                self._generate_synthetic_tally()
+            )

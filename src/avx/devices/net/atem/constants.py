@@ -176,6 +176,7 @@ class MessageTypes(object):
     ATEM_DISCONNECTED = _PREFIX + "Disconnected"
     AUX_OUTPUT_MAPPING = _PREFIX + "AuxOutputMapping"
     TALLY = _PREFIX + "Tally"
+    FULL_TALLY = _PREFIX + "FullTally"
     DSK_STATE = _PREFIX + "DownstreamKeyerState"
     INPUTS_CHANGED = _PREFIX + "InputsChanged"
     FTB_CHANGED = _PREFIX + "FadeToBlackChanged"
