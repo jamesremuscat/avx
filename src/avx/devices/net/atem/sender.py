@@ -1,4 +1,4 @@
-from .constants import AudioSource, MacroAction, VideoSource
+from .constants import AudioSource, MacroAction, VideoSource, KeyType
 from .utils import requiresInit, assertTopology, bytes_of
 from avx.devices.Device import InvalidArgumentException
 from avx.devices.net.atem.constants import MultiviewerLayout
@@ -156,6 +156,107 @@ class ATEMSender(object):
             [me - 1, usk - 1, 1 if onAir else 0, 0xBE, 0x07]
         )
         # Not sure about those magic values
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKType(self, me, usk, type, flying):
+        me_keyers = self._system_config['keyers'].get(me, 0)
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        if not isinstance(type, KeyType):
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKTp',
+            [
+                me - 1,
+                usk - 1,
+                type.value,
+                1 if flying else 0,
+                0, 0, 0, 0
+            ]
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKKeySource(self, me, usk, source):
+        me_keyers = self._system_config['keyers'].get(me, 0)
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        if not isinstance(source, VideoSource):
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKeC',
+            [
+                me - 1,
+                usk - 1
+            ] + self._resolveInputBytes(source)
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKFillSource(self, me, usk, source):
+        me_keyers = self._system_config['keyers'].get(me, 0)
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        if not isinstance(source, VideoSource):
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKeF',
+            [
+                me - 1,
+                usk - 1
+            ] + self._resolveInputBytes(source)
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKLumaParams(self, me, usk, premultipled=None, clip=None, gain=None, invert=None):
+        me_keyers = self._system_config['keyers'].get(me, 0)
+        if usk > me_keyers:
+            raise InvalidArgumentException
+        if clip:
+            if clip < 0 or clip > 1000:
+                raise InvalidArgumentException
+        if gain:
+            if gain < 0 or gain > 1000:
+                raise InvalidArgumentException
+
+        set_mask = 0
+        if preMultiplied is not None:
+            set_mask |= 1
+        if clip is not None:
+            set_mask |= 2
+        else:
+            clip = 0
+        if gain is not None:
+            set_mask |= 4
+        else:
+            gain = 0
+        if invert is not None:
+            set_mask |= 8
+
+        self._sendCommand(
+            'KeLm',
+            [
+                set_mask,
+                me - 1,
+                usk - 1,
+                1 if premultipled else 0
+            ] + bytes_of(clip)
+            + bytes_of(gain)
+            + [
+                1 if invert else 0,
+                0,
+                0,
+                0
+            ]
+        )
 
 ########
 # DSK
