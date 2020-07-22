@@ -109,6 +109,7 @@ class ATEMReceiver(object):
         keyer = data[1]
         self._state['keyers'].setdefault(meIndex, {}).setdefault(keyer, {})['on'] = (data[2] != 0)
         if self._isInitialized:
+            self.broadcast(MessageTypes.USK_STATE, self._state['keyers'])
             self._broadcast_full_tally()
 
     def _recv_KeBP(self, data):

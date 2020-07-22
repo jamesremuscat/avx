@@ -140,6 +140,24 @@ class ATEMSender(object):
         self._sendCommand('FtbA', [me - 1, 0xA7, 0x59, 0x08])
 
 ########
+# USK
+########
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKOnAir(self, me, usk, onAir):
+
+        me_keyers = self._system_config['keyers'].get(me, 0)
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKOn',
+            [me - 1, usk - 1, 1 if onAir else 0, 0xBE, 0x07]
+        )
+        # Not sure about those magic values
+
+########
 # DSK
 ########
 

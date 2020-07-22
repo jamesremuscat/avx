@@ -185,6 +185,7 @@ class MessageTypes(object):
     TALLY = _PREFIX + "Tally"
     FULL_TALLY = _PREFIX + "FullTally"
     DSK_STATE = _PREFIX + "DownstreamKeyerState"
+    USK_STATE = _PREFIX + "UpstreamKeyerState"
     INPUTS_CHANGED = _PREFIX + "InputsChanged"
     FTB_CHANGED = _PREFIX + "FadeToBlackChanged"
     FTB_RATE_CHANGED = _PREFIX + "FtBRateChanged"

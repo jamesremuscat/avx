@@ -19,6 +19,9 @@ class ATEMGetter(object):
     def getDSKState(self):
         return self._state['dskeyers']
 
+    def getUSKState(self):
+        return self._state['keyers']
+
     @requiresInit
     @assertTopology("mes", "me")
     def getFadeToBlackState(self, me=1):
