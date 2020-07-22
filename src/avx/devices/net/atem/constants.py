@@ -161,6 +161,13 @@ class TransitionStyle(Enum):
     STING = 4
 
 
+class KeyType(Enum):
+    LUMA = 0
+    CHROMA = 1
+    PATTERN = 2
+    DVE = 3
+
+
 class MacroAction(Enum):
     RUN = 0
     STOP = 1

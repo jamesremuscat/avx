@@ -1,4 +1,5 @@
-from .constants import ClipType, DownconverterMode, ExternalPortType, LABELS_PORTS_EXTERNAL, MessageTypes, MultiviewerLayout, PortType, \
+from .constants import ClipType, DownconverterMode, ExternalPortType, \
+    KeyType, LABELS_PORTS_EXTERNAL, MessageTypes, MultiviewerLayout, PortType, \
     TransitionStyle, VideoMode, VideoSource
 from .utils import parseBitmask, convert_cstring
 
@@ -106,7 +107,29 @@ class ATEMReceiver(object):
     def _recv_KeOn(self, data):
         meIndex = data[0]
         keyer = data[1]
-        self._state['keyers'].setdefault(meIndex, {})[keyer] = (data[2] != 0)
+        self._state['keyers'].setdefault(meIndex, {}).setdefault(keyer, {})['on'] = (data[2] != 0)
+        if self._isInitialized:
+            self._broadcast_full_tally()
+
+    def _recv_KeBP(self, data):
+        meIndex = data[0]
+        keyerIndex = data[1]
+        keyer = self._state['keyers'].setdefault(meIndex, {}).setdefault(keyerIndex, {})
+        keyer['type'] = KeyType(data[2])
+        keyer['enabled'] = (data[3] + data[4]) > 0
+        keyer['fly_enabled'] = (data[5] > 0)
+        keyer['fill'] = VideoSource(struct.unpack('!H', data[6:8])[0])
+        keyer['key'] = VideoSource(struct.unpack('!H', data[8:10])[0])
+
+        mask = keyer.setdefault('mask', {})
+        mask['enabled'] = (data[10] > 0)
+        mask['top'] = struct.unpack('!H', data[12:14])[0]
+        mask['bottom'] = struct.unpack('!H', data[14:16])[0]
+        mask['left'] = struct.unpack('!H', data[16:18])[0]
+        mask['right'] = struct.unpack('!H', data[18:20])[0]
+
+        if self._isInitialized:
+            self._broadcast_full_tally()
 
     def _recv_DskB(self, data):
         keyer = data[0]
@@ -311,7 +334,10 @@ class ATEMReceiver(object):
             this_me['pgm'].append(self._state['program'][me_index])
 
             # We also need to consider the upstream keyers...
-            # But we don't store information on those right now :(
+            for usk in self._state['keyers'][me_index]:
+                if usk.get('on', False):
+                    this_me['pgm'].append(usk['fill'])
+                    this_me['pgm'].append(usk['key'])
 
             # ... and transitions
             current_transition = self._state['transition'].get(me_index, {}).get('current', {})
@@ -324,17 +350,21 @@ class ATEMReceiver(object):
             if tie['bkgd']:
                 this_me[target].append(self._state['preview'][me_index])
             if tie['key1']:
-                # TODO store info on USKs to populate this
-                pass
+                key1 = self._state['keyers'][me_index][0]
+                this_me[target].append(key1['fill'])
+                this_me[target].append(key1['key'])
             if tie['key2']:
-                # TODO store info on USKs to populate this
-                pass
+                key2 = self._state['keyers'][me_index][1]
+                this_me[target].append(key2['fill'])
+                this_me[target].append(key2['key'])
             if tie['key3']:
-                # TODO store info on USKs to populate this
-                pass
+                key3 = self._state['keyers'][me_index][2]
+                this_me[target].append(key3['fill'])
+                this_me[target].append(key3['key'])
             if tie['key4']:
-                # TODO store info on USKs to populate this
-                pass
+                key4 = self._state['keyers'][me_index][3]
+                this_me[target].append(key4['fill'])
+                this_me[target].append(key4['key'])
 
             tally[me_index] = this_me
 

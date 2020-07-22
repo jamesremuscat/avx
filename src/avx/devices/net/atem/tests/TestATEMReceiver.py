@@ -1,5 +1,6 @@
-from avx.devices.net.atem import byteArrayToString, DownconverterMode, ExternalPortType, MultiviewerLayout, \
-    PortType, VideoMode, VideoSource, ClipType, MessageTypes, TransitionStyle
+from avx.devices.net.atem import byteArrayToString, DownconverterMode, \
+    ExternalPortType, MultiviewerLayout, PortType, VideoMode, VideoSource, \
+    ClipType, MessageTypes, TransitionStyle, KeyType
 from avx.devices.net.atem.tests import BaseATEMTest
 from avx.devices.net.atem.utils import bytes_of
 from time import sleep
@@ -163,7 +164,48 @@ class TestATEMReceiver(BaseATEMTest):
 
     def testRecvKeOn(self):
         self.send_command('KeOn', [0, 1, 1, 0])
-        self.assertEqual(True, self.atem._state['keyers'][0][1])
+        self.assertEqual(True, self.atem._state['keyers'][0][1]['on'])
+
+    def testRecvKeBP(self):
+        self.send_command(
+            'KeBP',
+            [
+                0,  # M/E 1
+                1,  # Keyer 2
+                0,  # Luma
+                1,  # Enabled?
+                1,  # Enabled?
+                0,  # Fly enabled
+                0, 1,  # Key source == INPUT_1
+                0, 2,  # Fill source == INPUT_2
+                0,  # Masked
+                99,  # ?
+                0, 0,  # Mask top
+                0, 0x0C,  # Mask bottom
+                0, 0x0D,  # Mask left
+                0, 0x10,  # Mask right
+            ]
+        )
+
+        expected = {
+            'type': KeyType.LUMA,
+            'enabled': True,
+            'fly_enabled': False,
+            'fill': VideoSource.INPUT_1,
+            'key': VideoSource.INPUT_2,
+            'mask': {
+                'enabled': False,
+                'top': 0,
+                'bottom': 12,
+                'left': 13,
+                'right': 16
+            }
+        }
+
+        self.assertEqual(
+            expected,
+            self.atem._state['keyers'][0][1]
+        )
 
     def testRecvDskB(self):
         self.send_command('DskB', [0, 0, 0, 1, 0, 2, 0])
