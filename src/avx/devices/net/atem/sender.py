@@ -216,7 +216,7 @@ class ATEMSender(object):
 
     @requiresInit
     @assertTopology('mes', 'me')
-    def setUSKLumaParams(self, me, usk, premultipled=None, clip=None, gain=None, invert=None):
+    def setUSKLumaParams(self, me, usk, preMultipled=None, clip=None, gain=None, invert=None):
         me_keyers = self._system_config['keyers'].get(me, 0)
         if usk > me_keyers:
             raise InvalidArgumentException
