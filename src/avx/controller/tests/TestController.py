@@ -179,28 +179,28 @@ class TestController(TestCase):
         c.broadcast("Test", "Test message", None)
         self.assertEqual([], c.clients)
 
-    def testPersistClientList(self):
+    @patch('avx.controller.Controller.saveState')
+    @patch('avx.controller.Controller.loadState')
+    def testPersistClientList(self, loadState, saveState):
         with create_temporary_copy(os.path.join(os.path.dirname(__file__), 'testConfig.json')) as confFile:
+            loadState.return_value = []
             c = Controller()
             c.loadConfig(confFile.name)
-
             c.registerClient("DOES_NOT_EXIST")
-            withClient = json.load(confFile)
-            print withClient
-            self.assertEqual(withClient["clients"], ["DOES_NOT_EXIST"])
+            saveState.assert_called_once_with('clients', ["DOES_NOT_EXIST"])
 
             del c
+            loadState.reset_mock()
+            saveState.reset_mock()
 
+            loadState.return_value = ["DOES_NOT_EXIST"]
             c2 = Controller()
             c2.loadConfig(confFile.name)
 
             self.assertEqual(c2.clients, ["DOES_NOT_EXIST"])
 
             c2.broadcast("Test", "Test message", None)
-
-            with open(confFile.name, "r") as cf2:
-                withClient2 = json.load(cf2)
-                self.assertEqual(withClient2["clients"], [])
+            saveState.assert_called_once_with('clients', [])
 
     def testInjectBroadcast(self):
         device = Device("test")
