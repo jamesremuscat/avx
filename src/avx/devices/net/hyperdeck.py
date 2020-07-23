@@ -190,7 +190,6 @@ class HyperDeck(TCPDevice):
         '''
         self.send('disk list\r\n')
 
-
 ########
 # State setters
 ########

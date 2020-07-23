@@ -5,9 +5,9 @@ import Pyro4
 
 
 def setHostname():
-        ip = getHostname()
-        logging.info("Using " + ip + " as hostname")
-        Pyro4.config.HOST = ip
+    ip = getHostname()
+    logging.info("Using " + ip + " as hostname")
+    Pyro4.config.HOST = ip
 
 
 def getHostname():

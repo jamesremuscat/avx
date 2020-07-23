@@ -8,7 +8,7 @@ install:
 - pip install pycodestyle coveralls
 - pip install --upgrade setuptools
 script:
-- pycodestyle --ignore=E501,W503 src
+- pycodestyle --ignore=E501,W504 src
 - python setup.py test
 after_success: coveralls
 before_deploy: sed -i -e "s/\.dev//" setup.cfg

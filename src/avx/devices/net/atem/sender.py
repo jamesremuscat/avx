@@ -248,8 +248,9 @@ class ATEMSender(object):
                 me - 1,
                 usk - 1,
                 1 if premultipled else 0
-            ] + bytes_of(clip)
-            + bytes_of(gain)
+            ] +
+            bytes_of(clip) +
+            bytes_of(gain) +
             + [
                 1 if invert else 0,
                 0,
@@ -345,10 +346,10 @@ class ATEMSender(object):
                 dsk - 1,
                 1 if preMultiplied else 0,
                 0
-            ]
-            + bytes_of(clip)
-            + bytes_of(gain)
-            + [
+            ] +
+            bytes_of(clip) +
+            bytes_of(gain) +
+            [
                 0, 0, 0, 0
             ]
         )
