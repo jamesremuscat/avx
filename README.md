@@ -1,4 +1,4 @@
-# AVX - Audio-Visual Control Extensions 
+# AVX - Audio-Visual Control Extensions
 
 [![Build Status](https://travis-ci.org/jamesremuscat/avx.svg?branch=master)](https://travis-ci.org/jamesremuscat/avx)
 [![Coverage Status](https://coveralls.io/repos/jamesremuscat/avx/badge.svg?branch=master&service=github)](https://coveralls.io/github/jamesremuscat/avx?branch=master)
@@ -53,14 +53,14 @@ may look like:
     }
   ]
 }
-``` 
+```
 
 Elements under "options" are passed directly as named parameters to the
 constructor of the class. Most, but not all, current devices require
 a `serialDevice` option.
 
 
-Be sure to map devices based on their USB device path - `/dev/ttyUSBx`'es 
+Be sure to map devices based on their USB device path - `/dev/ttyUSBx`'es
 might get swapped round after a reboot, which would break your configuration.
 Scripts included under `scripts/etc/udev/rules.d` will create symlinks based on
 device path, which relates to the physical port a device is plugged in to, in a
@@ -73,7 +73,7 @@ to each device, so balance these between descriptive and concise.
 
 ## Running
 
-You will need a Pyro4 nameserver running somewhere on your network. The 
+You will need a Pyro4 nameserver running somewhere on your network. The
 `runNameserver.sh` script will take care of this for you, or use the
 `scripts/etc/systemd/pyro4-nsd.service` systemd script to install as a system
 service. Systems still running initd can use `scripts/etc/init.d/pyro-nsd`.
@@ -82,7 +82,7 @@ The `runController.py` script will start a Controller instance and register it
 with the Pyro4 nameserver, making it available to all machines on your network.
 By default it will load a `config.json` configuration file, or whatever you
 specify with -c on the commandline. Installing via pip/easy_install will
-generate an `avx-controller` script which is run in the same way. 
+generate an `avx-controller` script which is run in the same way.
 
 The controller machine can also use the `scripts/etc/systemd/avx-controller.service`
 systemd script or `scripts/etc/init.d/avx-controller` init script to run the
@@ -177,7 +177,7 @@ Clients should override the `handleMessage(msgType, source, data)` method to han
 messages, which are sent via the controller's `broadcast` method. All messages are
 broadcast to all currently-connected clients. The arguments to `broadcast`, which are
 the same as those to `handleMessage`, are:
- 
+
  * `msgType`: string representing the type of message. Built-in message types are defined
    in `avx.Client.MessageTypes` or device-specific classes but client implementations are
    free to specify their own strings as required.
@@ -187,7 +187,7 @@ the same as those to `handleMessage`, are:
  * `data`: the message payload. May be any Python object, or `None`.
 
 Clients may broadcast messages by calling `Controller.broadcast()` or by scheduling a
-`BroadcastEvent`, for example as part of a macro sequence. 
+`BroadcastEvent`, for example as part of a macro sequence.
 
 Built-in message types currently include:
 
@@ -196,9 +196,9 @@ Built-in message types currently include:
    `dict` whose keys are the numbered outputs of the switcher, and whose values are the
    numbered inputs. For example, a switcher currently displaying input 1 on output 4 may send
    the data
-   
+
    ```{ 4: 1 }```
-   
+
    Note that the complete state of the switcher may not be represented (a single message may
    only describe a single output state). Nor is it guaranteed that such a message will
    automatically be sent when a switcher changes state (the Inline IN3808, for example, only
@@ -206,7 +206,27 @@ Built-in message types currently include:
 
 ## Changelog
 
-### v1.1 (release date TBC)
+### v1.4.0 (tbd)
+
+* List of connected clients is no longer written to the config file, but instead
+  to its own state file under `/var/lib/avx/`.
+
+### v1.3.1 (2018-12-02)
+
+* Fixed Hyperdeck functionality.
+
+### v1.3 (2018-11-21)
+
+* Added support for Datavideo PTC-150 network DVIP control (VISCA-over-ethernet).
+
+### v1.2.0 (2017-12-28)
+
+* Controller will now try to reconnect and reproxy to connected clients if it
+  is restarted.
+* VISCA pan/tilt speeds adjusted for PTC-150
+* Fixes and improvements to Hyperdeck functionality
+
+### v1.1.0 (2017-11-29)
 
 * Added support for Blackmagic Design ATEM video switchers. Functionality is partial
   and will be expanded in future releases.
