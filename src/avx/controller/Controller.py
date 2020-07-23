@@ -3,6 +3,7 @@ from avx import PyroUtils, _version
 from avx.controller.ControllerHttp import ControllerHttp
 from avx.devices import Device
 from avx.Sequencer import Sequencer
+from avx.utils import loadState, saveState
 from logging import Handler
 from Pyro4.errors import NamingError
 from semantic_version import Version as SemVer
@@ -98,32 +99,27 @@ class Controller(object):
                     logging.getLogger().setLevel(logging.DEBUG)
                     logging.info("-d specified, overriding any specified default logger level to DEBUG")
 
-            if "clients" in config:
+            if "clients" in config and len(config['clients']) > 0:
+                # Legacy support - client list no longer stored in config
                 self.clients = list(config["clients"])
-            self.config["clients"] = self.clients
+                saveState('clients', self.clients)
 
         except ValueError:
             logging.exception("Cannot parse config.json!")
 
-    def saveConfig(self):
-        if hasattr(self, "configFile"):
-            try:
-                with open(self.configFile, "w") as cfout:
-                    json.dump(self.config, cfout)
-            except IOError:
-                logging.exception("Cannot save config file!")
+        self.clients = loadState('clients', self.clients)
 
     def registerClient(self, clientURI):
         self.clients.append(str(clientURI))
         logging.info("Registered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) now connected")
-        self.saveConfig()
+        saveState('clients', self.clients)
 
     def unregisterClient(self, clientURI):
         self.clients.remove(str(clientURI))
         logging.info("Unregistered client at " + str(clientURI))
         logging.info(str(len(self.clients)) + " client(s) still connected")
-        self.saveConfig()
+        saveState('clients', self.clients)
 
     def broadcast(self, msgType, source, data=None):
         ''' Send a message to all clients '''
