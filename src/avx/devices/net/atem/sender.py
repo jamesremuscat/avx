@@ -146,21 +146,20 @@ class ATEMSender(object):
     @requiresInit
     @assertTopology('mes', 'me')
     def setUSKOnAir(self, me, usk, onAir):
-
-        me_keyers = self._system_config['keyers'].get(me, 0)
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
         if usk > me_keyers:
             raise InvalidArgumentException
 
         self._sendCommand(
             'CKOn',
-            [me - 1, usk - 1, 1 if onAir else 0, 0xBE, 0x07]
+            [me - 1, usk - 1, 1 if onAir else 0, 0x0A]
         )
         # Not sure about those magic values
 
     @requiresInit
     @assertTopology('mes', 'me')
     def setUSKType(self, me, usk, type, flying):
-        me_keyers = self._system_config['keyers'].get(me, 0)
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
         if usk > me_keyers:
             raise InvalidArgumentException
 
@@ -181,7 +180,7 @@ class ATEMSender(object):
     @requiresInit
     @assertTopology('mes', 'me')
     def setUSKKeySource(self, me, usk, source):
-        me_keyers = self._system_config['keyers'].get(me, 0)
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
         if usk > me_keyers:
             raise InvalidArgumentException
 
@@ -199,7 +198,7 @@ class ATEMSender(object):
     @requiresInit
     @assertTopology('mes', 'me')
     def setUSKFillSource(self, me, usk, source):
-        me_keyers = self._system_config['keyers'].get(me, 0)
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
         if usk > me_keyers:
             raise InvalidArgumentException
 
@@ -216,8 +215,8 @@ class ATEMSender(object):
 
     @requiresInit
     @assertTopology('mes', 'me')
-    def setUSKLumaParams(self, me, usk, preMultipled=None, clip=None, gain=None, invert=None):
-        me_keyers = self._system_config['keyers'].get(me, 0)
+    def setUSKLumaParams(self, me, usk, preMultiplied=None, clip=None, gain=None, invert=None):
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
         if usk > me_keyers:
             raise InvalidArgumentException
         if clip:
@@ -247,11 +246,11 @@ class ATEMSender(object):
                 set_mask,
                 me - 1,
                 usk - 1,
-                1 if premultipled else 0
+                1 if preMultiplied else 0
             ] +
             bytes_of(clip) +
             bytes_of(gain) +
-            + [
+            [
                 1 if invert else 0,
                 0,
                 0,

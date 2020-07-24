@@ -32,7 +32,10 @@ class ATEMReceiver(object):
 
     def _recv__MeC(self, data):
         index = data[0]
-        self._system_config.setdefault('keyers', {})[index] = data[1]
+        num_keyers = data[1]
+        keyer_dict = self._system_config.setdefault('keyers', {}).setdefault(index, {})
+        for i in range(num_keyers):
+            keyer_dict[i] = {'on': False}
 
     def _recv__mpl(self, data):
         self._system_config['media_players'] = {}
@@ -327,15 +330,18 @@ class ATEMReceiver(object):
     def _generate_synthetic_tally(self):
         tally = {}
 
-        for me_index in range(self._config['topology'].get('mes', 0)):
+        for me_index in range(self._system_config['topology'].get('mes', 0)):
             this_me = {'prv': [], 'pgm': []}
 
             # These are the easy ones: program/preview for each M/E
-            this_me['prv'].append(self._state['preview'][me_index])
-            this_me['pgm'].append(self._state['program'][me_index])
+            if me_index in self._state['preview']:
+                this_me['prv'].append(self._state['preview'][me_index])
+
+            if me_index in self._state['program']:
+                this_me['pgm'].append(self._state['program'][me_index])
 
             # We also need to consider the upstream keyers...
-            for usk in self._state['keyers'][me_index]:
+            for usk in self._state['keyers'].get(me_index, {}).values():
                 if usk.get('on', False):
                     this_me['pgm'].append(usk['fill'])
                     this_me['pgm'].append(usk['key'])
@@ -345,24 +351,24 @@ class ATEMReceiver(object):
             if current_transition.get('in_transition', False):
                 target = 'pgm'
             else:
-                target = 'pvw'
+                target = 'prv'
 
             tie = current_transition.get('tied', {})
-            if tie['bkgd']:
+            if tie.get('bkgd'):
                 this_me[target].append(self._state['preview'][me_index])
-            if tie['key1']:
+            if tie.get('key1'):
                 key1 = self._state['keyers'][me_index][0]
                 this_me[target].append(key1['fill'])
                 this_me[target].append(key1['key'])
-            if tie['key2']:
+            if tie.get('key2'):
                 key2 = self._state['keyers'][me_index][1]
                 this_me[target].append(key2['fill'])
                 this_me[target].append(key2['key'])
-            if tie['key3']:
+            if tie.get('key3'):
                 key3 = self._state['keyers'][me_index][2]
                 this_me[target].append(key3['fill'])
                 this_me[target].append(key3['key'])
-            if tie['key4']:
+            if tie.get('key4'):
                 key4 = self._state['keyers'][me_index][3]
                 this_me[target].append(key4['fill'])
                 this_me[target].append(key4['key'])
