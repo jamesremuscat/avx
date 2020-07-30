@@ -22,6 +22,21 @@ class ATEMGetter(object):
     def getUSKState(self):
         return self._state['keyers']
 
+    def getSuperSourceState(self):
+        return self._state['supersource']
+
+    def _get_supersource_sources(self):
+        result = []
+        ssrc = self.getSuperSourceState()
+        if 'fill' in ssrc:
+            result.append(ssrc['fill'])
+        if 'key' in ssrc:
+            result.append(ssrc['key'])
+
+        for box in ssrc.get('boxes', []):
+            if box.get('enabled', False):
+                result.append(box['source'])
+
     @requiresInit
     @assertTopology("mes", "me")
     def getFadeToBlackState(self, me=1):

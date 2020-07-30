@@ -1,6 +1,6 @@
-from .constants import ClipType, DownconverterMode, ExternalPortType, \
+from .constants import BevelType, ClipType, DownconverterMode, ExternalPortType, \
     KeyType, LABELS_PORTS_EXTERNAL, MessageTypes, MultiviewerLayout, PortType, \
-    TransitionStyle, VideoMode, VideoSource
+    SuperSourceArtType, TransitionStyle, VideoMode, VideoSource
 from .utils import parseBitmask, convert_cstring
 
 import struct
@@ -308,6 +308,60 @@ class ATEMReceiver(object):
             self.broadcast(MessageTypes.FTB_CHANGED, {meIndex: ftb_state})
 
 ########
+# SuperSource
+########
+
+    def _recv_SSrc(self, data):
+        ssrc = self._state['supersource']
+
+        ssrc['fill'] = VideoSource(struct.unpack('!H', data[0:2])[0])
+        ssrc['key'] = VideoSource(struct.unpack('!H', data[2:4])[0])
+        ssrc['artType'] = SuperSourceArtType(data[4])
+
+        ssrc['premultiplied'] = (data[5] > 0)
+        ssrc['clip'] = struct.unpack('!H', data[6:8])[0]
+        ssrc['gain'] = struct.unpack('!H', data[8:10])[0]
+        ssrc['invert'] = (data[10] > 0)
+
+        border = ssrc.setdefault('border', {})
+        border['enabled'] = data[11] > 0
+        border['bevel'] = BevelType(data[12])
+
+        border['outer_width'] = struct.unpack('!H', data[14:16])[0]
+        border['inner_width'] = struct.unpack('!H', data[16:18])[0]
+        border['outer_softness'] = data[18]
+        border['inner_softness'] = data[19]
+        border['bevel_softness'] = data[20]
+        border['bevel_position'] = data[21]
+        border['hue'] = struct.unpack('!H', data[22:24])[0]
+        border['saturation'] = struct.unpack('!H', data[24:26])[0]
+        border['luma'] = struct.unpack('!H', data[26:28])[0]
+        border['light_source_direction'] = struct.unpack('!H', data[28:30])[0]
+        border['light_source_altitude'] = data[30]
+
+        self._broadcast_full_tally()
+
+    def _recv_SSBP(self, data):
+        ssrc = self._state['supersource']
+        box = ssrc['boxes'][data[0]]
+
+        box['enabled'] = (data[1] > 0)
+        box['source'] = VideoSource(struct.unpack('!H', data[2:4])[0])
+        box['x'] = struct.unpack('!h', data[4:6])[0]
+        box['y'] = struct.unpack('!h', data[6:8])[0]
+        box['scale'] = struct.unpack('!H', data[8:10])[0]
+
+        crop = box.setdefault('crop', {})
+
+        crop['enabled'] = (data[10] > 0)
+        crop['top'] = struct.unpack('!H', data[12:14])[0]
+        crop['bottom'] = struct.unpack('!H', data[14:16])[0]
+        crop['left'] = struct.unpack('!H', data[16:18])[0]
+        crop['right'] = struct.unpack('!H', data[18:20])[0]
+
+        self._broadcast_full_tally()
+
+########
 # Macros
 ########
 
@@ -335,16 +389,25 @@ class ATEMReceiver(object):
 
             # These are the easy ones: program/preview for each M/E
             if me_index in self._state['preview']:
-                this_me['prv'].append(self._state['preview'][me_index])
+                prv_source = self._state['preview'][me_index]
+                this_me['prv'].append(prv_source)
+                if prv_source == VideoSource.SUPER_SOURCE:
+                    this_me['prv'].extend(self._get_supersource_sources())
 
             if me_index in self._state['program']:
-                this_me['pgm'].append(self._state['program'][me_index])
+                pgm_source = self._state['program'][me_index]
+                this_me['pgm'].append(pgm_source)
+                if prv_source == VideoSource.SUPER_SOURCE:
+                    this_me['pgm'].extend(self._get_supersource_sources())
 
             # We also need to consider the upstream keyers...
             for usk in self._state['keyers'].get(me_index, {}).values():
                 if usk.get('on', False):
                     this_me['pgm'].append(usk['fill'])
                     this_me['pgm'].append(usk['key'])
+
+                    if VideoSource.SUPER_SOURCE in [usk['fill'], usk['key']]:
+                        this_me['pgm'].extend(self._get_supersource_sources())
 
             # ... and transitions
             current_transition = self._state['transition'].get(me_index, {}).get('current', {})
@@ -355,23 +418,34 @@ class ATEMReceiver(object):
 
             tie = current_transition.get('tied', {})
             if tie.get('bkgd'):
-                this_me[target].append(self._state['preview'][me_index])
+                bkgd_source = self._state['preview'][me_index]
+                this_me[target].append(bkgd_source)
+                if VideoSource.SUPER_SOURCE == bkgd_source:
+                    this_me[target].extend(self._get_supersource_sources())
             if tie.get('key1'):
                 key1 = self._state['keyers'][me_index][0]
                 this_me[target].append(key1['fill'])
                 this_me[target].append(key1['key'])
+                if VideoSource.SUPER_SOURCE in [key1['fill'], key1['key']]:
+                    this_me[target].extend(self._get_supersource_sources())
             if tie.get('key2'):
                 key2 = self._state['keyers'][me_index][1]
                 this_me[target].append(key2['fill'])
                 this_me[target].append(key2['key'])
+                if VideoSource.SUPER_SOURCE in [key2['fill'], key2['key']]:
+                    this_me[target].extend(self._get_supersource_sources())
             if tie.get('key3'):
                 key3 = self._state['keyers'][me_index][2]
                 this_me[target].append(key3['fill'])
                 this_me[target].append(key3['key'])
+                if VideoSource.SUPER_SOURCE in [key3['fill'], key3['key']]:
+                    this_me[target].extend(self._get_supersource_sources())
             if tie.get('key4'):
                 key4 = self._state['keyers'][me_index][3]
                 this_me[target].append(key4['fill'])
                 this_me[target].append(key4['key'])
+                if VideoSource.SUPER_SOURCE in [key4['fill'], key4['key']]:
+                    this_me[target].extend(self._get_supersource_sources())
 
             tally[me_index] = this_me
 
@@ -380,6 +454,9 @@ class ATEMReceiver(object):
             if dsk.get('in_transition', False) or dsk.get('on_air', False):
                 tally[0]['pgm'].append(dsk['key'])
                 tally[0]['pgm'].append(dsk['fill'])
+
+                if VideoSource.SUPER_SOURCE in [dsk['fill'], dsk['key']]:
+                    tally[0]['pgm'].extend(self._get_supersource_sources())
 
         return tally
 

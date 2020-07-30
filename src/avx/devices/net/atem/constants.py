@@ -168,6 +168,18 @@ class KeyType(Enum):
     DVE = 3
 
 
+class BevelType(Enum):
+    NONE = 0
+    IN_OUT = 1
+    IN = 2
+    OUT = 3
+
+
+class SuperSourceArtType(Enum):
+    BACKGROUND = 0
+    FOREGROUND = 1
+
+
 class MacroAction(Enum):
     RUN = 0
     STOP = 1
