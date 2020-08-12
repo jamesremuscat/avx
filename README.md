@@ -210,7 +210,7 @@ Built-in message types currently include:
 
 * List of connected clients is no longer written to the config file, but instead
   to its own state file under `/var/lib/avx/`.
-* Added ATEM functions for upstream keyers
+* Added ATEM functions for upstream keyers and Super Source
 * Added "synthetic" tally for ATEM switcher giving sources per M/E bus
 
 ### v1.3.1 (2018-12-02)
