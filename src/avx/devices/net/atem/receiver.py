@@ -339,6 +339,12 @@ class ATEMReceiver(object):
         border['light_source_direction'] = struct.unpack('!H', data[28:30])[0]
         border['light_source_altitude'] = data[30]
 
+        if self._isInitialized:
+            self.broadcast(
+                MessageTypes.SUPER_SOURCE_CHANGED,
+                self._state['supersource']
+            )
+
         self._broadcast_full_tally()
 
     def _recv_SSBP(self, data):
@@ -358,6 +364,12 @@ class ATEMReceiver(object):
         crop['bottom'] = struct.unpack('!H', data[14:16])[0]
         crop['left'] = struct.unpack('!H', data[16:18])[0]
         crop['right'] = struct.unpack('!H', data[18:20])[0]
+
+        if self._isInitialized:
+            self.broadcast(
+                MessageTypes.SUPER_SOURCE_CHANGED,
+                self._state['supersource']
+            )
 
         self._broadcast_full_tally()
 

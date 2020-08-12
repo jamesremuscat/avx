@@ -202,3 +202,4 @@ class MessageTypes(object):
     FTB_CHANGED = _PREFIX + "FadeToBlackChanged"
     FTB_RATE_CHANGED = _PREFIX + "FtBRateChanged"
     TRANSITION_MIX_PROPERTIES_CHANGED = _PREFIX + "TrMxPropsChanged"
+    SUPER_SOURCE_CHANGED = _PREFIX + "SuperSourceChanged"
