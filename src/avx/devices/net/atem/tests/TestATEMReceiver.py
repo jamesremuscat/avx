@@ -49,8 +49,8 @@ class TestATEMReceiver(BaseATEMTest):
         # Remainder of bytes are unknowns
 
     def testRecv_MeC(self):
-        self.send_command('_MeC', [8, 27, 0])
-        self.assertEqual(27, self.atem._system_config['keyers'][8])
+        self.send_command('_MeC', [8, 3, 0])
+        self.assertEqual([0, 1, 2], self.atem._system_config['keyers'][8].keys())
 
     def testRecv_mpl(self):
         self.send_command('_mpl', [29, 42, 0])
