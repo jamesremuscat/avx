@@ -197,3 +197,108 @@ class TestATEMSender(BaseATEMTest):
         self.atem.resetAudioMixerPeaks(AudioSource.XLR)
         self.assert_sent_packet('RAMP', [0x2, 0, 0x3, 0xE9, 0, 0, 0, 0])
         self.atem._socket.reset_mock()
+
+########
+# Super Source
+########
+
+    def testSetSuperSourceFill(self):
+        self.atem.setSuperSourceFill(VideoSource.COLOUR_BARS)
+        self.assert_sent_packet(
+            'CSSc',
+            [
+                0x1,
+                0,
+                0,
+                0
+            ] +
+            bytes_of(VideoSource.COLOUR_BARS.value) +
+            ([0] * 30)
+        )
+
+    def testSetSuperSourceKey(self):
+        self.atem.setSuperSourceKey(VideoSource.COLOUR_BARS)
+        self.assert_sent_packet(
+            'CSSc',
+            [
+                0x2,
+                0,
+                0,
+                0,
+                0, 0
+            ] +
+            bytes_of(VideoSource.COLOUR_BARS.value) +
+            ([0] * 28)
+        )
+
+    def testSetSuperSourceParams(self):
+        self.atem.setSuperSourceParams(
+            foreground=True,
+            clip=500,
+            gain=250,
+            border_outer_softness=42
+        )
+        self.assert_sent_packet(
+            'CSSc',
+            [
+                0x34,
+                0x08,
+                0,
+                0,
+                0, 0, 0, 0,
+                1,
+                0,
+                0x01, 0xF4,
+                0x00, 0xFA,
+                0,
+                0,
+                0,
+                0,
+                0, 0,
+                0, 0,
+                42
+            ] + ([0] * 13)
+        )
+
+    def testSetSuperSourceBoxSource(self):
+        self.atem.setSuperSourceBoxSource(3, VideoSource.COLOUR_BARS)
+        self.assert_sent_packet(
+            'CSBP',
+            [
+                2, 0,
+                3,
+                0
+            ] +
+            bytes_of(VideoSource.COLOUR_BARS.value) +
+            [0] * 17
+        )
+
+    def testSetSuperSourceBoxParams(self):
+        self.atem.setSuperSourceBoxParams(
+            2,
+            enabled=True,
+            position_x=0,
+            position_y=1234,
+            cropped=False,
+            crop_left=12345
+        )
+        self.assert_sent_packet(
+            'CSBP',
+            [
+                0x2D,
+                0x01,
+                2,
+                1,
+                0, 0,
+                0, 0,
+                0x04, 0xD2,
+                0, 0,
+                0,
+                0,
+                0, 0,
+                0, 0,
+                0x30, 0x39,
+                0, 0,
+                0
+            ]
+        )
