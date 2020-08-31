@@ -37,6 +37,8 @@ class ATEMGetter(object):
             if box.get('enabled', False):
                 result.append(box['source'])
 
+        return result
+
     @requiresInit
     @assertTopology("mes", "me")
     def getFadeToBlackState(self, me=1):
