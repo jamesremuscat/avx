@@ -400,34 +400,21 @@ class ATEMSender(object):
 
     @requiresInit
     def setSuperSourceFill(self, source):
-        if not isinstance(source, VideoSource):
-            raise InvalidArgumentException
-        self._sendCommand(
-            'CSSc',
-            [
-                1, 0, 0, 0  # Only change fill source
-            ] +
-            self._resolveInputBytes(source) +
-            [0] * 30  # Set everything else to 0
+        return self.setSuperSourceParams(
+            fill=source
         )
 
     @requiresInit
     def setSuperSourceKey(self, source):
-        if not isinstance(source, VideoSource):
-            raise InvalidArgumentException
-        self._sendCommand(
-            'CSSc',
-            [
-                2, 0, 0, 0,  # Only change key source
-                0, 0,
-            ] +
-            self._resolveInputBytes(source) +
-            [0] * 28  # Set everything else to 0
+        return self.setSuperSourceParams(
+            key=source
         )
 
     @requiresInit
     def setSuperSourceParams(
         self,
+        fill=None,
+        key=None,
         foreground=None,
         preMultiplied=None,
         clip=None,
@@ -447,7 +434,19 @@ class ATEMSender(object):
         light_source_direction=None,
         light_source_attitude=None
     ):
+
+        if fill is not None:
+            if not isinstance(fill, VideoSource):
+                raise InvalidArgumentException
+        if key is not None:
+            if not isinstance(key, VideoSource):
+                raise InvalidArgumentException
+
         mask = [0, 0, 0, 0]
+        if fill is not None:
+            mask[0] |= 1
+        if key is not None:
+            mask[0] |= 2
         if foreground is not None:
             mask[0] |= 4
         if preMultiplied is not None:
@@ -485,11 +484,12 @@ class ATEMSender(object):
         if light_source_attitude is not None:
             mask[2] |= 8
 
-        self._sendCommand(
+        return self._sendCommand(
             'CSSc',
             mask +
+            (self._resolveInputBytes(fill) if fill is not None else [0, 0]) +
+            (self._resolveInputBytes(key) if key is not None else [0, 0]) +
             [
-                0, 0, 0, 0,  # Not changing video sources
                 1 if foreground else 0,
                 1 if preMultiplied else 0
             ] +
@@ -521,19 +521,9 @@ class ATEMSender(object):
 
     @requiresInit
     def setSuperSourceBoxSource(self, box, source):
-        if not isinstance(source, VideoSource):
-            raise InvalidArgumentException
-        if 0 > box or box > 3:
-            raise InvalidArgumentException
-        self._sendCommand(
-            'CSBP',
-            [
-                2, 0,  # Only change input source
-                box,
-                0
-            ] +
-            self._resolveInputBytes(source) +
-            [0] * 17  # Set everything else to 0
+        return self.setSuperSourceBoxParams(
+            box,
+            source=source
         )
 
     @requiresInit
@@ -541,6 +531,7 @@ class ATEMSender(object):
         self,
         box,
         enabled=None,
+        source=None,
         position_x=None,
         position_y=None,
         size=None,
@@ -551,6 +542,11 @@ class ATEMSender(object):
         crop_right=None
     ):
 
+        if 0 > box or box > 3:
+            raise InvalidArgumentException
+        if source is not None:
+            if not isinstance(source, VideoSource):
+                raise InvalidArgumentException
         if position_x is not None:
             if position_x < -4800 or position_x > 4800:
                 raise InvalidArgumentException()
@@ -577,6 +573,8 @@ class ATEMSender(object):
         mask_2 = 0
         if enabled is not None:
             mask_1 |= 1
+        if source is not None:
+            mask_1 |= 2
         if position_x is not None:
             mask_1 |= 4
         if position_y is not None:
@@ -594,15 +592,15 @@ class ATEMSender(object):
         if crop_right is not None:
             mask_2 |= 2
 
-        self._sendCommand(
+        return self._sendCommand(
             'CSBP',
             [
                 mask_1,
                 mask_2,
                 box,
-                1 if enabled else 0,
-                0, 0
+                1 if enabled else 0
             ] +
+            (self._resolveInputBytes(source) if source else [0, 0]) +
             bytes_of(position_x or 0) +
             bytes_of(position_y or 0) +
             array_pack('!h', size or 0) +
