@@ -177,6 +177,17 @@ class VISCACommandsMixin(object):
     def focusManual(self):
         return self.sendVISCA([0x01, 0x04, 0x38, 0x03])
 
+    def focusDirect(self, focus):
+        return self.sendVISCA(
+            [
+                0x01, 0x04, 0x48,
+                (focus & 0xF000) >> 12,
+                (focus & 0x0F00) >> 8,
+                (focus & 0x00F0) >> 4,
+                (focus & 0x000F)
+            ]
+        )
+
     def brighter(self):
         self.sendVISCA([0x01, 0x04, 0x39, 0x0D])  # Put camera into manual exposure mode first!
         return self.sendVISCA([0x01, 0x04, 0x0D, 0x02])
