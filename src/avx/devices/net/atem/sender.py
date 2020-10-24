@@ -398,6 +398,12 @@ class ATEMSender(object):
 # Super Source
 ########
 
+# Disabled since this code doesn't work - need to identify more magic
+# constants in the protocol I think...
+
+
+'''
+
     @requiresInit
     def setSuperSourceFill(self, source):
         return self.setSuperSourceParams(
@@ -616,3 +622,4 @@ class ATEMSender(object):
                 0
             ]
         )
+'''

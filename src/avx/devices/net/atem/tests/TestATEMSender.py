@@ -5,6 +5,8 @@ from avx.devices.net.atem.utils import byteArrayToString, bytes_of, \
     NotInitializedException
 from avx.devices.Device import InvalidArgumentException
 
+import pytest
+
 
 class TestATEMSender(BaseATEMTest):
     def assert_sent_packet(self, cmd, payload):
@@ -202,6 +204,7 @@ class TestATEMSender(BaseATEMTest):
 # Super Source
 ########
 
+    @pytest.mark.skip(reason='Code is not currently working and is commented out')
     def testSetSuperSourceFill(self):
         self.atem.setSuperSourceFill(VideoSource.COLOUR_BARS)
         self.assert_sent_packet(
@@ -216,6 +219,7 @@ class TestATEMSender(BaseATEMTest):
             ([0] * 30)
         )
 
+    @pytest.mark.skip(reason='Code is not currently working and is commented out')
     def testSetSuperSourceKey(self):
         self.atem.setSuperSourceKey(VideoSource.COLOUR_BARS)
         self.assert_sent_packet(
@@ -231,6 +235,7 @@ class TestATEMSender(BaseATEMTest):
             ([0] * 28)
         )
 
+    @pytest.mark.skip(reason='Code is not currently working and is commented out')
     def testSetSuperSourceParams(self):
         self.atem.setSuperSourceParams(
             foreground=True,
@@ -260,6 +265,7 @@ class TestATEMSender(BaseATEMTest):
             ] + ([0] * 13)
         )
 
+    @pytest.mark.skip(reason='Code is not currently working and is commented out')
     def testSetSuperSourceBoxSource(self):
         self.atem.setSuperSourceBoxSource(3, VideoSource.COLOUR_BARS)
         self.assert_sent_packet(
@@ -273,6 +279,7 @@ class TestATEMSender(BaseATEMTest):
             [0] * 17
         )
 
+    @pytest.mark.skip(reason='Code is not currently working and is commented out')
     def testSetSuperSourceBoxParams(self):
         self.atem.setSuperSourceBoxParams(
             2,
