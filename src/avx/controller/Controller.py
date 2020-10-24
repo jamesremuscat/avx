@@ -134,6 +134,11 @@ class Controller(object):
             except Exception:
                 logging.exception("Failed to call handleMessage on registered client {}, removing.".format(uri))
                 self.unregisterClient(uri)
+        for device in self.devices.values():
+            if hasattr(device, 'receiveMessage'):
+                device.receiveMessage(msgType, source, data)
+        for slave in self.slaves:
+            slave.broadcast(msgType, source, data)
 
     def getVersion(self):
         return self.version
