@@ -110,10 +110,11 @@ class Controller(object):
         self.clients = loadState('clients', self.clients)
 
     def registerClient(self, clientURI):
-        self.clients.append(str(clientURI))
-        logging.info("Registered client at " + str(clientURI))
-        logging.info(str(len(self.clients)) + " client(s) now connected")
-        saveState('clients', self.clients)
+        if str(clientURI) not in self.clients:
+            self.clients.append(str(clientURI))
+            logging.info("Registered client at " + str(clientURI))
+            logging.info(str(len(self.clients)) + " client(s) now connected")
+            saveState('clients', self.clients)
 
     def unregisterClient(self, clientURI):
         self.clients.remove(str(clientURI))
