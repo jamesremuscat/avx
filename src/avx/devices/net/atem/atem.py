@@ -67,7 +67,11 @@ class ATEM(Device, ATEMGetter, ATEMSender, ATEMReceiver):
             'audio': {},
             'tally_by_index': {},
             'tally': {},
-            'transition': {}
+            'transition': {},
+            'supersource': {
+                'boxes': [{}, {}, {}, {}]
+            }  # Later ATEM models have multiple SSrc - this will need to change
+               # to support later versions of the protocol
         }
         self._cameracontrol = {}
 

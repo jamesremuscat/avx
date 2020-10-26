@@ -2,6 +2,7 @@ from avx.devices.Device import InvalidArgumentException
 
 import ctypes
 import inspect
+import struct
 
 
 def byteArrayToString(byteArray):
@@ -10,6 +11,10 @@ def byteArrayToString(byteArray):
 
 def bytes_of(val):
     return [(val >> 8), (val & 0xFF)]
+
+
+def array_pack(format, value):
+    return map(ord, struct.pack(format, value))
 
 
 class NotInitializedException(Exception):

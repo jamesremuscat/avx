@@ -5,10 +5,10 @@ python:
 env:
 - PYTEST_ADDOPTS="--cov=avx"
 install:
-- pip install pep8 coveralls
+- pip install pycodestyle coveralls
 - pip install --upgrade setuptools
 script:
-- pep8 --ignore=E501 src
+- pycodestyle --ignore=E501,W504 src
 - python setup.py test
 after_success: coveralls
 before_deploy: sed -i -e "s/\.dev//" setup.cfg
@@ -20,4 +20,3 @@ deploy:
   on:
     tags: true
   skip_cleanup: true
-

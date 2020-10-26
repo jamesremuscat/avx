@@ -161,6 +161,25 @@ class TransitionStyle(Enum):
     STING = 4
 
 
+class KeyType(Enum):
+    LUMA = 0
+    CHROMA = 1
+    PATTERN = 2
+    DVE = 3
+
+
+class BevelType(Enum):
+    NONE = 0
+    IN_OUT = 1
+    IN = 2
+    OUT = 3
+
+
+class SuperSourceArtType(Enum):
+    BACKGROUND = 0
+    FOREGROUND = 1
+
+
 class MacroAction(Enum):
     RUN = 0
     STOP = 1
@@ -176,8 +195,11 @@ class MessageTypes(object):
     ATEM_DISCONNECTED = _PREFIX + "Disconnected"
     AUX_OUTPUT_MAPPING = _PREFIX + "AuxOutputMapping"
     TALLY = _PREFIX + "Tally"
+    FULL_TALLY = _PREFIX + "FullTally"
     DSK_STATE = _PREFIX + "DownstreamKeyerState"
+    USK_STATE = _PREFIX + "UpstreamKeyerState"
     INPUTS_CHANGED = _PREFIX + "InputsChanged"
     FTB_CHANGED = _PREFIX + "FadeToBlackChanged"
     FTB_RATE_CHANGED = _PREFIX + "FtBRateChanged"
     TRANSITION_MIX_PROPERTIES_CHANGED = _PREFIX + "TrMxPropsChanged"
+    SUPER_SOURCE_CHANGED = _PREFIX + "SuperSourceChanged"

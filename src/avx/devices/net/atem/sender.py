@@ -1,7 +1,9 @@
-from .constants import AudioSource, MacroAction, VideoSource
-from .utils import requiresInit, assertTopology, bytes_of
+from .constants import AudioSource, MacroAction, VideoSource, KeyType
+from .utils import requiresInit, assertTopology, bytes_of, array_pack
 from avx.devices.Device import InvalidArgumentException
 from avx.devices.net.atem.constants import MultiviewerLayout
+
+import struct
 
 
 #############
@@ -140,6 +142,125 @@ class ATEMSender(object):
         self._sendCommand('FtbA', [me - 1, 0xA7, 0x59, 0x08])
 
 ########
+# USK
+########
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKOnAir(self, me, usk, onAir):
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKOn',
+            [me - 1, usk - 1, 1 if onAir else 0, 0x0A]
+        )
+        # Not sure about those magic values
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKType(self, me, usk, type, flying):
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        if not isinstance(type, KeyType):
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKTp',
+            [
+                me - 1,
+                usk - 1,
+                type.value,
+                1 if flying else 0,
+                0, 0, 0, 0
+            ]
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKKeySource(self, me, usk, source):
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        if not isinstance(source, VideoSource):
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKeC',
+            [
+                me - 1,
+                usk - 1
+            ] + self._resolveInputBytes(source)
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKFillSource(self, me, usk, source):
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
+        if usk > me_keyers:
+            raise InvalidArgumentException
+
+        if not isinstance(source, VideoSource):
+            raise InvalidArgumentException
+
+        self._sendCommand(
+            'CKeF',
+            [
+                me - 1,
+                usk - 1
+            ] + self._resolveInputBytes(source)
+        )
+
+    @requiresInit
+    @assertTopology('mes', 'me')
+    def setUSKLumaParams(self, me, usk, preMultiplied=None, clip=None, gain=None, invert=None):
+        me_keyers = len(self._system_config['keyers'].get(me - 1, {}))
+        if usk > me_keyers:
+            raise InvalidArgumentException
+        if clip:
+            if clip < 0 or clip > 1000:
+                raise InvalidArgumentException
+        if gain:
+            if gain < 0 or gain > 1000:
+                raise InvalidArgumentException
+
+        set_mask = 0
+        if preMultiplied is not None:
+            set_mask |= 1
+        if clip is not None:
+            set_mask |= 2
+        else:
+            clip = 0
+        if gain is not None:
+            set_mask |= 4
+        else:
+            gain = 0
+        if invert is not None:
+            set_mask |= 8
+
+        self._sendCommand(
+            'KeLm',
+            [
+                set_mask,
+                me - 1,
+                usk - 1,
+                1 if preMultiplied else 0
+            ] +
+            bytes_of(clip) +
+            bytes_of(gain) +
+            [
+                1 if invert else 0,
+                0,
+                0,
+                0
+            ]
+        )
+
+########
 # DSK
 ########
 
@@ -272,3 +393,233 @@ class ATEMSender(object):
             'RAMP',
             [mask, 0] + source_bytes + [(1 if source is None else 0), 0, 0, 0]
         )
+
+########
+# Super Source
+########
+
+# Disabled since this code doesn't work - need to identify more magic
+# constants in the protocol I think...
+
+
+'''
+
+    @requiresInit
+    def setSuperSourceFill(self, source):
+        return self.setSuperSourceParams(
+            fill=source
+        )
+
+    @requiresInit
+    def setSuperSourceKey(self, source):
+        return self.setSuperSourceParams(
+            key=source
+        )
+
+    @requiresInit
+    def setSuperSourceParams(
+        self,
+        fill=None,
+        key=None,
+        foreground=None,
+        preMultiplied=None,
+        clip=None,
+        gain=None,
+        invert=None,
+        border_enabled=None,
+        border_bevel=None,
+        border_outer_width=None,
+        border_inner_width=None,
+        border_outer_softness=None,
+        border_inner_softness=None,
+        border_bevel_softness=None,
+        border_bevel_position=None,
+        border_hue=None,
+        border_saturation=None,
+        border_luma=None,
+        light_source_direction=None,
+        light_source_attitude=None
+    ):
+
+        if fill is not None:
+            if not isinstance(fill, VideoSource):
+                raise InvalidArgumentException
+        if key is not None:
+            if not isinstance(key, VideoSource):
+                raise InvalidArgumentException
+
+        mask = [0, 0, 0, 0]
+        if fill is not None:
+            mask[0] |= 1
+        if key is not None:
+            mask[0] |= 2
+        if foreground is not None:
+            mask[0] |= 4
+        if preMultiplied is not None:
+            mask[0] |= 8
+        if clip is not None:
+            mask[0] |= 16
+        if gain is not None:
+            mask[0] |= 32
+        if invert is not None:
+            mask[0] |= 64
+        if border_enabled is not None:
+            mask[0] |= 128
+        if border_bevel is not None:
+            mask[1] |= 1
+        if border_outer_width is not None:
+            mask[1] |= 2
+        if border_inner_width is not None:
+            mask[1] |= 4
+        if border_outer_softness is not None:
+            mask[1] |= 8
+        if border_inner_softness is not None:
+            mask[1] |= 16
+        if border_bevel_softness is not None:
+            mask[1] |= 32
+        if border_bevel_position is not None:
+            mask[1] |= 64
+        if border_hue is not None:
+            mask[1] |= 128
+        if border_saturation is not None:
+            mask[2] |= 1
+        if border_luma is not None:
+            mask[2] |= 2
+        if light_source_direction is not None:
+            mask[2] |= 4
+        if light_source_attitude is not None:
+            mask[2] |= 8
+
+        return self._sendCommand(
+            'CSSc',
+            mask +
+            (self._resolveInputBytes(fill) if fill is not None else [0, 0]) +
+            (self._resolveInputBytes(key) if key is not None else [0, 0]) +
+            [
+                1 if foreground else 0,
+                1 if preMultiplied else 0
+            ] +
+            array_pack('!H', clip or 0) +
+            array_pack('!H', gain or 0) +
+            [
+                1 if invert else 0,
+                1 if border_enabled else 0,
+                border_bevel or 0,
+                0
+            ] +
+            array_pack('!H', border_outer_width or 0) +
+            array_pack('!H', border_inner_width or 0) +
+            [
+                border_outer_softness or 0,
+                border_inner_softness or 0,
+                border_bevel_softness or 0,
+                border_bevel_position or 0
+            ] +
+            array_pack('!H', border_hue or 0) +
+            array_pack('!H', border_saturation or 0) +
+            array_pack('!H', border_luma or 0) +
+            array_pack('!H', light_source_direction or 0) +
+            [
+                light_source_attitude or 0,
+                0
+            ]
+        )
+
+    @requiresInit
+    def setSuperSourceBoxSource(self, box, source):
+        return self.setSuperSourceBoxParams(
+            box,
+            source=source
+        )
+
+    @requiresInit
+    def setSuperSourceBoxParams(
+        self,
+        box,
+        enabled=None,
+        source=None,
+        position_x=None,
+        position_y=None,
+        size=None,
+        cropped=None,
+        crop_top=None,
+        crop_bottom=None,
+        crop_left=None,
+        crop_right=None
+    ):
+
+        if 0 > box or box > 3:
+            raise InvalidArgumentException
+        if source is not None:
+            if not isinstance(source, VideoSource):
+                raise InvalidArgumentException
+        if position_x is not None:
+            if position_x < -4800 or position_x > 4800:
+                raise InvalidArgumentException()
+        if position_y is not None:
+            if position_y < -4800 or position_y > 4800:
+                raise InvalidArgumentException()
+        if size is not None:
+            if size < 70 or size > 1000:
+                raise InvalidArgumentException()
+        if crop_top is not None:
+            if crop_top < 0 or crop_top > 18000:
+                raise InvalidArgumentException()
+        if crop_bottom is not None:
+            if crop_bottom < 0 or crop_bottom > 18000:
+                raise InvalidArgumentException()
+        if crop_left is not None:
+            if crop_left < 0 or crop_left > 18000:
+                raise InvalidArgumentException()
+        if crop_right is not None:
+            if crop_right < 0 or crop_right > 18000:
+                raise InvalidArgumentException()
+
+        mask_1 = 0
+        mask_2 = 0
+        if enabled is not None:
+            mask_1 |= 1
+        if source is not None:
+            mask_1 |= 2
+        if position_x is not None:
+            mask_1 |= 4
+        if position_y is not None:
+            mask_1 |= 8
+        if size is not None:
+            mask_1 |= 16
+        if cropped is not None:
+            mask_1 |= 32
+        if crop_top is not None:
+            mask_1 |= 64
+        if crop_bottom is not None:
+            mask_1 |= 128
+        if crop_left is not None:
+            mask_2 |= 1
+        if crop_right is not None:
+            mask_2 |= 2
+
+        return self._sendCommand(
+            'CSBP',
+            [
+                mask_1,
+                mask_2,
+                box,
+                1 if enabled else 0
+            ] +
+            (self._resolveInputBytes(source) if source else [0, 0]) +
+            bytes_of(position_x or 0) +
+            bytes_of(position_y or 0) +
+            array_pack('!h', size or 0) +
+            [
+                1 if cropped else 0,
+                0
+            ] +
+            array_pack('!H', crop_top or 0) +
+            array_pack('!H', crop_bottom or 0) +
+            array_pack('!H', crop_left or 0) +
+            array_pack('!H', crop_right or 0) +
+            [
+                0
+            ]
+        )
+'''
