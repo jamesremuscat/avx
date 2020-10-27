@@ -5,7 +5,7 @@ from avx.devices import Device
 from avx.Sequencer import Sequencer
 from avx.utils import loadState, saveState
 from logging import Handler
-from Pyro4.errors import NamingError
+from Pyro4.errors import PyroError, NamingError
 from semantic_version import Version as SemVer
 import atexit
 import logging.config
@@ -132,7 +132,7 @@ class Controller(object):
                 client._pyroTimeout = 1
                 result = client.handleMessage(msgType, source, data)
                 logging.debug("Client call returned " + str(result))
-            except Exception:
+            except PyroError:
                 logging.exception("Failed to call handleMessage on registered client {}, removing.".format(uri))
                 self.unregisterClient(uri)
         for device in self.devices.values():
