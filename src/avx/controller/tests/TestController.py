@@ -6,7 +6,7 @@ from avx.devices.serial.SerialRelayCard import UpDownStopArray
 from mock import MagicMock, call, patch
 from threading import Thread
 from unittest import TestCase
-from Pyro4.errors import NamingError
+from Pyro4.errors import PyroError, NamingError
 
 import json
 import os
@@ -246,7 +246,7 @@ class TestController(TestCase):
 
         pyro.Proxy = MagicMock()
 
-        pyro.Proxy.side_effect = [Exception("Foo"), good]
+        pyro.Proxy.side_effect = [PyroError("Foo"), good]
 
         c.broadcast("Test", "testBroadcastWithBadClient", "Bar")
 
