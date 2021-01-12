@@ -4,14 +4,14 @@ Created on 8 Apr 2013
 @author: jrem
 '''
 from avx import PyroUtils
+from avx.controller.messagebus import Subscriber
 
 import Pyro4
 import atexit
 import threading
 
 
-class Client(threading.Thread):
-
+class Client(Subscriber, threading.Thread):
     def __init__(self):
         super(Client, self).__init__()
         self.started = threading.Event()
@@ -20,6 +20,7 @@ class Client(threading.Thread):
         PyroUtils.setHostname()
         daemon = Pyro4.Daemon()
         self.uri = daemon.register(self)
+        self.bus.subscribe('avx', self)
         self.started.set()
         atexit.register(lambda: daemon.shutdown())
         daemon.requestLoop()
@@ -27,7 +28,10 @@ class Client(threading.Thread):
     def getHostIP(self):
         return Pyro4.config.HOST
 
-    @Pyro4.expose
+    def consume_message(self, topic, message):
+        msgType, source, data = message.data
+        self.handleMessage(msgType, source, data)
+
     def handleMessage(self, msgType, sourceDeviceID, data):
         pass
 

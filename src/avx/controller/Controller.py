@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, FileType
 from avx import PyroUtils, _version
 from avx.controller.ControllerHttp import ControllerHttp
+from avx.controller.messagebus import make_messagebus, MessageBus, PYRO_MSGBUS_NAME
 from avx.devices import Device
 from avx.Sequencer import Sequencer
 from avx.utils import loadState, saveState
@@ -39,9 +40,9 @@ class Controller(object):
         self.sequencer.start()
         self.logHandler = ControllerLogHandler()
         logging.getLogger().addHandler(self.logHandler)
-        self.clients = []
         self.slaves = []
         self.daemon = Pyro4.Daemon(PyroUtils.getHostname())
+        self.messagebus = None
 
     @staticmethod
     def fromPyro(controllerID=""):
@@ -99,42 +100,20 @@ class Controller(object):
                     logging.getLogger().setLevel(logging.DEBUG)
                     logging.info("-d specified, overriding any specified default logger level to DEBUG")
 
-            if "clients" in config and len(config['clients']) > 0:
-                # Legacy support - client list no longer stored in config
-                self.clients = list(config["clients"])
-                saveState('clients', self.clients)
-
         except ValueError:
             logging.exception("Cannot parse config.json!")
 
-        self.clients = loadState('clients', self.clients)
-
     def registerClient(self, clientURI):
-        if str(clientURI) not in self.clients:
-            self.clients.append(str(clientURI))
-            logging.info("Registered client at " + str(clientURI))
-            logging.info(str(len(self.clients)) + " client(s) now connected")
-            saveState('clients', self.clients)
+        logging.warn('Client {} called deprecated and non-functional method registerClient'.format(clientURI))
 
     def unregisterClient(self, clientURI):
-        self.clients.remove(str(clientURI))
-        logging.info("Unregistered client at " + str(clientURI))
-        logging.info(str(len(self.clients)) + " client(s) still connected")
-        saveState('clients', self.clients)
+        logging.warn('Client {} called deprecated and non-functional method unegisterClient'.format(clientURI))
 
     def broadcast(self, msgType, source, data=None):
         ''' Send a message to all clients '''
         logging.debug("Broadcast: {}, {}, {}".format(msgType, source, data))
-        for uri in list(self.clients):
-            try:
-                logging.debug("Calling handleMessage on client at {}".format(uri))
-                client = Pyro4.Proxy(uri)
-                client._pyroTimeout = 1
-                result = client.handleMessage(msgType, source, data)
-                logging.debug("Client call returned " + str(result))
-            except PyroError:
-                logging.exception("Failed to call handleMessage on registered client {}, removing.".format(uri))
-                self.unregisterClient(uri)
+        if self.messagebus:
+            self.messagebus.send_no_ack('avx', (msgType, source, data))
         for device in self.devices.values():
             if hasattr(device, 'receiveMessage'):
                 device.receiveMessage(msgType, source, data)
@@ -190,7 +169,15 @@ class Controller(object):
 
         ns.register(name, uri)
 
+        logging.info('Registering messagebus...')
+        make_messagebus.storagetype = 'memory'
+        messagebus_uri = self.daemon.register(MessageBus)
+        ns.register(PYRO_MSGBUS_NAME, messagebus_uri)
+
+        self.messagebus = Pyro4.Proxy('PYRONAME:' + PYRO_MSGBUS_NAME)
+
         atexit.register(lambda: self.daemon.shutdown())
+        logging.info('Entering request loop')
 
         self.daemon.requestLoop()
 
