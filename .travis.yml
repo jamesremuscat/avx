@@ -6,10 +6,10 @@ env:
 - PYTEST_ADDOPTS="--cov=avx"
 install:
 - pip install pycodestyle coveralls
-- pip install --upgrade setuptools
+- pip install --upgrade pip setuptools tox wheel
 script:
 - pycodestyle --ignore=E501,W504 src
-- python setup.py test
+- tox
 after_success: coveralls
 before_deploy: sed -i -e "s/\.dev//" setup.cfg
 deploy:
