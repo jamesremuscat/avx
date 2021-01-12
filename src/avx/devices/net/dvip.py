@@ -28,6 +28,7 @@ class DVIPCamera(TCPDevice, VISCACommandsMixin):
 
     def __init__(self, deviceID, ipAddress, port=5002, **kwargs):
         super(DVIPCamera, self).__init__(deviceID, ipAddress, port, **kwargs)
+        self._send_lock = Lock()
         self._ack = Event()
         self._await_response = Lock()
         self._response_received = Event()
@@ -48,17 +49,18 @@ class DVIPCamera(TCPDevice, VISCACommandsMixin):
                 self._response_received.set()
 
     def sendVISCA(self, data):
-        self._ack.clear()
-        data_bytes = [0x81] + data + [0xFF]
-        length = len(data_bytes) + 2
+        with self._send_lock:
+            self._ack.clear()
+            data_bytes = [0x81] + data + [0xFF]
+            length = len(data_bytes) + 2
 
-        self.send(
-            SerialDevice.byteArrayToString([
-                length >> 8,
-                length & 0xFF
-            ] + data_bytes)
-        )
-        self._ack.wait(self.ACK_TIMEOUT)
+            self.send(
+                SerialDevice.byteArrayToString([
+                    length >> 8,
+                    length & 0xFF
+                ] + data_bytes)
+            )
+            self._ack.wait(self.ACK_TIMEOUT)
 
     def getVISCA(self, commandBytes):
         with self._await_response:
