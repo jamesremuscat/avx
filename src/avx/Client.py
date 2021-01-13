@@ -22,7 +22,12 @@ class Client(Subscriber, threading.Thread):
         self.uri = daemon.register(self)
         self.bus.subscribe('avx', self)
         self.started.set()
-        atexit.register(lambda: daemon.shutdown())
+
+        def shutdown():
+            self.bus.unsubscribe('avx', self)
+            daemon.shutdown()
+
+        atexit.register(shutdown)
         daemon.requestLoop()
 
     def getHostIP(self):
