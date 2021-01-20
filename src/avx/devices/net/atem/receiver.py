@@ -396,7 +396,7 @@ class ATEMReceiver(object):
     def _generate_synthetic_tally(self):
         tally = {}
 
-        for me_index in range(self._system_config['topology'].get('mes', 0)):
+        for me_index in range(self._system_config.get('topology', {}).get('mes', 0)):
             this_me = {'prv': [], 'pgm': []}
 
             # These are the easy ones: program/preview for each M/E
