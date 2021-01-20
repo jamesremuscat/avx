@@ -19,8 +19,8 @@ Pyro4.config.REQUIRE_EXPOSE = False
 
 
 def versionsCompatible(remote, local):
-    rv = SemVer(remote, partial=True)
-    lv = SemVer(local, partial=True)
+    rv = SemVer(remote)
+    lv = SemVer(local)
     if rv.major == 0:
         return rv.major == lv.major and rv.minor == lv.minor
     return rv.major == lv.major and rv.minor >= lv.minor
