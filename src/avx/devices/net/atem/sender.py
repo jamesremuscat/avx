@@ -398,12 +398,6 @@ class ATEMSender(object):
 # Super Source
 ########
 
-# Disabled since this code doesn't work - need to identify more magic
-# constants in the protocol I think...
-
-
-'''
-
     @requiresInit
     def setSuperSourceFill(self, source):
         return self.setSuperSourceParams(
@@ -450,45 +444,45 @@ class ATEMSender(object):
 
         mask = [0, 0, 0, 0]
         if fill is not None:
-            mask[0] |= 1
+            mask[3] |= 1
         if key is not None:
-            mask[0] |= 2
+            mask[3] |= 2
         if foreground is not None:
-            mask[0] |= 4
+            mask[3] |= 4
         if preMultiplied is not None:
-            mask[0] |= 8
+            mask[3] |= 8
         if clip is not None:
-            mask[0] |= 16
+            mask[3] |= 16
         if gain is not None:
-            mask[0] |= 32
+            mask[3] |= 32
         if invert is not None:
-            mask[0] |= 64
+            mask[3] |= 64
         if border_enabled is not None:
-            mask[0] |= 128
+            mask[3] |= 128
         if border_bevel is not None:
-            mask[1] |= 1
-        if border_outer_width is not None:
-            mask[1] |= 2
-        if border_inner_width is not None:
-            mask[1] |= 4
-        if border_outer_softness is not None:
-            mask[1] |= 8
-        if border_inner_softness is not None:
-            mask[1] |= 16
-        if border_bevel_softness is not None:
-            mask[1] |= 32
-        if border_bevel_position is not None:
-            mask[1] |= 64
-        if border_hue is not None:
-            mask[1] |= 128
-        if border_saturation is not None:
             mask[2] |= 1
-        if border_luma is not None:
+        if border_outer_width is not None:
             mask[2] |= 2
-        if light_source_direction is not None:
+        if border_inner_width is not None:
             mask[2] |= 4
-        if light_source_attitude is not None:
+        if border_outer_softness is not None:
             mask[2] |= 8
+        if border_inner_softness is not None:
+            mask[2] |= 16
+        if border_bevel_softness is not None:
+            mask[2] |= 32
+        if border_bevel_position is not None:
+            mask[2] |= 64
+        if border_hue is not None:
+            mask[2] |= 128
+        if border_saturation is not None:
+            mask[1] |= 1
+        if border_luma is not None:
+            mask[1] |= 2
+        if light_source_direction is not None:
+            mask[1] |= 4
+        if light_source_attitude is not None:
+            mask[1] |= 8
 
         return self._sendCommand(
             'CSSc',
@@ -505,7 +499,7 @@ class ATEMSender(object):
                 1 if invert else 0,
                 1 if border_enabled else 0,
                 border_bevel or 0,
-                0
+                0x65
             ] +
             array_pack('!H', border_outer_width or 0) +
             array_pack('!H', border_inner_width or 0) +
@@ -521,7 +515,7 @@ class ATEMSender(object):
             array_pack('!H', light_source_direction or 0) +
             [
                 light_source_attitude or 0,
-                0
+                0x01
             ]
         )
 
@@ -601,25 +595,25 @@ class ATEMSender(object):
         return self._sendCommand(
             'CSBP',
             [
-                mask_1,
                 mask_2,
+                mask_1,
                 box,
-                1 if enabled else 0
+                1 if enabled is True else 0 if enabled is False else 128
             ] +
             (self._resolveInputBytes(source) if source else [0, 0]) +
             bytes_of(position_x or 0) +
             bytes_of(position_y or 0) +
             array_pack('!h', size or 0) +
             [
-                1 if cropped else 0,
-                0
+                1 if cropped is True else 0 if cropped is False else 0xb8,
+                0x5B
             ] +
             array_pack('!H', crop_top or 0) +
             array_pack('!H', crop_bottom or 0) +
             array_pack('!H', crop_left or 0) +
             array_pack('!H', crop_right or 0) +
             [
+                0x33,
                 0
             ]
         )
-'''
