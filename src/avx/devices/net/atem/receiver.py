@@ -409,7 +409,7 @@ class ATEMReceiver(object):
             if me_index in self._state['program']:
                 pgm_source = self._state['program'][me_index]
                 this_me['pgm'].append(pgm_source)
-                if prv_source == VideoSource.SUPER_SOURCE:
+                if pgm_source == VideoSource.SUPER_SOURCE:
                     this_me['pgm'].extend(self._get_supersource_sources())
 
             # We also need to consider the upstream keyers...
