@@ -25,6 +25,20 @@ class _PTC150Base(object):
                         (av & 0x00F0) >> 4,
                         (av & 0x000F)])
 
+    def powerOn(self):
+        return self.sendVISCA([0x01, 0x04, 0x00, 0x02])
+
+    def powerOff(self):
+        return self.sendVISCA([0x01, 0x04, 0x00, 0x03])
+
+    def initialise(self):
+        super(_PTC150Base, self).initialise()
+        self.powerOn()
+
+    def deinitialise(self):
+        self.powerOff()
+        super(_PTC150Base, self).deinitialise()
+
 
 class PTC150(_PTC150Base, VISCACamera):
     def tallyRed(self):
