@@ -33,16 +33,10 @@ class _PTC150Base(object):
 
     def initialise(self):
         super(_PTC150Base, self).initialise()
-        try:
-            self.powerOn()
-        except Exception:
-            pass  # We tried...
+        self.powerOn()
 
     def deinitialise(self):
-        try:
-            self.powerOff()
-        except Exception:
-            pass
+        self.powerOff()
         super(_PTC150Base, self).deinitialise()
 
 
