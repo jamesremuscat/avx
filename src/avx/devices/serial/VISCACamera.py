@@ -189,12 +189,20 @@ class VISCACommandsMixin(object):
         )
 
     def brighter(self):
-        self.sendVISCA([0x01, 0x04, 0x39, 0x0D])  # Put camera into manual exposure mode first!
+        self.setBrightExposure()
         return self.sendVISCA([0x01, 0x04, 0x0D, 0x02])
 
     def darker(self):
-        self.sendVISCA([0x01, 0x04, 0x39, 0x0D])  # Put camera into manual exposure mode first!
+        self.setBrightExposure()
         return self.sendVISCA([0x01, 0x04, 0x0D, 0x03])
+
+    def gainUp(self):
+        self.setManualExposure()
+        return self.sendVISCA([0x01, 0x04, 0x0B, 0x02])
+
+    def gainDown(self):
+        self.setManualExposure()
+        return self.sendVISCA([0x01, 0x04, 0x0B, 0x03])
 
     def autoExposure(self):
         return self.sendVISCA([0x01, 0x04, 0x39, 0x00])
@@ -239,6 +247,9 @@ class VISCACommandsMixin(object):
 
     def setManualExposure(self):
         self.sendVISCA([0x01, 0x04, 0x39, 0x03])
+
+    def setBrightExposure(self):
+        return self.sendVISCA([0x01, 0x04, 0x39, 0x0D])
 
     def setAperture(self, aperture):
         if isinstance(aperture, CameraSettingEnum):
