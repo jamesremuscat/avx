@@ -155,19 +155,20 @@ class HyperDeck(TCPDevice):
         listing = {}
         cliplines = extra[1:]  # Ignore the 'slot id:' line
         for line in cliplines:
-            idx, data = line.split(': ')
-            parts = data.split(' ')
-            duration = parts.pop()
-            video_format = parts.pop()
-            file_format = parts.pop()
-            name = ' '.join(parts)
+            if ': ' in line:
+                idx, data = line.split(': ')
+                parts = data.split(' ')
+                duration = parts.pop()
+                video_format = parts.pop()
+                file_format = parts.pop()
+                name = ' '.join(parts)
 
-            listing[int(idx)] = {
-                'name': name,
-                'file_format': file_format,
-                'video_format': video_format,
-                'duration': duration
-            }
+                listing[int(idx)] = {
+                    'name': name,
+                    'file_format': file_format,
+                    'video_format': video_format,
+                    'duration': duration
+                }
 
         self.broadcast(MessageTypes.CLIP_LISTING, listing)
 
